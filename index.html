@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vote-icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Performance & SEO -->
+    <meta name="description" content="Plateforme de vote électronique sécurisée avec chiffrement AES-256, 2FA et support multi-types de scrutin" />
+    <meta name="keywords" content="vote électronique, e-voting, vote sécurisé, scrutin en ligne, élections" />
+
+    <!-- Preconnect pour améliorer les performances -->
+    <link rel="preconnect" href="http://localhost:3000" />
+    <link rel="dns-prefetch" href="http://localhost:3000" />
+
+    <!-- Preload des ressources critiques -->
+    <link rel="modulepreload" href="/src/main.jsx" />
+
+    <!-- Hints de prefetch pour les routes communes (chargées en arrière-plan) -->
+    <!-- Ces routes seront préchargées avec une priorité basse après le chargement initial -->
+    <link rel="prefetch" as="script" href="/src/pages/Dashboard.jsx" />
+    <link rel="prefetch" as="script" href="/src/pages/Login.jsx" />
+
+    <title>E-Voting - Plateforme de Vote Sécurisée</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Service Worker pour le cache (optionnel, à activer en production) -->
+    <script>
+      // if ('serviceWorker' in navigator && import.meta.env.PROD) {
+      //   window.addEventListener('load', () => {
+      //     navigator.serviceWorker.register('/sw.js');
+      //   });
+      // }
+    </script>
+  </body>
+</html>
