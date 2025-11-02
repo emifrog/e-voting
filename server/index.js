@@ -24,6 +24,16 @@ import pushRoutes from './routes/push.js';
 import { initScheduler } from './services/scheduler.js';
 import { initializeWebSocket } from './services/websocket.js';
 
+// Advanced Rate Limiting
+import {
+  generalLimiter,
+  loginLimiter,
+  voteRateLimiter,
+  checkRateLimitStatus,
+  onLoginSuccess,
+  onLoginFailure
+} from './middleware/advancedRateLimit.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -113,51 +123,19 @@ app.use(cors({
   credentials: true
 }));
 
-// Rate limiting général
-const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
-  message: 'Trop de requêtes, veuillez réessayer plus tard'
-});
-
-// Rate limiting strict pour les votes (prévention bourrage d'urnes)
-const voteLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 3, // Maximum 3 tentatives de vote par minute
-  skipSuccessfulRequests: true, // Ne compte que les requêtes échouées
-  message: 'Trop de tentatives de vote. Veuillez patienter avant de réessayer.',
-  standardHeaders: true,
-  legacyHeaders: false,
-  handler: (req, res) => {
-    console.warn(`Rate limit dépassé pour le vote: IP ${req.ip}, Token ${req.params.token}`);
-    res.status(429).json({
-      error: 'Trop de tentatives de vote',
-      message: 'Vous avez fait trop de tentatives de vote. Veuillez patienter 1 minute avant de réessayer.',
-      retryAfter: 60
-    });
-  }
-});
-
-// Rate limiting pour les tentatives d'authentification
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Maximum 5 tentatives de connexion
-  skipSuccessfulRequests: true,
-  message: 'Trop de tentatives de connexion. Veuillez réessayer dans 15 minutes.'
-});
-
-app.use('/api/', limiter);
+// Apply general rate limiter to all API routes
+app.use('/api/', generalLimiter);
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Routes API avec rate limiting approprié
-app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api/2fa', authLimiter, twoFactorRoutes);
+// Routes API with advanced rate limiting
+app.use('/api/auth', loginLimiter, checkRateLimitStatus('login'), authRoutes);
+app.use('/api/2fa', loginLimiter, twoFactorRoutes);
 app.use('/api/elections', electionsRoutes);
 app.use('/api/elections', votersRoutes);
-app.use('/api/vote', voteLimiter, votingRoutes); // Rate limiting strict pour les votes
+app.use('/api/vote', voteRateLimiter, votingRoutes); // Advanced rate limiting for votes
 app.use('/api/elections', resultsRoutes);
 app.use('/api/elections', observersRoutes);
 app.use('/api/observer', observersRoutes);

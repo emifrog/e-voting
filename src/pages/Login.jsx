@@ -1,17 +1,19 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
-import { LogIn, Shield } from 'lucide-react';
+import { LogIn, Shield, CheckCircle } from 'lucide-react';
 
 function Login({ setIsAuthenticated }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [twoFactorCode, setTwoFactorCode] = useState('');
   const [twoFactorRequired, setTwoFactorRequired] = useState(false);
-  const [tempToken, setTempToken] = useState('');
+  const [tempEmail, setTempEmail] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,23 +21,23 @@ function Login({ setIsAuthenticated }) {
     setLoading(true);
 
     try {
-      const response = await api.post('/auth/login', { email, password });
+      const response = await api.post('/auth/login', { email, password, rememberMe });
 
       // Vérifier si 2FA est requis
-      if (response.data.requires2FA) {
+      if (response.data.require2FA) {
         setTwoFactorRequired(true);
-        setTempToken(response.data.tempToken);
+        setTempEmail(email);
         setLoading(false);
         return;
       }
 
       // Login réussi sans 2FA
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      setIsAuthenticated(true);
-      navigate('/dashboard');
+      saveTokensAndNavigate(response.data);
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur de connexion');
+      const errorMsg = err.response?.data?.message ||
+                      err.response?.data?.error ||
+                      'Erreur de connexion';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -47,20 +49,33 @@ function Login({ setIsAuthenticated }) {
     setLoading(true);
 
     try {
-      const response = await api.post('/2fa/validate', {
-        tempToken,
-        code: twoFactorCode,
+      const response = await api.post('/auth/login', {
+        email: tempEmail,
+        password,
+        twoFactorToken: twoFactorCode,
+        rememberMe
       });
 
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      setIsAuthenticated(true);
-      navigate('/dashboard');
+      saveTokensAndNavigate(response.data);
     } catch (err) {
-      setError(err.response?.data?.error || 'Code 2FA invalide');
+      setError(err.response?.data?.message || 'Code 2FA invalide');
     } finally {
       setLoading(false);
     }
+  };
+
+  const saveTokensAndNavigate = (data) => {
+    // Save tokens
+    localStorage.setItem('accessToken', data.accessToken);
+    localStorage.setItem('refreshToken', data.refreshToken);
+    localStorage.setItem('expiresIn', data.expiresIn);
+    localStorage.setItem('user', JSON.stringify(data.user));
+
+    // Update API default header
+    api.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
+
+    setIsAuthenticated(true);
+    navigate('/dashboard');
   };
 
   const handleBackToLogin = () => {
@@ -124,6 +139,34 @@ function Login({ setIsAuthenticated }) {
                 required
                 placeholder="••••••••"
               />
+            </div>
+
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              marginBottom: '20px'
+            }}>
+              <input
+                id="rememberMe"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  cursor: 'pointer',
+                  accentColor: '#2563eb'
+                }}
+              />
+              <label htmlFor="rememberMe" style={{
+                fontSize: '14px',
+                color: '#374151',
+                cursor: 'pointer',
+                margin: 0
+              }}>
+                Se souvenir de moi (30 jours)
+              </label>
             </div>
 
             <button
