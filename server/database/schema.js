@@ -159,11 +159,48 @@ export const createTables = (db) => {
 
   // Index pour optimiser les requêtes
   db.exec(`
+    -- Existing indexes
     CREATE INDEX IF NOT EXISTS idx_voters_election ON voters(election_id);
     CREATE INDEX IF NOT EXISTS idx_voters_token ON voters(token);
     CREATE INDEX IF NOT EXISTS idx_ballots_election ON ballots(election_id);
     CREATE INDEX IF NOT EXISTS idx_public_votes_election ON public_votes(election_id);
     CREATE INDEX IF NOT EXISTS idx_observers_election ON observers(election_id);
     CREATE INDEX IF NOT EXISTS idx_attendance_election ON attendance_list(election_id);
+
+    -- SPRINT 2.5: Additional indexes for pagination and filtering
+    -- Composite index for pagination queries: election_id + has_voted
+    CREATE INDEX IF NOT EXISTS idx_voters_election_voted ON voters(election_id, has_voted);
+
+    -- Index for search operations in voters table
+    CREATE INDEX IF NOT EXISTS idx_voters_email ON voters(email);
+    CREATE INDEX IF NOT EXISTS idx_voters_name ON voters(name);
+
+    -- Composite index for vote counting queries
+    CREATE INDEX IF NOT EXISTS idx_voters_election_weight_voted ON voters(election_id, weight, has_voted);
+
+    -- Index for election queries filtering by created_by and status
+    CREATE INDEX IF NOT EXISTS idx_elections_created_by_status ON elections(created_by, status);
+
+    -- Index for audit log queries
+    CREATE INDEX IF NOT EXISTS idx_audit_logs_election_created ON audit_logs(election_id, created_at);
+    CREATE INDEX IF NOT EXISTS idx_audit_logs_user_created ON audit_logs(user_id, created_at);
+
+    -- Index for ballots (secret votes) queries with timestamps
+    CREATE INDEX IF NOT EXISTS idx_ballots_election_cast ON ballots(election_id, cast_at);
+
+    -- Index for public votes queries with timestamps
+    CREATE INDEX IF NOT EXISTS idx_public_votes_election_cast ON public_votes(election_id, cast_at);
+
+    -- Index for attendance list queries
+    CREATE INDEX IF NOT EXISTS idx_attendance_election_voter ON attendance_list(election_id, voter_id);
+
+    -- Index for election_options queries
+    CREATE INDEX IF NOT EXISTS idx_election_options_election ON election_options(election_id, option_order);
+
+    -- Index for reminder queries
+    CREATE INDEX IF NOT EXISTS idx_voters_election_reminder ON voters(election_id, reminder_sent, has_voted);
+
+    -- Index for scheduled tasks queries
+    CREATE INDEX IF NOT EXISTS idx_scheduled_tasks_election_executed ON scheduled_tasks(election_id, executed, scheduled_for);
   `);
 };
