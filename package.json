@@ -37,6 +37,7 @@
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
+    "csurf": "^1.11.0",
     "csv-parse": "^5.5.3",
     "date-fns": "^3.0.6",
     "dotenv": "^16.3.1",
@@ -60,7 +61,8 @@
     "socket.io-client": "^4.8.1",
     "speakeasy": "^2.0.0",
     "uuid": "^9.0.1",
-    "web-push": "^3.6.7"
+    "web-push": "^3.6.7",
+    "winston": "^3.18.3"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
