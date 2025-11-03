@@ -200,26 +200,83 @@ router.post('/:electionId/voters/import', authenticateAdmin, upload.single('file
 });
 
 /**
- * GET /api/elections/:electionId/voters - Liste des électeurs
+ * GET /api/elections/:electionId/voters - Récupérer les électeurs avec pagination
+ * Params:
+ *   - page: Numéro de page (défaut: 1)
+ *   - limit: Électeurs par page (défaut: 50, max: 500)
+ *   - search: Recherche par email ou nom (optionnel)
+ *   - sort: Champ de tri (email, name, weight, has_voted, created_at) (défaut: created_at)
+ *   - direction: Direction du tri (asc, desc) (défaut: desc)
+ * Response: { voters, pagination: { page, pageSize, total, totalPages, hasNextPage, hasPreviousPage } }
  */
 router.get('/:electionId/voters', authenticateAdmin, async (req, res) => {
   try {
     const { electionId } = req.params;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(500, Math.max(1, parseInt(req.query.limit) || 50));
+    const search = req.query.search || '';
+    const sort = ['email', 'name', 'weight', 'has_voted', 'created_at'].includes(req.query.sort)
+      ? req.query.sort
+      : 'created_at';
+    const direction = req.query.direction === 'asc' ? 'asc' : 'desc';
 
-    const election = await db.get('SELECT * FROM elections WHERE id = ? AND created_by = ?', [electionId, req.user.id]);
+    // Verify election exists and belongs to user
+    const election = await db.get(
+      'SELECT * FROM elections WHERE id = ? AND created_by = ?',
+      [electionId, req.user.id]
+    );
 
     if (!election) {
       return res.status(404).json({ error: 'Élection non trouvée' });
     }
 
+    // Build WHERE clause
+    let whereClause = 'election_id = ?';
+    let whereParams = [electionId];
+
+    if (search) {
+      whereClause += ' AND (email LIKE ? OR name LIKE ?)';
+      const searchPattern = `%${search}%`;
+      whereParams.push(searchPattern, searchPattern);
+    }
+
+    // Get total count
+    const countResult = await db.get(
+      `SELECT COUNT(*) as total FROM voters WHERE ${whereClause}`,
+      whereParams
+    );
+    const total = countResult.total;
+    const totalPages = Math.ceil(total / limit);
+
+    // Validate page number
+    if (page > totalPages && total > 0) {
+      return res.status(400).json({
+        error: 'Numéro de page invalide',
+        totalPages
+      });
+    }
+
+    // Fetch paginated voters
+    const offset = (page - 1) * limit;
     const voters = await db.all(`
       SELECT id, email, name, weight, has_voted, voted_at, reminder_sent, last_reminder_at, created_at
       FROM voters
-      WHERE election_id = ?
-      ORDER BY created_at DESC
-    `, [electionId]);
+      WHERE ${whereClause}
+      ORDER BY ${sort} ${direction}
+      LIMIT ? OFFSET ?
+    `, [...whereParams, limit, offset]);
 
-    res.json({ voters });
+    res.json({
+      voters,
+      pagination: {
+        page,
+        pageSize: limit,
+        total,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1
+      }
+    });
   } catch (error) {
     console.error('Erreur récupération électeurs:', error);
     res.status(500).json({ error: 'Erreur lors de la récupération des électeurs' });
@@ -273,6 +330,102 @@ router.post('/:electionId/voters/send-emails', authenticateAdmin, async (req, re
   } catch (error) {
     console.error('Erreur envoi emails:', error);
     res.status(500).json({ error: 'Erreur lors de l\'envoi des emails' });
+  }
+});
+
+/**
+ * PUT /api/elections/:electionId/voters/:voterId - Mettre à jour un électeur
+ * Allowed fields: email, name, weight
+ */
+router.put('/:electionId/voters/:voterId', authenticateAdmin, async (req, res) => {
+  try {
+    const { electionId, voterId } = req.params;
+    const { email, name, weight } = req.body;
+
+    // Verify election exists and belongs to user
+    const election = await db.get(
+      'SELECT * FROM elections WHERE id = ? AND created_by = ?',
+      [electionId, req.user.id]
+    );
+
+    if (!election) {
+      return res.status(404).json({ error: 'Élection non trouvée' });
+    }
+
+    // Only allow editing before voting starts
+    if (election.status !== 'draft') {
+      return res.status(400).json({ error: 'Impossible de modifier un électeur après le démarrage' });
+    }
+
+    // Verify voter exists and belongs to this election
+    const voter = await db.get(
+      'SELECT * FROM voters WHERE id = ? AND election_id = ?',
+      [voterId, electionId]
+    );
+
+    if (!voter) {
+      return res.status(404).json({ error: 'Électeur non trouvé' });
+    }
+
+    // Validate inputs
+    if (!email || email.trim().length === 0) {
+      return res.status(400).json({ error: 'Email requis' });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Email invalide' });
+    }
+
+    // Check for duplicate email (excluding current voter)
+    const existingVoter = await db.get(
+      'SELECT id FROM voters WHERE email = ? AND election_id = ? AND id != ?',
+      [email, electionId, voterId]
+    );
+
+    if (existingVoter) {
+      return res.status(400).json({ error: 'Cet email existe déjà pour cette élection' });
+    }
+
+    // Prepare update data
+    const updateFields = ['email = ?'];
+    const updateParams = [email];
+
+    if (name !== undefined && name !== null) {
+      updateFields.push('name = ?');
+      updateParams.push(name.trim());
+    }
+
+    if (weight !== undefined && weight !== null && election.is_weighted) {
+      const weightNum = parseFloat(weight);
+      if (isNaN(weightNum) || weightNum < 0) {
+        return res.status(400).json({ error: 'Poids doit être un nombre positif' });
+      }
+      updateFields.push('weight = ?');
+      updateParams.push(weightNum);
+    }
+
+    updateParams.push(voterId, electionId);
+
+    // Update voter
+    await db.run(
+      `UPDATE voters SET ${updateFields.join(', ')} WHERE id = ? AND election_id = ?`,
+      updateParams
+    );
+
+    // Return updated voter
+    const updatedVoter = await db.get(
+      'SELECT * FROM voters WHERE id = ? AND election_id = ?',
+      [voterId, electionId]
+    );
+
+    res.json({
+      message: 'Électeur mis à jour avec succès',
+      voter: updatedVoter
+    });
+  } catch (error) {
+    console.error('Erreur mise à jour électeur:', error);
+    res.status(500).json({ error: 'Erreur lors de la mise à jour' });
   }
 });
 

@@ -1,77 +1,88 @@
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect, memo, useCallback } from 'react';
 import { Search, Edit2, Trash2, CheckCircle, XCircle, Mail, Weight } from 'lucide-react';
 import api from '../utils/api';
+import PaginationControls from './PaginationControls';
 
 function VotersTable({ electionId, isWeighted, refreshTrigger }) {
-  const [voters, setVoters] = useState([]);
-  const [filteredVoters, setFilteredVoters] = useState([]);
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortConfig, setSortConfig] = useState({ key: 'email', direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' });
+
+  // Data state
+  const [voters, setVoters] = useState([]);
+  const [totalVoters, setTotalVoters] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  // UI state
   const [editingVoter, setEditingVoter] = useState(null);
   const [editForm, setEditForm] = useState({ email: '', name: '', weight: 1 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchVoters();
-  }, [electionId, refreshTrigger]);
-
-  useEffect(() => {
-    // Filtrer les électeurs selon le terme de recherche
-    const filtered = voters.filter(voter =>
-      voter.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (voter.name && voter.name.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-    setFilteredVoters(filtered);
-  }, [searchTerm, voters]);
-
-  const fetchVoters = async () => {
+  // Fetch voters with pagination
+  const fetchVoters = useCallback(async (pageNum = 1, limit = pageSize, search = '', sort = 'created_at', dir = 'desc') => {
     try {
-      const response = await api.get(`/elections/${electionId}/voters`);
+      setLoading(true);
+      const response = await api.get(`/elections/${electionId}/voters`, {
+        params: {
+          page: pageNum,
+          limit,
+          search: search.trim(),
+          sort,
+          direction: dir
+        }
+      });
+
       setVoters(response.data.voters || []);
-      setFilteredVoters(response.data.voters || []);
+      setTotalVoters(response.data.pagination?.total || 0);
+      setTotalPages(response.data.pagination?.totalPages || 0);
+      setError('');
     } catch (err) {
       setError(err.response?.data?.error || 'Erreur de chargement des électeurs');
     } finally {
       setLoading(false);
     }
-  };
+  }, [electionId, pageSize]);
 
-  const handleSort = (key) => {
+  // Initial load and refresh trigger
+  useEffect(() => {
+    setPage(1);
+    fetchVoters(1, pageSize, searchTerm, sortConfig.key, sortConfig.direction);
+  }, [electionId, refreshTrigger]);
+
+  // Handle search changes
+  const handleSearch = useCallback((value) => {
+    setSearchTerm(value);
+    setPage(1); // Reset to first page on search
+    fetchVoters(1, pageSize, value, sortConfig.key, sortConfig.direction);
+  }, [pageSize, sortConfig, fetchVoters]);
+
+  // Handle page change
+  const handlePageChange = useCallback((newPage) => {
+    setPage(newPage);
+    fetchVoters(newPage, pageSize, searchTerm, sortConfig.key, sortConfig.direction);
+  }, [pageSize, searchTerm, sortConfig, fetchVoters]);
+
+  // Handle page size change
+  const handlePageSizeChange = useCallback((newSize) => {
+    setPageSize(newSize);
+    setPage(1); // Reset to first page
+    fetchVoters(1, newSize, searchTerm, sortConfig.key, sortConfig.direction);
+  }, [searchTerm, sortConfig, fetchVoters]);
+
+  // Handle sort
+  const handleSort = useCallback((key) => {
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
     }
-    setSortConfig({ key, direction });
-
-    const sorted = [...filteredVoters].sort((a, b) => {
-      let aVal = a[key];
-      let bVal = b[key];
-
-      // Gérer les valeurs nulles
-      if (aVal === null || aVal === undefined) aVal = '';
-      if (bVal === null || bVal === undefined) bVal = '';
-
-      // Tri numérique pour weight et has_voted
-      if (key === 'weight') {
-        return direction === 'asc' ? aVal - bVal : bVal - aVal;
-      }
-      if (key === 'has_voted') {
-        return direction === 'asc' ? (aVal === bVal ? 0 : aVal ? 1 : -1) : (aVal === bVal ? 0 : aVal ? -1 : 1);
-      }
-
-      // Tri alphabétique
-      if (typeof aVal === 'string' && typeof bVal === 'string') {
-        return direction === 'asc'
-          ? aVal.localeCompare(bVal)
-          : bVal.localeCompare(aVal);
-      }
-
-      return 0;
-    });
-
-    setFilteredVoters(sorted);
-  };
+    const newSort = { key, direction };
+    setSortConfig(newSort);
+    setPage(1); // Reset to first page on sort
+    fetchVoters(1, pageSize, searchTerm, key, direction);
+  }, [pageSize, searchTerm, sortConfig, fetchVoters]);
 
   const handleEdit = (voter) => {
     setEditingVoter(voter.id);
@@ -143,15 +154,15 @@ function VotersTable({ electionId, isWeighted, refreshTrigger }) {
       <div className="grid grid-3" style={{ marginBottom: '20px' }}>
         <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '8px' }}>
           <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '4px' }}>Total électeurs</p>
-          <h3 style={{ fontSize: '24px', color: '#111827' }}>{voters.length}</h3>
+          <h3 style={{ fontSize: '24px', color: '#111827' }}>{totalVoters}</h3>
         </div>
         <div style={{ background: '#dcfce7', padding: '16px', borderRadius: '8px' }}>
           <p style={{ color: '#166534', fontSize: '14px', marginBottom: '4px' }}>Ont voté</p>
-          <h3 style={{ fontSize: '24px', color: '#166534' }}>{votedCount}</h3>
+          <h3 style={{ fontSize: '24px', color: '#166534' }}>{voters.filter(v => v.has_voted).length}</h3>
         </div>
         <div style={{ background: '#fef3c7', padding: '16px', borderRadius: '8px' }}>
           <p style={{ color: '#92400e', fontSize: '14px', marginBottom: '4px' }}>N'ont pas voté</p>
-          <h3 style={{ fontSize: '24px', color: '#92400e' }}>{notVotedCount}</h3>
+          <h3 style={{ fontSize: '24px', color: '#92400e' }}>{voters.filter(v => !v.has_voted).length}</h3>
         </div>
       </div>
 
@@ -172,7 +183,8 @@ function VotersTable({ electionId, isWeighted, refreshTrigger }) {
             type="text"
             placeholder="Rechercher par email ou nom..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
+            disabled={loading}
             className="input"
             style={{ paddingLeft: '40px' }}
           />
@@ -412,12 +424,17 @@ function VotersTable({ electionId, isWeighted, refreshTrigger }) {
         </table>
       </div>
 
-      {/* Info footer */}
-      <div style={{ marginTop: '16px', padding: '12px', background: '#f9fafb', borderRadius: '8px' }}>
-        <p style={{ fontSize: '14px', color: '#6b7280' }}>
-          Affichage de {filteredVoters.length} électeur(s)
-          {searchTerm && ` sur ${voters.length} au total`}
-        </p>
+      {/* Pagination controls */}
+      <div style={{ marginTop: '16px' }}>
+        <PaginationControls
+          page={page}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          total={totalVoters}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          isLoading={loading}
+        />
       </div>
     </div>
   );
