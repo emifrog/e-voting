@@ -4,6 +4,7 @@ import db from '../database/db.js';
 import { authenticateAdmin } from '../middleware/auth.js';
 import { validateElectionCreation } from '../middleware/validation.js';
 import { notifyElectionStarted, notifyElectionClosed } from '../services/websocket.js';
+import { getStats as getCacheStats, invalidateRelated } from '../utils/cache.js';
 
 const router = express.Router();
 
@@ -308,6 +309,9 @@ router.post('/:id/close', authenticateAdmin, async (req, res) => {
       VALUES (?, ?, ?, 'close_election')
     `, [uuidv4(), req.params.id, req.user.id]);
 
+    // Invalidate cached data (election status changed)
+    invalidateRelated('election_status_changed', req.params.id, req.user.id);
+
     // Notification: Élection clôturée
     await notifyElectionClosed(req.params.id, req.user.id, election.title);
 
@@ -315,6 +319,22 @@ router.post('/:id/close', authenticateAdmin, async (req, res) => {
   } catch (error) {
     console.error('Erreur clôture élection:', error);
     res.status(500).json({ error: 'Erreur lors de la clôture' });
+  }
+});
+
+/**
+ * GET /api/cache/stats - Statistiques du cache (Admin)
+ */
+router.get('/cache/stats', authenticateAdmin, (req, res) => {
+  try {
+    const stats = getCacheStats();
+    res.json({
+      message: 'Cache statistics',
+      cache: stats
+    });
+  } catch (error) {
+    console.error('Erreur stats cache:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des stats' });
   }
 });
 

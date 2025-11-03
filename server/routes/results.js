@@ -3,11 +3,13 @@ import db from '../database/db.js';
 import { authenticateAdmin, authenticateObserver } from '../middleware/auth.js';
 import { decrypt } from '../utils/crypto.js';
 import { calculateResults } from '../services/voting.js';
+import { getCachedOrFetch, cacheKeys, ttlConfig, invalidateRelated } from '../utils/cache.js';
 
 const router = express.Router();
 
 /**
  * GET /api/elections/:electionId/results - Obtenir les résultats
+ * Cached: 30 minutes or until votes change
  */
 router.get('/:electionId/results', authenticateAdmin, async (req, res) => {
   try {
@@ -67,39 +69,48 @@ router.get('/:electionId/results', authenticateAdmin, async (req, res) => {
       }));
     }
 
-    // Calculer les résultats
-    const results = calculateResults(ballots, election.voting_type, options);
+    // Try to get results from cache
+    const cacheKey = cacheKeys.electionResults(electionId);
+    const cachedResults = await getCachedOrFetch(cacheKey, async () => {
+      // Calculate results
+      const calculatedResults = calculateResults(ballots, election.voting_type, options);
 
-    // Statistiques
-    const stats = await db.get(`
-      SELECT
-        COUNT(*) as total_voters,
-        SUM(CASE WHEN has_voted = true THEN 1 ELSE 0 END) as voted_count,
-        SUM(weight) as total_weight,
-        SUM(CASE WHEN has_voted = true THEN weight ELSE 0 END) as voted_weight
-      FROM voters
-      WHERE election_id = ?
-    `, [electionId]);
+      // Get voter statistics
+      const voterStats = await db.get(`
+        SELECT
+          COUNT(*) as total_voters,
+          SUM(CASE WHEN has_voted = true THEN 1 ELSE 0 END) as voted_count,
+          SUM(weight) as total_weight,
+          SUM(CASE WHEN has_voted = true THEN weight ELSE 0 END) as voted_weight
+        FROM voters
+        WHERE election_id = ?
+      `, [electionId]);
 
-    res.json({
-      election: {
-        id: election.id,
-        title: election.title,
-        voting_type: election.voting_type,
-        is_secret: election.is_secret === true,
-        status: election.status
-      },
-      stats: {
-        ...stats,
-        participation_rate: stats.total_voters > 0
-          ? ((stats.voted_count / stats.total_voters) * 100).toFixed(2)
+      // Compute participation rates
+      const stats = {
+        ...voterStats,
+        participation_rate: voterStats.total_voters > 0
+          ? ((voterStats.voted_count / voterStats.total_voters) * 100).toFixed(2)
           : 0,
-        weighted_participation: stats.total_weight > 0
-          ? ((stats.voted_weight / stats.total_weight) * 100).toFixed(2)
+        weighted_participation: voterStats.total_weight > 0
+          ? ((voterStats.voted_weight / voterStats.total_weight) * 100).toFixed(2)
           : 0
-      },
-      results
-    });
+      };
+
+      return {
+        election: {
+          id: election.id,
+          title: election.title,
+          voting_type: election.voting_type,
+          is_secret: election.is_secret === true,
+          status: election.status
+        },
+        stats,
+        results: calculatedResults
+      };
+    }, ttlConfig.RESULTS);
+
+    res.json(cachedResults);
   } catch (error) {
     console.error('Erreur calcul résultats:', error);
     res.status(500).json({ error: 'Erreur lors du calcul des résultats' });

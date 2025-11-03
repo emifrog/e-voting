@@ -7,6 +7,7 @@ import { encrypt, createBallotHash } from '../utils/crypto.js';
 import { validateVote as validateVoteData } from '../services/voting.js';
 import { updateQuorumStatus } from '../services/quorum.js';
 import { notifyVoteReceived, notifyQuorumReached } from '../services/websocket.js';
+import { invalidateRelated } from '../utils/cache.js';
 
 const router = express.Router();
 
@@ -168,10 +169,13 @@ router.post('/:token', authenticateVoter, validateVote, async (req, res) => {
     );
 
     // Récupérer les infos de l'élection pour les notifications
-    const election = await db.get('SELECT title, admin_user_id FROM elections WHERE id = ?', [voter.election_id]);
+    const election = await db.get('SELECT title, admin_user_id, created_by FROM elections WHERE id = ?', [voter.election_id]);
 
     // Mettre à jour le statut du quorum
     const quorumStatus = await updateQuorumStatus(voter.election_id);
+
+    // Invalidate cached results and stats (vote affects results)
+    invalidateRelated('vote_cast', voter.election_id, election.created_by);
 
     // Notification: Vote reçu
     await notifyVoteReceived(voter.election_id, election.admin_user_id, election.title);
