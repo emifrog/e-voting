@@ -5,6 +5,7 @@ import { authenticateAdmin } from '../middleware/auth.js';
 import { validateElectionCreation } from '../middleware/validation.js';
 import { notifyElectionStarted, notifyElectionClosed } from '../services/websocket.js';
 import { getStats as getCacheStats, invalidateRelated } from '../utils/cache.js';
+import { canCloseElection, getQuorumEnforcementDetails } from '../utils/quorumEnforcement.js';
 
 const router = express.Router();
 
@@ -283,6 +284,7 @@ router.post('/:id/start', authenticateAdmin, async (req, res) => {
 
 /**
  * POST /api/elections/:id/close - Clôturer une élection
+ * Enforces quorum requirements before closure
  */
 router.post('/:id/close', authenticateAdmin, async (req, res) => {
   try {
@@ -297,17 +299,49 @@ router.post('/:id/close', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'L\'élection n\'est pas active' });
     }
 
+    // Check quorum enforcement before closure
+    const quorumCheck = await canCloseElection(req.params.id, req.user.id);
+
+    if (!quorumCheck.canClose) {
+      // Quorum not met - return error with details
+      const enforcementDetails = await getQuorumEnforcementDetails(req.params.id);
+
+      return res.status(409).json({
+        error: 'Cannot close election: quorum requirement not met',
+        code: 'QUORUM_NOT_MET',
+        message: quorumCheck.message,
+        details: quorumCheck.status ? {
+          type: quorumCheck.status.type,
+          current: quorumCheck.status.current,
+          target: quorumCheck.status.target,
+          percentage: quorumCheck.status.percentage,
+          remaining: Math.max(0, quorumCheck.status.target - quorumCheck.status.current)
+        } : null,
+        enforcement: enforcementDetails
+      });
+    }
+
+    // Quorum is met (or not required) - proceed with closure
     await db.run(`
       UPDATE elections
       SET status = 'closed', actual_end = CURRENT_TIMESTAMP
       WHERE id = ?
     `, [req.params.id]);
 
-    // Log d'audit
+    // Log d'audit with quorum info
     await db.run(`
-      INSERT INTO audit_logs (id, election_id, user_id, action)
-      VALUES (?, ?, ?, 'close_election')
-    `, [uuidv4(), req.params.id, req.user.id]);
+      INSERT INTO audit_logs (id, election_id, user_id, action, details)
+      VALUES (?, ?, ?, 'close_election', ?)
+    `, [
+      uuidv4(),
+      req.params.id,
+      req.user.id,
+      JSON.stringify({
+        quorum_enforced: quorumCheck.quorumRequired,
+        quorum_met: quorumCheck.quorumMet,
+        quorum_status: quorumCheck.status
+      })
+    ]);
 
     // Invalidate cached data (election status changed)
     invalidateRelated('election_status_changed', req.params.id, req.user.id);
@@ -315,10 +349,43 @@ router.post('/:id/close', authenticateAdmin, async (req, res) => {
     // Notification: Élection clôturée
     await notifyElectionClosed(req.params.id, req.user.id, election.title);
 
-    res.json({ message: 'Élection clôturée avec succès' });
+    res.json({
+      message: 'Élection clôturée avec succès',
+      quorum: quorumCheck.quorumRequired ? {
+        enforced: true,
+        met: quorumCheck.quorumMet,
+        status: quorumCheck.status
+      } : {
+        enforced: false
+      }
+    });
   } catch (error) {
     console.error('Erreur clôture élection:', error);
     res.status(500).json({ error: 'Erreur lors de la clôture' });
+  }
+});
+
+/**
+ * GET /api/elections/:electionId/quorum-enforcement - Check if election can be closed
+ */
+router.get('/:electionId/quorum-enforcement', authenticateAdmin, async (req, res) => {
+  try {
+    const { electionId } = req.params;
+
+    const election = await db.get(
+      'SELECT id FROM elections WHERE id = ? AND created_by = ?',
+      [electionId, req.user.id]
+    );
+
+    if (!election) {
+      return res.status(404).json({ error: 'Élection non trouvée' });
+    }
+
+    const enforcement = await getQuorumEnforcementDetails(electionId);
+    res.json(enforcement);
+  } catch (error) {
+    console.error('Erreur vérification quorum:', error);
+    res.status(500).json({ error: 'Erreur lors de la vérification du quorum' });
   }
 });
 
