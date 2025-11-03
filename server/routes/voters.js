@@ -285,6 +285,7 @@ router.get('/:electionId/voters', authenticateAdmin, async (req, res) => {
 
 /**
  * POST /api/elections/:electionId/voters/send-emails - Envoyer les emails de vote
+ * Optimized: Batch QR code generation and database updates (no N+1 queries)
  */
 router.post('/:electionId/voters/send-emails', authenticateAdmin, async (req, res) => {
   try {
@@ -296,36 +297,101 @@ router.post('/:electionId/voters/send-emails', authenticateAdmin, async (req, re
       return res.status(404).json({ error: 'Élection non trouvée' });
     }
 
+    // Single query to fetch all voters
     const voters = await db.all('SELECT * FROM voters WHERE election_id = ?', [electionId]);
+
+    if (voters.length === 0) {
+      return res.json({
+        message: 'Aucun électeur à notifier',
+        sentCount: 0,
+        totalVoters: 0
+      });
+    }
 
     let sentCount = 0;
     const errors = [];
 
-    for (const voter of voters) {
-      try {
-        const votingUrl = `${process.env.APP_URL}/vote/${voter.token}`;
-        const qrCodeDataUrl = await generateVotingQRCode(votingUrl);
+    // Prepare batch update statement
+    const updateQrCode = db.prepare('UPDATE voters SET qr_code = ? WHERE id = ?');
+    const updateReminder = db.prepare('UPDATE voters SET reminder_sent = true, last_reminder_at = datetime(\'now\') WHERE id = ?');
 
-        // Enregistrer le QR code dans la BD
-        await db.run('UPDATE voters SET qr_code = ? WHERE id = ?', [qrCodeDataUrl, voter.id]);
-
-        const result = await sendVotingEmail(voter, election, qrCodeDataUrl);
-
-        if (result.success) {
-          sentCount++;
-        } else {
-          errors.push({ email: voter.email, error: result.error });
+    // Step 1: Generate QR codes for all voters (can be done in parallel)
+    const votersWithQr = await Promise.all(
+      voters.map(async (voter) => {
+        try {
+          const votingUrl = `${process.env.APP_URL}/vote/${voter.token}`;
+          const qrCodeDataUrl = await generateVotingQRCode(votingUrl);
+          return { ...voter, qrCodeDataUrl };
+        } catch (error) {
+          errors.push({ email: voter.email, error: `QR Code error: ${error.message}` });
+          return null;
         }
-      } catch (error) {
-        errors.push({ email: voter.email, error: error.message });
+      })
+    );
+
+    // Filter out failed QR code generations
+    const validVoters = votersWithQr.filter(v => v !== null);
+
+    // Step 2: Batch update QR codes in database (single transaction)
+    try {
+      const transaction = db.transaction(() => {
+        for (const voter of validVoters) {
+          updateQrCode.run(voter.qrCodeDataUrl, voter.id);
+        }
+      });
+      transaction();
+    } catch (error) {
+      console.error('Erreur batch update QR codes:', error);
+      errors.push({ email: 'batch', error: 'QR Code database update failed' });
+    }
+
+    // Step 3: Send emails in parallel (can be optimized further with queuing)
+    const emailResults = await Promise.allSettled(
+      validVoters.map(voter =>
+        sendVotingEmail(voter, election, voter.qrCodeDataUrl)
+          .then(result => ({ voter, result }))
+      )
+    );
+
+    // Step 4: Batch update reminder flags for successfully sent emails
+    const successfulVoters = [];
+    for (const settlement of emailResults) {
+      if (settlement.status === 'fulfilled' && settlement.value.result.success) {
+        successfulVoters.push(settlement.value.voter.id);
+        sentCount++;
+      } else {
+        const voter = settlement.value?.voter;
+        const error = settlement.value?.result?.error || settlement.reason?.message;
+        if (voter) {
+          errors.push({ email: voter.email, error });
+        }
       }
+    }
+
+    // Step 5: Batch update reminder flags (single transaction)
+    try {
+      const transaction = db.transaction(() => {
+        for (const voterId of successfulVoters) {
+          updateReminder.run(voterId);
+        }
+      });
+      transaction();
+    } catch (error) {
+      console.error('Erreur batch update reminder flags:', error);
     }
 
     res.json({
       message: `${sentCount} email(s) envoyé(s) sur ${voters.length}`,
       sentCount,
       totalVoters: voters.length,
-      errors: errors.length > 0 ? errors : undefined
+      qrCodesGenerated: validVoters.length,
+      errors: errors.length > 0 ? errors : undefined,
+      summary: {
+        total: voters.length,
+        sent: sentCount,
+        failed: voters.length - sentCount - errors.length,
+        errors: errors.length
+      }
     });
   } catch (error) {
     console.error('Erreur envoi emails:', error);

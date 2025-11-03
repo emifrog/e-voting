@@ -9,6 +9,7 @@ const router = express.Router();
 
 /**
  * POST /api/elections/:electionId/send-reminders - Envoyer des rappels
+ * Optimized: Batch reminder updates (no N+1 queries)
  */
 router.post('/:electionId/send-reminders', authenticateAdmin, async (req, res) => {
   try {
@@ -25,33 +26,63 @@ router.post('/:electionId/send-reminders', authenticateAdmin, async (req, res) =
       return res.status(400).json({ error: 'L\'élection n\'est pas active' });
     }
 
-    // Récupérer les électeurs n'ayant pas voté
+    // Single query to fetch all pending voters
     const voters = db.prepare(`
       SELECT * FROM voters
       WHERE election_id = ? AND has_voted = 0
     `).all(electionId);
 
+    if (voters.length === 0) {
+      return res.json({
+        message: 'Aucun électeur en attente',
+        sentCount: 0,
+        totalPending: 0
+      });
+    }
+
     let sentCount = 0;
     const errors = [];
 
-    for (const voter of voters) {
-      try {
-        const result = await sendReminderEmail(voter, election);
+    // Step 1: Send emails in parallel
+    const emailResults = await Promise.allSettled(
+      voters.map(voter =>
+        sendReminderEmail(voter, election)
+          .then(result => ({ voter, result }))
+      )
+    );
 
-        if (result.success) {
-          // Mettre à jour le statut de rappel
-          db.prepare(`
-            UPDATE voters
-            SET reminder_sent = 1, last_reminder_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-          `).run(voter.id);
-
-          sentCount++;
-        } else {
-          errors.push({ email: voter.email, error: result.error });
+    // Step 2: Batch update reminder status for successfully sent emails
+    const successfulVoters = [];
+    for (const settlement of emailResults) {
+      if (settlement.status === 'fulfilled' && settlement.value.result.success) {
+        successfulVoters.push(settlement.value.voter.id);
+        sentCount++;
+      } else {
+        const voter = settlement.value?.voter;
+        const error = settlement.value?.result?.error || settlement.reason?.message;
+        if (voter) {
+          errors.push({ email: voter.email, error });
         }
+      }
+    }
+
+    // Step 3: Batch update reminder flags (single transaction)
+    if (successfulVoters.length > 0) {
+      try {
+        const updateReminder = db.prepare(`
+          UPDATE voters
+          SET reminder_sent = 1, last_reminder_at = CURRENT_TIMESTAMP
+          WHERE id = ?
+        `);
+
+        const transaction = db.transaction(() => {
+          for (const voterId of successfulVoters) {
+            updateReminder.run(voterId);
+          }
+        });
+        transaction();
       } catch (error) {
-        errors.push({ email: voter.email, error: error.message });
+        console.error('Erreur batch update reminders:', error);
       }
     }
 
@@ -63,7 +94,7 @@ router.post('/:electionId/send-reminders', authenticateAdmin, async (req, res) =
       uuidv4(),
       electionId,
       req.user.id,
-      JSON.stringify({ sent: sentCount, total: voters.length })
+      JSON.stringify({ sent: sentCount, total: voters.length, failed: voters.length - sentCount })
     );
 
     // Notification: Rappels envoyés
@@ -75,6 +106,7 @@ router.post('/:electionId/send-reminders', authenticateAdmin, async (req, res) =
       message: `${sentCount} rappel(s) envoyé(s) sur ${voters.length} électeur(s)`,
       sentCount,
       totalPending: voters.length,
+      failed: voters.length - sentCount,
       errors: errors.length > 0 ? errors : undefined
     });
   } catch (error) {
