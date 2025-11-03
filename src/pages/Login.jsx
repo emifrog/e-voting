@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { LogIn, Shield, CheckCircle } from 'lucide-react';
+import { LogIn, Shield } from 'lucide-react';
 
 function Login({ setIsAuthenticated }) {
   const [email, setEmail] = useState('');
@@ -13,7 +13,6 @@ function Login({ setIsAuthenticated }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -65,14 +64,16 @@ function Login({ setIsAuthenticated }) {
   };
 
   const saveTokensAndNavigate = (data) => {
-    // Save tokens
+    // Save tokens - use 'token' comme clé principale pour cohérence avec api.js
+    const authToken = data.accessToken || data.token;
+    localStorage.setItem('token', authToken);
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
     localStorage.setItem('expiresIn', data.expiresIn);
     localStorage.setItem('user', JSON.stringify(data.user));
 
     // Update API default header
-    api.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
+    api.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
 
     setIsAuthenticated(true);
     navigate('/dashboard');

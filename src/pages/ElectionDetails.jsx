@@ -1,7 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { ArrowLeft, Users, Mail, Play, StopCircle, BarChart3, Download, Bell, UserPlus, QrCode } from 'lucide-react';
+import { ArrowLeft, Mail, Play, StopCircle, BarChart3, Bell, UserPlus, QrCode } from 'lucide-react';
 import QuorumIndicator from '../components/QuorumIndicator';
 import VotersTable from '../components/VotersTable';
 import ElectionQRCode from '../components/ElectionQRCode';
@@ -130,17 +130,21 @@ function ElectionDetails() {
     const pendingVoters = voters.filter(v => !v.has_voted);
     if (confirm(`Envoyer un rappel à ${pendingVoters.length} électeur(s) ?`)) {
       try {
-        const response = await api.post(`/elections/${id}/send-reminders`);
+        const response = await api.post(`/elections/${id}/send-reminders`, {});
         addLocalNotification({
           type: 'success',
           title: 'Rappels envoyés',
-          message: `${response.data.sentCount} rappel(s) envoyé(s) aux électeurs`
+          message: `${response.data.sentCount || response.data.message}`
         });
+        // Rafraîchir les données après l'envoi
+        fetchVoters();
+        fetchElectionDetails();
       } catch (error) {
+        console.error('Erreur envoi reminders:', error.response?.data || error.message);
         addLocalNotification({
           type: 'error',
           title: 'Erreur',
-          message: 'Erreur lors de l\'envoi des rappels'
+          message: error.response?.data?.error || 'Erreur lors de l\'envoi des rappels'
         });
       }
     }

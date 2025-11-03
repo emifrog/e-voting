@@ -30,6 +30,8 @@ function Dashboard({ setIsAuthenticated }) {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setIsAuthenticated(false);
+    // Dispatcher un événement pour synchroniser les onglets
+    window.dispatchEvent(new Event('user-logout'));
     navigate('/login');
   };
 

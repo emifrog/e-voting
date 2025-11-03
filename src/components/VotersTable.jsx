@@ -139,8 +139,7 @@ function VotersTable({ electionId, isWeighted, refreshTrigger }) {
     );
   }
 
-  const votedCount = voters.filter(v => v.has_voted).length;
-  const notVotedCount = voters.length - votedCount;
+  // Variable utilisée pour afficher le statut dans les statistiques
 
   return (
     <div>
@@ -274,7 +273,7 @@ function VotersTable({ electionId, isWeighted, refreshTrigger }) {
             </tr>
           </thead>
           <tbody>
-            {filteredVoters.length === 0 ? (
+            {voters.length === 0 ? (
               <tr>
                 <td
                   colSpan={isWeighted ? 5 : 4}
@@ -284,7 +283,7 @@ function VotersTable({ electionId, isWeighted, refreshTrigger }) {
                 </td>
               </tr>
             ) : (
-              filteredVoters.map((voter) => (
+              voters.map((voter) => (
                 <tr
                   key={voter.id}
                   style={{

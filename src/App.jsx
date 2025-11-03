@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
+import { useAuth } from './hooks/useAuth';
 import { NotificationProvider } from './contexts/NotificationContext';
 import NotificationCenter from './components/NotificationCenter';
 import PageLoader from './components/PageLoader';
@@ -17,15 +18,7 @@ const Security = lazy(() => import('./pages/Security'));
 const Results = lazy(() => import('./pages/Results'));
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Vérifier si l'utilisateur est connecté
-    const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token);
-    setLoading(false);
-  }, []);
+  const { isAuthenticated, loading, setIsAuthenticated } = useAuth();
 
   if (loading) {
     return (

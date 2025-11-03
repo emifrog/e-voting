@@ -24,7 +24,12 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      window.location.href = '/login';
+      // Dispatcher un événement pour notifier l'App de la déconnexion
+      window.dispatchEvent(new Event('user-logout'));
+      // Rediriger après un court délai pour laisser le temps au state de se mettre à jour
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 100);
     }
     return Promise.reject(error);
   }
