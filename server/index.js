@@ -34,11 +34,18 @@ import {
   onLoginFailure
 } from './middleware/advancedRateLimit.js';
 
+// Monitoring
+import { initSentry, sentryErrorHandler } from './config/sentry.js';
+import { prometheusMiddleware, register } from './config/prometheus.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Initialiser Sentry (doit être fait en premier)
+initSentry(app);
 
 // Validation des variables d'environnement critiques au démarrage
 function validateEnvironment() {
@@ -125,6 +132,9 @@ app.use(cors({
 
 // Apply general rate limiter to all API routes
 app.use('/api/', generalLimiter);
+
+// Prometheus metrics middleware (avant body parsing pour tout capturer)
+app.use(prometheusMiddleware);
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
@@ -333,6 +343,17 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Endpoint pour les métriques Prometheus
+app.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', register.contentType);
+    const metrics = await register.metrics();
+    res.end(metrics);
+  } catch (err) {
+    res.status(500).end(err);
+  }
+});
+
 // Servir les fichiers statiques en production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../dist')));
@@ -342,13 +363,16 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+// Gestionnaire d'erreurs Sentry (doit être avant les autres gestionnaires d'erreur)
+app.use(sentryErrorHandler());
+
 // Gestion des erreurs 404
-app.use((req, res) => {
+app.use((_req, res) => {
   res.status(404).json({ error: 'Route non trouvée' });
 });
 
 // Gestion globale des erreurs
-app.use((err, req, res, next) => {
+app.use((err, _req, res, _next) => {
   console.error('Erreur:', err);
   res.status(500).json({
     error: 'Erreur interne du serveur',

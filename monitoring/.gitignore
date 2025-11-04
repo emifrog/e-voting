@@ -1,0 +1,10 @@
+# Ignorer les données des volumes Docker
+prometheus/data/
+grafana/data/
+
+# Ignorer les logs
+*.log
+
+# Ignorer les fichiers temporaires
+*.tmp
+*.swp
