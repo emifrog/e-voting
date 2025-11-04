@@ -1,0 +1,43 @@
+global:
+  scrape_interval: 15s # Scraper les métriques toutes les 15 secondes
+  evaluation_interval: 15s # Évaluer les règles toutes les 15 secondes
+  external_labels:
+    monitor: 'evoting-monitor'
+
+# Configuration des alertes (optionnel)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets:
+#           - alertmanager:9093
+
+# Chargement des règles d'alerte
+# rule_files:
+#   - "alerts/*.yml"
+
+scrape_configs:
+  # Job pour l'application E-Voting
+  - job_name: 'evoting-app'
+    static_configs:
+      - targets: ['host.docker.internal:3000']
+        labels:
+          service: 'evoting-backend'
+          environment: 'development'
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+
+  # Job pour Prometheus lui-même
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # Job pour Node Exporter (métriques système)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          service: 'node-exporter'
+          environment: 'development'

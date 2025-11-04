@@ -91,7 +91,7 @@ router.post('/login', async (req, res) => {
     const { email, password, twoFactorToken, rememberMe = false } = req.body;
 
     // Trouver l'utilisateur
-    const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
+    const user = await db.get('SELECT id, email, password, name, role FROM users WHERE email = ?', [email]);
     if (!user) {
       return res.status(401).json({
         error: true,
@@ -196,7 +196,7 @@ router.post('/refresh', async (req, res) => {
     }
 
     // Get user from database
-    const user = await db.get('SELECT * FROM users WHERE id = ?', [decoded.id]);
+    const user = await db.get('SELECT id, email, name, role FROM users WHERE id = ?', [decoded.id]);
     if (!user) {
       return res.status(401).json({
         error: true,
