@@ -426,6 +426,7 @@
 - `server/routes/auditLogs.js` - Audit log API endpoints
 - `server/database/schema.js` - Added hash chain fields + immutability triggers
 - `docs/AUDIT_LOGS_AND_EXPORTS.md` - Complete documentation
+- `server/test/auditLogsExports.test.js` - Comprehensive test suite (50+ test cases)
 
 **Système Implémenté (Audit Logs):**
 - ✅ Append-only table (no deletes via database triggers)
@@ -570,6 +571,7 @@ Retry-After: 60 (on 429)
 - `server/services/exportService.js` - Export service with metadata & signatures
 - `server/routes/exports.js` - Export API endpoints
 - `docs/AUDIT_LOGS_AND_EXPORTS.md` - Complete documentation (part 2)
+- `server/test/auditLogsExports.test.js` - Comprehensive test suite (50+ test cases)
 
 **Système Implémenté (Exports):**
 - ✅ Export with metadata (election_id, exported_by, timestamp, export_id)
