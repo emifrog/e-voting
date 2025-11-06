@@ -3,7 +3,7 @@
 **Dernière mise à jour:** Novembre 6, 2024
 **Sprint 2 Status:** ✅ COMPLÉTÉ (100%)
 **Sprint 3 Status:** ✅ COMPLÉTÉ (100%) - Bulk Ops + Auto-Save + Search/Filter + Atomicity
-**Total Améliorations:** 22 planifiées - **14 complétées (64%)** ✨
+**Total Améliorations:** 22 planifiées - **15 complétées (68%)** ✨
 
 ---
 
@@ -343,13 +343,77 @@
 
 ---
 
-### 17. ⏳ Protection CSRF
-**Status:** PARTIEL (Express CSRF middleware possible)
-**Manquant:** Aucun token CSRF validé sur POST/PUT/DELETE
-**Solution Proposée:**
-- [ ] CSRF middleware
-- [ ] Tokens dans tous les forms
-- [ ] Validation server-side
+### 17. ✅ Protection CSRF (Sécurité)
+**Status:** COMPLÉTÉ (Sprint 4)
+**Problème:** Aucun token CSRF validé sur POST/PUT/DELETE
+
+**Fichiers Créés/Modifiés:**
+- `server/middleware/csrf.js` - CSRF middleware with token generation/verification
+- `server/utils/csrfTokenStore.js` - In-memory and Redis token stores
+- `src/hooks/useCsrfToken.js` - React hook for CSRF token management
+- `src/utils/api.js` - API client with automatic CSRF injection
+- `docs/CSRF_PROTECTION.md` - Comprehensive documentation
+- `server/test/csrf.test.js` - Full test suite (30+ cases)
+- `server/index.js` - CSRF middleware integration
+
+**Système Implémenté:**
+- ✅ Double-Submit Cookie pattern for CSRF prevention
+- ✅ HTTP-only cookies (can't be accessed by malicious JS)
+- ✅ SameSite=Strict attribute (only same-site requests)
+- ✅ Single-use tokens (deleted after each request)
+- ✅ Token generation on all requests
+- ✅ Token verification on POST/PUT/DELETE/PATCH
+- ✅ Automatic token refresh after each request
+- ✅ User-specific token validation
+- ✅ In-memory token store (development)
+- ✅ Redis token store support (production with scaling)
+- ✅ React hook for manual token management
+- ✅ Automatic CSRF injection in API client (axios)
+- ✅ Graceful error handling with auto page reload
+
+**CSRF Protection Flow:**
+1. GET request → Server generates token + sets HTTP-only cookie
+2. Client stores token in sessionStorage
+3. POST request → Client includes token in X-CSRF-Token header
+4. Server verifies token matches cookie + user
+5. Token deleted (single-use)
+6. New token generated and sent to client
+
+**API Integration:**
+- ✅ All POST/PUT/DELETE/PATCH automatically protected
+- ✅ CSRF errors automatically trigger page reload
+- ✅ No additional setup needed (automatic in axios)
+- ✅ React hook available for fetch API: `useCsrfToken()`
+
+**Security Protections:**
+- ✅ Prevents CSRF attacks from malicious sites
+- ✅ Prevents token fixation attacks
+- ✅ Prevents token replay attacks
+- ✅ Token bound to specific user
+- ✅ Token expires after 1 hour
+- ✅ Tokens cleaned up on logout
+- ✅ Multiple token sources supported (header, body, query)
+
+**Testing:**
+- ✅ 30+ test cases in server/test/csrf.test.js
+- ✅ Token generation and verification tests
+- ✅ Error handling and attack prevention tests
+- ✅ Security headers validation
+- ✅ Multi-method support (GET, POST, PUT, DELETE, etc.)
+
+**Production Ready:**
+- ✅ HTTPS only (Secure flag in production)
+- ✅ Redis backend for scaled deployments
+- ✅ Automatic token cleanup
+- ✅ Comprehensive error logging
+- ✅ Session management integration
+
+**Impact:**
+- ✅ Protection: CSRF attacks against state-changing requests prevented
+- ✅ Compatibility: Seamless integration with existing axios/React code
+- ✅ Scalability: Redis support for multi-server deployments
+- ✅ Security: Industry-standard double-submit cookie pattern
+- ✅ Transparency: Automatic, requires minimal code changes
 
 ---
 

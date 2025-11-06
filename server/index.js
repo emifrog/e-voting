@@ -4,6 +4,7 @@ import { createServer } from 'http';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import cookieParser from 'cookie-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -35,6 +36,13 @@ import {
   onLoginSuccess,
   onLoginFailure
 } from './middleware/advancedRateLimit.js';
+
+// CSRF Protection
+import {
+  csrfTokenGeneration,
+  csrfTokenVerification,
+  clearUserTokens
+} from './middleware/csrf.js';
 
 // Monitoring
 import { initSentry, sentryErrorHandler } from './config/sentry.js';
@@ -141,6 +149,15 @@ app.use(prometheusMiddleware);
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Cookie parsing (needed for CSRF protection)
+app.use(cookieParser());
+
+// CSRF Protection - Generate tokens on all requests
+app.use(csrfTokenGeneration);
+
+// CSRF Protection - Verify tokens on state-changing requests
+app.use(csrfTokenVerification);
 
 // Routes API with advanced rate limiting
 app.use('/api/auth', loginLimiter, checkRateLimitStatus('login'), authRoutes);
