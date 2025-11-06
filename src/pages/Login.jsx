@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
+import ErrorAlert from '../components/ErrorAlert';
+import { getErrorHint } from '../utils/errorHandler';
 import { LogIn, Shield } from 'lucide-react';
 
 function Login({ setIsAuthenticated }) {
@@ -109,9 +111,11 @@ function Login({ setIsAuthenticated }) {
         </div>
 
         {error && (
-          <div className="alert alert-error">
-            {error}
-          </div>
+          <ErrorAlert
+            error={error}
+            actionHint={getErrorHint(error)}
+            onDismiss={() => setError('')}
+          />
         )}
 
         {!twoFactorRequired ? (

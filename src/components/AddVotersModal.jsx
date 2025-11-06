@@ -103,9 +103,11 @@ function AddVotersModal({ electionId, onClose, onSuccess }) {
     try {
       // Filtrer les lignes vides
       const validVoters = voters.filter(v => v.email && v.name);
+      const emptyRows = voters.filter(v => !v.email || !v.name).length;
 
       if (validVoters.length === 0) {
-        setError('Veuillez ajouter au moins un électeur avec email et nom');
+        setError('Veuillez ajouter au least un électeur avec email et nom. ' +
+          (emptyRows > 0 ? `${emptyRows} ligne(s) incomplète(s) détectée(s).` : ''));
         setLoading(false);
         return;
       }
@@ -131,7 +133,17 @@ function AddVotersModal({ electionId, onClose, onSuccess }) {
         setError(response.data.message || 'Aucun électeur n\'a pu être ajouté');
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Erreur lors de l\'ajout des électeurs');
+      // Parse specific error messages
+      const errorMsg = err.response?.data?.error;
+      if (errorMsg?.includes('UNIQUE') || errorMsg?.includes('déjà')) {
+        setError('Cet email existe déjà pour cette élection. Vérifiez la liste des doublons.');
+      } else if (errorMsg?.includes('email')) {
+        setError('Format email invalide détecté. Vérifiez les adresses email.');
+      } else if (errorMsg?.includes('weight')) {
+        setError('Poids invalide. Le poids doit être un nombre positif.');
+      } else {
+        setError(errorMsg || 'Erreur lors de l\'ajout des électeurs. Veuillez réessayer.');
+      }
     } finally {
       setLoading(false);
     }

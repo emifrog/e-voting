@@ -97,7 +97,16 @@ router.post('/', authenticateAdmin, validateElectionCreation, async (req, res) =
     });
   } catch (error) {
     console.error('Erreur création élection:', error);
-    res.status(500).json({ error: 'Erreur lors de la création de l\'élection' });
+
+    // Provide specific error messages
+    if (error.message?.includes('UNIQUE')) {
+      return res.status(400).json({ error: 'Un titre d\'élection similaire existe déjà' });
+    }
+    if (error.message?.includes('NOT NULL')) {
+      return res.status(400).json({ error: 'Des champs obligatoires sont manquants (titre, options, etc.)' });
+    }
+
+    res.status(500).json({ error: 'Erreur lors de la création de l\'élection. Veuillez réessayer.' });
   }
 });
 
