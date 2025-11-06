@@ -128,7 +128,7 @@ export const createTables = (db) => {
     )
   `);
 
-  // Table des logs d'audit
+  // Table des logs d'audit (immutable - append-only)
   db.exec(`
     CREATE TABLE IF NOT EXISTS audit_logs (
       id TEXT PRIMARY KEY,
@@ -138,9 +138,29 @@ export const createTables = (db) => {
       details TEXT,
       ip_address TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      entry_hash TEXT UNIQUE NOT NULL,
+      prev_hash TEXT NOT NULL,
+      signature TEXT NOT NULL,
       FOREIGN KEY (election_id) REFERENCES elections(id),
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
+  `);
+
+  // Create immutability trigger - prevent updates/deletes
+  db.exec(`
+    CREATE TRIGGER IF NOT EXISTS audit_logs_immutable
+    BEFORE UPDATE ON audit_logs
+    BEGIN
+      SELECT RAISE(ABORT, 'Audit logs are immutable - updates not allowed');
+    END
+  `);
+
+  db.exec(`
+    CREATE TRIGGER IF NOT EXISTS audit_logs_no_delete
+    BEFORE DELETE ON audit_logs
+    BEGIN
+      SELECT RAISE(ABORT, 'Audit logs are immutable - deletes not allowed');
+    END
   `);
 
   // Table des tâches planifiées

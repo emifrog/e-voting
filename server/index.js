@@ -21,6 +21,8 @@ import quorumRoutes from './routes/quorum.js';
 import notificationsRoutes from './routes/notifications.js';
 import pushRoutes from './routes/push.js';
 import keyManagementRoutes from './routes/keyManagement.js';
+import auditLogsRoutes from './routes/auditLogs.js';
+import exportsRoutes from './routes/exports.js';
 
 // Services
 import { initScheduler } from './services/scheduler.js';
@@ -173,6 +175,8 @@ app.use('/api/quorum', quorumRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/push', pushRoutes);
 app.use('/api/admin', keyManagementRoutes);
+app.use('/api/elections', auditLogsRoutes);
+app.use('/api/elections', exportsRoutes);
 
 // Page d'accueil API
 app.get('/', (req, res) => {

@@ -3,7 +3,7 @@
 **Dernière mise à jour:** Novembre 6, 2024
 **Sprint 2 Status:** ✅ COMPLÉTÉ (100%)
 **Sprint 3 Status:** ✅ COMPLÉTÉ (100%) - Bulk Ops + Auto-Save + Search/Filter + Atomicity
-**Total Améliorations:** 22 planifiées - **16 complétées (73%)** ✨
+**Total Améliorations:** 22 planifiées - **18 complétées (82%)** ✨
 
 ---
 
@@ -417,13 +417,52 @@
 
 ---
 
-### 18. ⏳ Audit logs immuables
-**Status:** EN ATTENTE (Sprint 4)
-**Problème:** Admin pourrait supprimer logs
-**Solution Proposée:**
-- [ ] Table append-only (no deletes)
-- [ ] Hash chain (blockchain-like)
-- [ ] Digital signatures
+### 18. ✅ Audit logs immuables (Sécurité)
+**Status:** COMPLÉTÉ (Sprint 4)
+**Problème:** Admin pourrait supprimer/modifier logs pour couvrir ses traces
+
+**Fichiers Créés/Modifiés:**
+- `server/services/auditLog.js` - Immutable audit log service with hash chain
+- `server/routes/auditLogs.js` - Audit log API endpoints
+- `server/database/schema.js` - Added hash chain fields + immutability triggers
+- `docs/AUDIT_LOGS_AND_EXPORTS.md` - Complete documentation
+
+**Système Implémenté (Audit Logs):**
+- ✅ Append-only table (no deletes via database triggers)
+- ✅ Hash chain (each entry references previous entry's hash)
+- ✅ SHA-256 entry hashing
+- ✅ HMAC-SHA256 digital signatures
+- ✅ Chain verification (detect tampering)
+- ✅ Immutability certificate generation
+- ✅ Tamper detection (hashes don't match = modified data)
+
+**Hash Chain Format:**
+```
+Entry 1: hash(id + "genesis" + timestamp + action)
+Entry 2: hash(id + entry1_hash + timestamp + action)
+Entry 3: hash(id + entry2_hash + timestamp + action)
+...
+```
+
+**Database Protection:**
+- Triggers prevent UPDATE on audit_logs table
+- Triggers prevent DELETE on audit_logs table
+- Database raises ABORT error on modification attempt
+
+**API Endpoints:**
+- GET `/api/elections/:electionId/audit-logs` - Get logs with filtering
+- GET `/audit-logs/verify-chain` - Verify chain integrity
+- GET `/audit-logs/certificate` - Get immutability certificate
+- GET `/audit-logs/export` - Export logs (CSV/JSON)
+- POST `/audit-logs/manual` - Create manual audit entry
+- GET `/audit-logs/stats` - Get audit statistics
+
+**Impact:**
+- ✅ Tamper-Proof: Hash chain detects any modification
+- ✅ Authenticated: HMAC signature proves server created logs
+- ✅ Verifiable: Anyone can verify logs haven't been tampered
+- ✅ Non-Repudiation: Admin can't deny their actions
+- ✅ Compliance: Meets audit requirements for regulated elections
 
 ---
 
@@ -523,13 +562,67 @@ Retry-After: 60 (on 429)
 
 ## 📊 AMÉLIORATIONS ANALYTICS/REPORTING (Sprint 3 & 6)
 
-### 20. ⏳ Export avec métadonnées
-**Status:** EN ATTENTE
-**Manquant:** Export sans audit trail ni signature
-**Solution Proposée:**
-- [ ] Ajouter: election_id, exported_by, timestamp
-- [ ] SHA-256 hash
-- [ ] Digital signature (OpenSSL)
+### 20. ✅ Export avec métadonnées (Sécurité)
+**Status:** COMPLÉTÉ (Sprint 4)
+**Problème:** Exports sans métadonnées = impossible de vérifier authenticité
+
+**Fichiers Créés/Modifiés:**
+- `server/services/exportService.js` - Export service with metadata & signatures
+- `server/routes/exports.js` - Export API endpoints
+- `docs/AUDIT_LOGS_AND_EXPORTS.md` - Complete documentation (part 2)
+
+**Système Implémenté (Exports):**
+- ✅ Export with metadata (election_id, exported_by, timestamp, export_id)
+- ✅ SHA-256 hashing of export data
+- ✅ HMAC-SHA256 digital signatures
+- ✅ Signature verification (detect modification)
+- ✅ CSV and JSON export formats
+- ✅ Multiple export types (results, voters, audit logs)
+- ✅ Compliance report generation
+
+**Export Package Format:**
+```json
+{
+  "data": {...},
+  "metadata": {
+    "exportId": "export-abc123...",
+    "electionId": "election-123",
+    "exportedBy": "admin-456",
+    "exportedAt": "2025-01-20T10:30:00Z",
+    "dataHash": "a1b2c3d4e5f6..."
+  },
+  "signature": "xyz789...",
+  "verified": true
+}
+```
+
+**API Endpoints:**
+- GET `/api/elections/:electionId/export/results` - Export results
+- GET `/export/voters` - Export voters list
+- GET `/export/audit` - Export audit logs
+- POST `/export/verify` - Verify export signature
+- GET `/export/compliance-report` - Generate compliance report
+- GET `/export/all` - Export all data (combined)
+
+**Signature Verification:**
+1. Recompute SHA-256 of received data
+2. Check: recomputed_hash == metadata.dataHash
+3. If no → Data was modified!
+4. Recompute HMAC with metadata
+5. Check: recomputed_signature == signature
+6. If no → Signature was forged!
+
+**Supported Formats:**
+- JSON (full package with metadata and signature)
+- CSV (tabular format with metadata header)
+
+**Impact:**
+- ✅ Integrity: SHA-256 proves data unmodified
+- ✅ Authenticity: HMAC signature proves server created it
+- ✅ Verifiable: Recipient can independently verify
+- ✅ Metadata: Export creator, date, ID tracked
+- ✅ Non-Repudiation: Server can't deny export creation
+- ✅ Compliance: Meets audit trail requirements
 
 ---
 
