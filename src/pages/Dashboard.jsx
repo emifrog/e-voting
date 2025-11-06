@@ -1,13 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { Plus, LogOut, BarChart3, Users, Clock, CheckCircle, Shield, Trash2 } from 'lucide-react';
+import { Plus, LogOut, BarChart3, Users, Clock, CheckCircle, Shield, Trash2, Search, X } from 'lucide-react';
 
 function Dashboard({ setIsAuthenticated }) {
   const [elections, setElections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  // Filter and search state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all'); // all, draft, active, closed
+  const [sortBy, setSortBy] = useState('date-desc'); // date-desc, date-asc, title-asc, title-desc, participation-desc
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
@@ -25,6 +30,53 @@ function Dashboard({ setIsAuthenticated }) {
       setLoading(false);
     }
   };
+
+  // Filter and sort elections
+  const filteredElections = useMemo(() => {
+    let filtered = elections;
+
+    // Apply search filter
+    if (searchTerm.trim()) {
+      const search = searchTerm.toLowerCase();
+      filtered = filtered.filter(e =>
+        e.title.toLowerCase().includes(search) ||
+        (e.description && e.description.toLowerCase().includes(search))
+      );
+    }
+
+    // Apply status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(e => e.status === statusFilter);
+    }
+
+    // Apply sorting
+    const sorted = [...filtered];
+    switch (sortBy) {
+      case 'date-desc':
+        sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        break;
+      case 'date-asc':
+        sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        break;
+      case 'title-asc':
+        sorted.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case 'title-desc':
+        sorted.sort((a, b) => b.title.localeCompare(a.title));
+        break;
+      case 'participation-desc':
+        sorted.sort((a, b) => {
+          const aParticipation = a.total_voters > 0 ? (a.voted_count / a.total_voters) : 0;
+          const bParticipation = b.total_voters > 0 ? (b.voted_count / b.total_voters) : 0;
+          return bParticipation - aParticipation;
+        });
+        break;
+      default:
+        break;
+    }
+
+    return sorted;
+  }, [elections, searchTerm, statusFilter, sortBy]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -71,6 +123,13 @@ function Dashboard({ setIsAuthenticated }) {
     active: elections.filter(e => e.status === 'active').length,
     draft: elections.filter(e => e.status === 'draft').length,
     closed: elections.filter(e => e.status === 'closed').length
+  };
+
+  const filteredStats = {
+    total: filteredElections.length,
+    active: filteredElections.filter(e => e.status === 'active').length,
+    draft: filteredElections.filter(e => e.status === 'draft').length,
+    closed: filteredElections.filter(e => e.status === 'closed').length
   };
 
   return (
@@ -171,6 +230,102 @@ function Dashboard({ setIsAuthenticated }) {
             </button>
           </div>
 
+          {/* Search and Filter Bar */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: '16px',
+            marginBottom: '20px',
+            padding: '16px',
+            background: '#f9fafb',
+            borderRadius: '8px'
+          }}>
+            {/* Search */}
+            <div style={{ position: 'relative' }}>
+              <Search
+                size={18}
+                style={{
+                  position: 'absolute',
+                  left: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#6b7280'
+                }}
+              />
+              <input
+                type="text"
+                placeholder="Rechercher par titre ou description..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="input"
+                style={{ paddingLeft: '40px', width: '100%', boxSizing: 'border-box' }}
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#6b7280'
+                  }}
+                >
+                  <X size={18} />
+                </button>
+              )}
+            </div>
+
+            {/* Status Filter */}
+            <div>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="input"
+                style={{ width: '100%', boxSizing: 'border-box' }}
+              >
+                <option value="all">Tous les statuts</option>
+                <option value="draft">Brouillons</option>
+                <option value="active">En cours</option>
+                <option value="closed">Terminés</option>
+              </select>
+            </div>
+
+            {/* Sort */}
+            <div>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="input"
+                style={{ width: '100%', boxSizing: 'border-box' }}
+              >
+                <option value="date-desc">Date (récent → ancien)</option>
+                <option value="date-asc">Date (ancien → récent)</option>
+                <option value="title-asc">Titre (A → Z)</option>
+                <option value="title-desc">Titre (Z → A)</option>
+                <option value="participation-desc">Participation (haute → basse)</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Results count */}
+          {elections.length > 0 && (
+            <div style={{
+              fontSize: '13px',
+              color: '#6b7280',
+              marginBottom: '16px',
+              paddingBottom: '16px',
+              borderBottom: '1px solid #e5e7eb'
+            }}>
+              {searchTerm || statusFilter !== 'all'
+                ? `${filteredStats.total} résultat(s) sur ${stats.total}`
+                : `${stats.total} élection(s)`}
+            </div>
+          )}
+
           {loading ? (
             <div className="loading">
               <div className="spinner"></div>
@@ -187,6 +342,21 @@ function Dashboard({ setIsAuthenticated }) {
                 Créer ma première élection
               </button>
             </div>
+          ) : filteredElections.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
+              <p>Aucune élection ne correspond à vos critères de recherche</p>
+              <button
+                onClick={() => {
+                  setSearchTerm('');
+                  setStatusFilter('all');
+                  setSortBy('date-desc');
+                }}
+                className="btn btn-secondary"
+                style={{ marginTop: '20px' }}
+              >
+                Réinitialiser les filtres
+              </button>
+            </div>
           ) : (
             <table className="table">
               <thead>
@@ -201,7 +371,7 @@ function Dashboard({ setIsAuthenticated }) {
                 </tr>
               </thead>
               <tbody>
-                {elections.map((election) => (
+                {filteredElections.map((election) => (
                   <tr key={election.id}>
                     <td>
                       <strong>{election.title}</strong>
