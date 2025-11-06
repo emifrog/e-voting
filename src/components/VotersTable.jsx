@@ -21,6 +21,12 @@ function VotersTable({ electionId, isWeighted, refreshTrigger }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Bulk operations state
+  const [selectedVoterIds, setSelectedVoterIds] = useState(new Set());
+  const [bulkLoading, setBulkLoading] = useState(false);
+  const [showBulkWeightModal, setShowBulkWeightModal] = useState(false);
+  const [bulkWeight, setBulkWeight] = useState('1');
+
   // Fetch voters with pagination
   const fetchVoters = useCallback(async (pageNum = 1, limit = pageSize, search = '', sort = 'created_at', dir = 'desc') => {
     try {
@@ -49,6 +55,7 @@ function VotersTable({ electionId, isWeighted, refreshTrigger }) {
   // Initial load and refresh trigger
   useEffect(() => {
     setPage(1);
+    setSelectedVoterIds(new Set()); // Clear selection on refresh
     fetchVoters(1, pageSize, searchTerm, sortConfig.key, sortConfig.direction);
   }, [electionId, refreshTrigger]);
 
@@ -56,12 +63,14 @@ function VotersTable({ electionId, isWeighted, refreshTrigger }) {
   const handleSearch = useCallback((value) => {
     setSearchTerm(value);
     setPage(1); // Reset to first page on search
+    setSelectedVoterIds(new Set()); // Clear selection on search
     fetchVoters(1, pageSize, value, sortConfig.key, sortConfig.direction);
   }, [pageSize, sortConfig, fetchVoters]);
 
   // Handle page change
   const handlePageChange = useCallback((newPage) => {
     setPage(newPage);
+    setSelectedVoterIds(new Set()); // Clear selection on page change
     fetchVoters(newPage, pageSize, searchTerm, sortConfig.key, sortConfig.direction);
   }, [pageSize, searchTerm, sortConfig, fetchVoters]);
 
@@ -69,6 +78,7 @@ function VotersTable({ electionId, isWeighted, refreshTrigger }) {
   const handlePageSizeChange = useCallback((newSize) => {
     setPageSize(newSize);
     setPage(1); // Reset to first page
+    setSelectedVoterIds(new Set()); // Clear selection on page size change
     fetchVoters(1, newSize, searchTerm, sortConfig.key, sortConfig.direction);
   }, [searchTerm, sortConfig, fetchVoters]);
 
@@ -131,6 +141,121 @@ function VotersTable({ electionId, isWeighted, refreshTrigger }) {
     }
   };
 
+  // Bulk operations handlers
+  const handleSelectVoter = (voterId) => {
+    const newSelected = new Set(selectedVoterIds);
+    if (newSelected.has(voterId)) {
+      newSelected.delete(voterId);
+    } else {
+      newSelected.add(voterId);
+    }
+    setSelectedVoterIds(newSelected);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedVoterIds.size === voters.length) {
+      setSelectedVoterIds(new Set());
+    } else {
+      setSelectedVoterIds(new Set(voters.map(v => v.id)));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedVoterIds.size === 0) {
+      setError('Sélectionnez au moins un électeur');
+      return;
+    }
+
+    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer ${selectedVoterIds.size} électeur(s) ?`)) {
+      return;
+    }
+
+    try {
+      setBulkLoading(true);
+      await api.post(`/elections/${electionId}/voters/bulk-delete`, {
+        voterIds: Array.from(selectedVoterIds)
+      });
+      setSelectedVoterIds(new Set());
+      await fetchVoters();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erreur lors de la suppression en masse');
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
+  const handleBulkUpdateWeight = async () => {
+    if (selectedVoterIds.size === 0) {
+      setError('Sélectionnez au least un électeur');
+      return;
+    }
+
+    const weightNum = parseFloat(bulkWeight);
+    if (isNaN(weightNum) || weightNum < 0) {
+      setError('Poids doit être un nombre positif');
+      return;
+    }
+
+    try {
+      setBulkLoading(true);
+      await api.put(`/elections/${electionId}/voters/bulk-update`, {
+        voterIds: Array.from(selectedVoterIds),
+        weight: weightNum
+      });
+      setSelectedVoterIds(new Set());
+      setShowBulkWeightModal(false);
+      setBulkWeight('1');
+      await fetchVoters();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erreur lors de la mise à jour en masse');
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
+  const handleBulkResend = async () => {
+    if (selectedVoterIds.size === 0) {
+      setError('Sélectionnez au least un électeur');
+      return;
+    }
+
+    try {
+      setBulkLoading(true);
+      const response = await api.post(`/elections/${electionId}/voters/bulk-resend`, {
+        voterIds: Array.from(selectedVoterIds)
+      });
+      alert(`${response.data.sentCount} invitation(s) renvoyée(s)`);
+      setSelectedVoterIds(new Set());
+      await fetchVoters();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erreur lors du renvoi');
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
+  const handleBulkExport = async () => {
+    try {
+      const response = await api.post(
+        `/elections/${electionId}/voters/bulk-export-csv`,
+        {
+          voterIds: selectedVoterIds.size > 0 ? Array.from(selectedVoterIds) : []
+        },
+        { responseType: 'blob' }
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `electeurs_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentElement.removeChild(link);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erreur lors de l\'export');
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '40px' }}>
@@ -190,11 +315,128 @@ function VotersTable({ electionId, isWeighted, refreshTrigger }) {
         </div>
       </div>
 
+      {/* Bulk actions toolbar */}
+      {selectedVoterIds.size > 0 && (
+        <div style={{
+          background: '#eff6ff',
+          border: '2px solid #3b82f6',
+          borderRadius: '8px',
+          padding: '16px',
+          marginBottom: '20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <div>
+            <strong>{selectedVoterIds.size} électeur(s) sélectionné(s)</strong>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <button
+              onClick={handleBulkExport}
+              className="btn btn-sm btn-secondary"
+              disabled={bulkLoading}
+              title="Exporter en CSV"
+            >
+              📥 Exporter
+            </button>
+            {isWeighted && (
+              <button
+                onClick={() => setShowBulkWeightModal(true)}
+                className="btn btn-sm btn-primary"
+                disabled={bulkLoading}
+                title="Mettre à jour le poids"
+              >
+                ⚖️ Poids
+              </button>
+            )}
+            <button
+              onClick={handleBulkResend}
+              className="btn btn-sm btn-primary"
+              disabled={bulkLoading}
+              title="Renvoyer les invitations"
+            >
+              ✉️ Renvoyer
+            </button>
+            <button
+              onClick={handleBulkDelete}
+              className="btn btn-sm btn-danger"
+              disabled={bulkLoading}
+              title="Supprimer"
+            >
+              🗑️ Supprimer
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk weight update modal */}
+      {showBulkWeightModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '8px',
+            padding: '24px',
+            maxWidth: '400px',
+            boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)'
+          }}>
+            <h3 style={{ marginTop: 0 }}>Mettre à jour le poids</h3>
+            <p style={{ color: '#6b7280' }}>
+              Appliquer le poids à {selectedVoterIds.size} électeur(s)
+            </p>
+            <input
+              type="number"
+              value={bulkWeight}
+              onChange={(e) => setBulkWeight(e.target.value)}
+              className="input"
+              placeholder="Entrez le poids"
+              min="0"
+              step="0.1"
+              style={{ marginBottom: '16px', width: '100%', boxSizing: 'border-box' }}
+            />
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowBulkWeightModal(false)}
+                className="btn btn-sm btn-secondary"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleBulkUpdateWeight}
+                className="btn btn-sm btn-success"
+                disabled={bulkLoading}
+              >
+                {bulkLoading ? 'Mise à jour...' : 'Confirmer'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Tableau des électeurs */}
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: '#f9fafb', borderBottom: '2px solid #e5e7eb' }}>
+              <th style={{ padding: '12px', textAlign: 'center', fontWeight: '600', width: '50px' }}>
+                <input
+                  type="checkbox"
+                  checked={selectedVoterIds.size === voters.length && voters.length > 0}
+                  onChange={handleSelectAll}
+                  style={{ cursor: 'pointer', width: '18px', height: '18px' }}
+                  title="Sélectionner tout"
+                />
+              </th>
               <th
                 onClick={() => handleSort('email')}
                 style={{
@@ -276,7 +518,7 @@ function VotersTable({ electionId, isWeighted, refreshTrigger }) {
             {voters.length === 0 ? (
               <tr>
                 <td
-                  colSpan={isWeighted ? 5 : 4}
+                  colSpan={isWeighted ? 6 : 5}
                   style={{ padding: '40px', textAlign: 'center', color: '#6b7280' }}
                 >
                   {searchTerm ? 'Aucun électeur trouvé' : 'Aucun électeur'}
@@ -288,9 +530,17 @@ function VotersTable({ electionId, isWeighted, refreshTrigger }) {
                   key={voter.id}
                   style={{
                     borderBottom: '1px solid #e5e7eb',
-                    background: voter.has_voted ? '#f0fdf4' : 'white'
+                    background: selectedVoterIds.has(voter.id) ? '#dbeafe' : (voter.has_voted ? '#f0fdf4' : 'white')
                   }}
                 >
+                  <td style={{ padding: '12px', textAlign: 'center' }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedVoterIds.has(voter.id)}
+                      onChange={() => handleSelectVoter(voter.id)}
+                      style={{ cursor: 'pointer', width: '18px', height: '18px' }}
+                    />
+                  </td>
                   {editingVoter === voter.id ? (
                     <>
                       <td style={{ padding: '12px' }}>

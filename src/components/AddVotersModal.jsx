@@ -1,5 +1,5 @@
-import { useState, useCallback, useMemo, memo } from 'react';
-import { X, UserPlus, Upload, Trash2 } from 'lucide-react';
+import { useState, useCallback, useMemo, memo, useEffect, useRef } from 'react';
+import { X, UserPlus, Upload, Trash2, Save } from 'lucide-react';
 import api from '../utils/api';
 
 function AddVotersModal({ electionId, onClose, onSuccess }) {
@@ -11,6 +11,66 @@ function AddVotersModal({ electionId, onClose, onSuccess }) {
   const [successMessage, setSuccessMessage] = useState('');
   const [duplicates, setDuplicates] = useState([]);
   const [invalid, setInvalid] = useState([]);
+
+  // Auto-save state
+  const [saveStatus, setSaveStatus] = useState(''); // '', 'saving', 'saved', 'error'
+  const autoSaveTimerRef = useRef(null);
+  const AUTOSAVE_DELAY = 2000; // 2 seconds
+  const STORAGE_KEY = `addVoters_draft_${electionId}`;
+
+  // Load draft on mount
+  useEffect(() => {
+    const savedDraft = localStorage.getItem(STORAGE_KEY);
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        setVoters(draft.voters || [{ email: '', name: '', weight: 1.0 }]);
+        setMode(draft.mode || 'manual');
+      } catch (err) {
+        console.error('Erreur chargement brouillon:', err);
+      }
+    }
+  }, [STORAGE_KEY]);
+
+  // Auto-save voters effect
+  useEffect(() => {
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current);
+    }
+
+    if (voters.length > 0) {
+      autoSaveTimerRef.current = setTimeout(() => {
+        try {
+          setSaveStatus('saving');
+          const draftData = {
+            voters,
+            mode,
+            timestamp: new Date().toISOString()
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(draftData));
+          setSaveStatus('saved');
+
+          // Auto-clear status after 1.5 seconds
+          setTimeout(() => setSaveStatus(''), 1500);
+        } catch (err) {
+          console.error('Erreur auto-save:', err);
+          setSaveStatus('error');
+          setTimeout(() => setSaveStatus(''), 1500);
+        }
+      }, AUTOSAVE_DELAY);
+    }
+
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, [voters, mode, STORAGE_KEY]);
+
+  // Clear draft on successful submission
+  const clearDraft = () => {
+    localStorage.removeItem(STORAGE_KEY);
+  };
 
   const addVoterRow = useCallback(() => {
     setVoters(prev => [...prev, { email: '', name: '', weight: 1.0 }]);
@@ -63,6 +123,7 @@ function AddVotersModal({ electionId, onClose, onSuccess }) {
 
         // Attendre 2 secondes puis fermer et rafraîchir
         setTimeout(() => {
+          clearDraft();
           onSuccess();
           onClose();
         }, 2000);
@@ -110,6 +171,7 @@ function AddVotersModal({ electionId, onClose, onSuccess }) {
 
         // Attendre 2 secondes puis fermer et rafraîchir
         setTimeout(() => {
+          clearDraft();
           onSuccess();
           onClose();
         }, 2000);
@@ -137,8 +199,26 @@ function AddVotersModal({ electionId, onClose, onSuccess }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px' }}>
-        <div className="modal-header">
-          <h2>Ajouter des électeurs</h2>
+        <div className="modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <h2 style={{ margin: 0 }}>Ajouter des électeurs</h2>
+            {saveStatus && (
+              <div style={{
+                fontSize: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                color: saveStatus === 'saved' ? '#10b981' : saveStatus === 'error' ? '#ef4444' : '#6b7280'
+              }}>
+                <Save size={14} />
+                <span>
+                  {saveStatus === 'saving' && 'Enreg...'}
+                  {saveStatus === 'saved' && 'Enreg.'}
+                  {saveStatus === 'error' && 'Erreur'}
+                </span>
+              </div>
+            )}
+          </div>
           <button onClick={onClose} className="modal-close">
             <X size={20} />
           </button>

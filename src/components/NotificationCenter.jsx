@@ -86,20 +86,22 @@ function NotificationCenter() {
           {unreadCount > 0 && (
             <span style={{
               position: 'absolute',
-              top: '-4px',
-              right: '-4px',
+              top: '-8px',
+              right: '-8px',
               background: 'linear-gradient(135deg, #ef4444, #dc2626)',
               color: 'white',
               borderRadius: '50%',
-              width: '20px',
-              height: '20px',
+              width: '24px',
+              height: '24px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '11px',
+              fontSize: '12px',
               fontWeight: 'bold',
-              boxShadow: '0 2px 8px rgba(239, 68, 68, 0.4)',
-              animation: 'pulse 2s infinite'
+              boxShadow: '0 2px 12px rgba(239, 68, 68, 0.6), 0 0 0 3px white',
+              animation: 'pulse 2s infinite',
+              border: '2px solid white',
+              zIndex: 10
             }}>
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>

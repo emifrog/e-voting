@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { ArrowLeft, Plus, Trash2, Video } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Video, Save, Trash } from 'lucide-react';
 
 function CreateElection() {
   const navigate = useNavigate();
@@ -31,6 +31,71 @@ function CreateElection() {
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Auto-save state
+  const [saveStatus, setSaveStatus] = useState(''); // '', 'saving', 'saved', 'error'
+  const [lastSaved, setLastSaved] = useState(null);
+  const autoSaveTimerRef = useRef(null);
+  const AUTOSAVE_DELAY = 3000; // 3 seconds
+  const STORAGE_KEY = 'createElection_draft';
+
+  // Load draft on component mount
+  useEffect(() => {
+    const savedDraft = localStorage.getItem(STORAGE_KEY);
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        setFormData(draft.formData);
+        setOptions(draft.options);
+        setLastSaved(draft.timestamp);
+      } catch (err) {
+        console.error('Erreur lors du chargement du brouillon:', err);
+      }
+    }
+  }, []);
+
+  // Auto-save effect
+  useEffect(() => {
+    // Clear existing timer
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current);
+    }
+
+    // Set new timer
+    autoSaveTimerRef.current = setTimeout(() => {
+      const draftData = {
+        formData,
+        options,
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        setSaveStatus('saving');
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(draftData));
+        setSaveStatus('saved');
+        setLastSaved(new Date());
+
+        // Auto-clear saved status after 2 seconds
+        setTimeout(() => setSaveStatus(''), 2000);
+      } catch (err) {
+        console.error('Erreur auto-save:', err);
+        setSaveStatus('error');
+        setTimeout(() => setSaveStatus(''), 2000);
+      }
+    }, AUTOSAVE_DELAY);
+
+    // Cleanup
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, [formData, options]);
+
+  // Clear draft after successful submission
+  const clearDraft = () => {
+    localStorage.removeItem(STORAGE_KEY);
+  };
 
   const handleChange = (e) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
@@ -98,7 +163,7 @@ function CreateElection() {
       };
 
       const response = await api.post('/elections', electionData);
-
+      clearDraft();
       navigate(`/elections/${response.data.electionId}`);
     } catch (err) {
       setError(err.response?.data?.error || 'Erreur lors de la création');
@@ -120,10 +185,88 @@ function CreateElection() {
         </button>
 
         <div className="card">
-          <h1 style={{ fontSize: '28px', marginBottom: '8px' }}>Créer une nouvelle élection</h1>
-          <p style={{ color: '#6b7280', marginBottom: '30px' }}>
-            Configurez votre vote en ligne sécurisé
-          </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '20px' }}>
+            <div>
+              <h1 style={{ fontSize: '28px', marginBottom: '8px' }}>Créer une nouvelle élection</h1>
+              <p style={{ color: '#6b7280', marginBottom: 0 }}>
+                Configurez votre vote en ligne sécurisé
+              </p>
+            </div>
+
+            {/* Auto-save indicator */}
+            <div style={{ textAlign: 'right', minWidth: '150px' }}>
+              {saveStatus && (
+                <div style={{
+                  fontSize: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  gap: '6px',
+                  color: saveStatus === 'saved' ? '#10b981' : saveStatus === 'error' ? '#ef4444' : '#6b7280'
+                }}>
+                  <Save size={14} />
+                  <span>
+                    {saveStatus === 'saving' && 'Enregistrement...'}
+                    {saveStatus === 'saved' && 'Enregistré'}
+                    {saveStatus === 'error' && 'Erreur'}
+                  </span>
+                </div>
+              )}
+              {lastSaved && !saveStatus && (
+                <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0 }}>
+                  Enregistré à {new Date(lastSaved).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                </p>
+              )}
+              {localStorage.getItem(STORAGE_KEY) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    clearDraft();
+                    setFormData({
+                      title: '',
+                      description: '',
+                      voting_type: 'simple',
+                      is_secret: true,
+                      is_weighted: false,
+                      allow_anonymity: false,
+                      scheduled_start: '',
+                      scheduled_end: '',
+                      deferred_counting: false,
+                      max_voters: 10000,
+                      quorum_type: 'none',
+                      quorum_value: 50,
+                      enable_meeting: false,
+                      meeting_platform: 'teams',
+                      meeting_url: '',
+                      meeting_password: ''
+                    });
+                    setOptions([
+                      { option_text: '', candidate_name: '', candidate_info: '' },
+                      { option_text: '', candidate_name: '', candidate_info: '' }
+                    ]);
+                  }}
+                  style={{
+                    fontSize: '11px',
+                    color: '#ef4444',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    marginTop: '4px',
+                    padding: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    justifyContent: 'flex-end',
+                    width: '100%'
+                  }}
+                  title="Supprimer le brouillon"
+                >
+                  <Trash size={12} />
+                  Supprimer
+                </button>
+              )}
+            </div>
+          </div>
 
           {error && (
             <div className="alert alert-error">

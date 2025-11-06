@@ -178,6 +178,10 @@ function Security() {
   return (
     <div style={{ minHeight: '100vh', padding: '40px 20px' }}>
       <div className="container">
+        <button onClick={() => navigate('/dashboard')} className="btn btn-secondary" style={{ marginBottom: '20px' }}>
+          <ArrowLeft size={18} />
+          Retour
+        </button>
         <div style={{ marginBottom: '30px' }}>
           <h1 style={{ fontSize: '32px', marginBottom: '8px', color: '#111827' }}>
             🔒 Sécurité du Compte
