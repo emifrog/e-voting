@@ -3,7 +3,7 @@
 **Dernière mise à jour:** Novembre 6, 2024
 **Sprint 2 Status:** ✅ COMPLÉTÉ (100%)
 **Sprint 3 Status:** ✅ COMPLÉTÉ (100%) - Bulk Ops + Auto-Save + Search/Filter + Atomicity
-**Total Améliorations:** 22 planifiées - **15 complétées (68%)** ✨
+**Total Améliorations:** 22 planifiées - **16 complétées (73%)** ✨
 
 ---
 
@@ -427,16 +427,97 @@
 
 ---
 
-### 19. ✅ Rate limiting avancé
-**Status:** PARTIEL (IP-based implémenté)
-**Problème:** 3 tentatives/min par IP = contournable avec proxy
-**Solution Implémentée:**
-- ✅ 3 levels: general/auth/vote
-- ✅ Exponential backoff
-- ✅ IP tracking
-**À améliorer:**
-- [ ] Rate limit par voter token
-- [ ] Device fingerprinting
+### 19. ✅ Rate limiting avancé (Sécurité)
+**Status:** COMPLÉTÉ (Sprint 4)
+**Problème:** IP-based rate limiting seul = contournable avec proxy/VPN
+
+**Fichiers Créés/Modifiés:**
+- `server/utils/deviceFingerprint.js` - Device fingerprinting with spoofing detection
+- `server/utils/rateLimitStore.js` - Abstraction for in-memory/Redis backends
+- `server/middleware/enhancedRateLimit.js` - Enhanced rate limiting with fingerprinting
+- `docs/ADVANCED_RATE_LIMITING.md` - Complete documentation
+- `server/test/rateLimit.test.js` - 40+ comprehensive test cases
+
+**Système Implémenté:**
+- ✅ 3 levels: general/auth/vote (existing)
+- ✅ Exponential backoff (15s → 30s → 1m → 5m → 1h)
+- ✅ IP-based tracking (original)
+- ✅ Device fingerprinting (NEW)
+  - User-Agent hashing
+  - Accept-Language analysis
+  - IP + device combo
+  - Spoofing detection (bots, VPN, proxies, etc.)
+- ✅ Per-voter-token rate limiting (NEW)
+- ✅ Combined IP + fingerprint identifiers (NEW)
+- ✅ In-memory store (development, single-server)
+- ✅ Redis backend (production, multi-server)
+- ✅ Request header rate limit info
+- ✅ Retry-After headers (429 responses)
+- ✅ CAPTCHA trigger logic
+
+**Rate Limiting Tiers:**
+```
+General:   100 req/15min per IP
+Login:     5 attempts/15min per IP+fingerprint
+Vote:      1 vote/lifetime per voter token
+```
+
+**Device Fingerprinting Components:**
+- User-Agent (browser, OS, version)
+- Accept-Language (language preferences)
+- IP Address (location)
+- Accept-Encoding (compression support)
+- Accept Header (content types)
+- SHA-256 hash of combined data
+- Spoofing detection (VPN, bots, crawlers)
+
+**Spoofing Detection:**
+- ✅ Detects Phantom, Selenium, webdriver
+- ✅ Detects curl, wget, Postman
+- ✅ Detects bot/crawler user agents
+- ✅ Detects VPN/Proxy services
+- ✅ Detects missing/empty user agents
+- ✅ Risk levels: low/medium/high
+
+**Attack Protections:**
+- ✅ Brute force: 5 attempts then block
+- ✅ Distributed attacks: IP+fingerprint combo harder to spoof
+- ✅ Proxy bypass: Fingerprinting detects proxy patterns
+- ✅ Double voting: Per-token blocking
+- ✅ Bot attacks: Headless/crawler detection
+- ✅ Token theft: IP+fingerprint changes trigger alert
+
+**Production Features:**
+- ✅ Redis backend for multi-server deployments
+- ✅ Automatic store backend selection (in-memory/Redis)
+- ✅ Automatic cleanup of expired blocks
+- ✅ Prometheus metrics integration
+- ✅ Comprehensive logging
+- ✅ Configurable via environment variables
+- ✅ Scaling ready
+
+**Headers in Response:**
+```
+X-RateLimit-Limit: 5
+X-RateLimit-Remaining: 2
+X-RateLimit-Reset: 2025-01-20T15:50:00Z
+Retry-After: 60 (on 429)
+```
+
+**Testing:**
+- ✅ 40+ test cases in server/test/rateLimit.test.js
+- ✅ Fingerprinting consistency tests
+- ✅ Spoofing detection tests
+- ✅ Block/unblock logic tests
+- ✅ Attack prevention scenarios
+- ✅ Exponential backoff validation
+
+**Impact:**
+- ✅ Security: Much harder to bypass with proxy/VPN
+- ✅ Accuracy: Device fingerprinting + IP more accurate than IP alone
+- ✅ Flexibility: Multiple rate limit tiers for different use cases
+- ✅ Scalability: Redis backend for distributed deployments
+- ✅ Transparency: Headers inform clients of rate limit status
 
 ---
 
