@@ -19,10 +19,12 @@ import twoFactorRoutes from './routes/twoFactor.js';
 import quorumRoutes from './routes/quorum.js';
 import notificationsRoutes from './routes/notifications.js';
 import pushRoutes from './routes/push.js';
+import keyManagementRoutes from './routes/keyManagement.js';
 
 // Services
 import { initScheduler } from './services/scheduler.js';
 import { initializeWebSocket } from './services/websocket.js';
+import { initKeyRotationScheduler, getKeyRotationStatus } from './services/keyRotationService.js';
 
 // Advanced Rate Limiting
 import {
@@ -153,6 +155,7 @@ app.use('/api/elections', remindersRoutes);
 app.use('/api/quorum', quorumRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/push', pushRoutes);
+app.use('/api/admin', keyManagementRoutes);
 
 // Page d'accueil API
 app.get('/', (req, res) => {
@@ -388,6 +391,14 @@ initializeWebSocket(httpServer);
 
 // Initialiser le planificateur
 initScheduler();
+
+// Initialiser la rotation des clés de chiffrement (hebdomadaire par défaut)
+try {
+  initKeyRotationScheduler('0 0 * * 0'); // Dimanche à 00:00
+  console.log('✅ Key rotation scheduler initialized');
+} catch (error) {
+  console.warn('⚠️  Key rotation scheduler initialization failed:', error.message);
+}
 
 // Démarrer le serveur
 httpServer.listen(PORT, () => {

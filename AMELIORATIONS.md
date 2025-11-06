@@ -3,7 +3,7 @@
 **Dernière mise à jour:** Novembre 6, 2024
 **Sprint 2 Status:** ✅ COMPLÉTÉ (100%)
 **Sprint 3 Status:** ✅ COMPLÉTÉ (100%) - Bulk Ops + Auto-Save + Search/Filter + Atomicity
-**Total Améliorations:** 22 planifiées - **13 complétées (59%)**
+**Total Améliorations:** 22 planifiées - **14 complétées (64%)** ✨
 
 ---
 
@@ -288,14 +288,58 @@
 
 ## 🔐 AMÉLIORATIONS SÉCURITÉ (Sprint 4 & Beyond)
 
-### 16. ⏳ Gestion des clés de chiffrement
-**Status:** EN ATTENTE (Sprint 4)
-**Problème:** Clé en .env = exposée si fuite
-**Solution Proposée:**
-- [ ] AWS KMS ou Azure Key Vault
-- [ ] Rotation automatique tous les 90j
-- [ ] Key versioning
-**Impact:** Protection contre compromission
+### 16. ✅ Gestion des clés de chiffrement (SÉCURITÉ)
+**Status:** COMPLÉTÉ (Sprint 4)
+**Problème:** Clé en .env = exposée si fuite, pas de rotation
+
+**Fichiers Créés/Modifiés:**
+- `server/utils/keyManager.js` - Centralized key management with versioning
+- `server/services/keyRotationService.js` - Automated key rotation scheduler
+- `server/routes/keyManagement.js` - Admin API for key management
+- `server/utils/crypto.js` - Enhanced with key versioning support
+- `docs/KEY_MANAGEMENT.md` - Complete documentation
+- `server/test/keyRotation.test.js` - Comprehensive test suite
+- `server/index.js` - Integration of key rotation scheduler
+- `.env.example` - Updated with key rotation config
+
+**Système Implémenté:**
+- ✅ Centralized KeyManager class with versioning
+- ✅ Encrypted data format: `VERSION:encryptedData`
+- ✅ Automatic key selection on decryption
+- ✅ Scheduled rotation (weekly by default, configurable)
+- ✅ Manual rotation via admin endpoint
+- ✅ Historical key storage for 90 days (configurable)
+- ✅ Key metadata tracking (creation, expiration, status)
+- ✅ Backward compatibility with legacy unversioned data
+- ✅ Secure key lifecycle management
+- ✅ Admin API with 4 endpoints (status, rotate, audit, health)
+
+**API Endpoints:**
+- GET `/api/admin/key-rotation/status` - Current rotation status
+- POST `/api/admin/key-rotation/rotate` - Manual key rotation
+- GET `/api/admin/key-rotation/audit` - Rotation audit log
+- GET `/api/admin/key-rotation/health` - Encryption health check
+
+**Exemples:**
+- ✅ Automatic version tracking: `1:U2FsdGVkX1...` → key v1
+- ✅ Key rotation: v1 (archived) → v2 (active)
+- ✅ Old data decryption: Automatically uses v1 key
+- ✅ New data encryption: Uses v2 key
+
+**Sécurité Améliorée:**
+- ✅ No hardcoded keys
+- ✅ Key rotation without data loss
+- ✅ Version-aware encryption/decryption
+- ✅ Automatic key cleanup after expiration
+- ✅ Comprehensive audit logging
+- ✅ Health checks for encryption system
+
+**Impact:**
+- ✅ Protection: Keys rotate automatically every 90 days
+- ✅ Flexibility: Manual rotation available for incidents
+- ✅ Safety: Old keys preserved during transition
+- ✅ Auditability: Full rotation history available
+- ✅ Reliability: Backward compatible with existing data
 
 ---
 
