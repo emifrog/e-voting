@@ -222,14 +222,37 @@
 
 ---
 
-### 12. ⏳ Messages d'erreur spécifiques
-**Status:** PARTIEL (MVP)
-**Manquant:** "Erreur lors de l'ajout des électeurs"
-**Solution Proposée:** Messages contextués
+### 12. ✅ Messages d'erreur spécifiques
+**Status:** COMPLÉTÉ (Sprint 4 - En cours)
+**Problème:** Messages d'erreur génériques ("Erreur lors de l'ajout des électeurs")
+**Fichiers Créés/Modifiés:**
+- `server/utils/errorMessages.js` - Centralized error messages (8 categories)
+- `src/components/ErrorAlert.jsx` - Beautiful error display component
+- `src/utils/errorHandler.js` - Client-side error parsing & hints
+- `docs/ERROR_MESSAGES.md` - Complete documentation
+- `src/pages/Login.jsx` - Example integration
+- `server/routes/elections.js` - Server-side error improvements
+
+**Système Implémenté:**
+- ✅ 8 catégories d'erreurs (AUTH, ELECTIONS, VOTERS, VOTING, QUORUM, SERVER, FILE, EMAIL)
+- ✅ Chaque erreur a un message clair ET un hint actionnable
+- ✅ Composant ErrorAlert avec 3 niveaux de sévérité (error/warning/critical)
+- ✅ Parsing intelligent des erreurs côté client
+- ✅ Fonction `getErrorMessage()` côté serveur
+- ✅ Fonction `parseError()` côté client
+
 **Exemples:**
-- [ ] "Email déjà utilisé pour cette élection"
-- [ ] "Format email invalide"
-- [ ] "Poids doit être > 0"
+- ✅ "Email déjà utilisé pour cette élection" + "Vérifiez les doublons"
+- ✅ "Format email invalide détecté" + "Vérifiez user@domain.com"
+- ✅ "Poids doit être un nombre positif" + "Exemples: 1, 1.5, 2"
+- ✅ "Le quorum n'est pas atteint" + "Attendez plus de votes"
+
+**Impact:**
+- ✅ UX: Les utilisateurs savent exactement ce qui s'est passé
+- ✅ Résolution: Hints guident vers la solution
+- ✅ Maintenabilité: Messages centralisés, faciles à mettre à jour
+- ✅ Debugging: Aide aussi les développeurs
+- ✅ Cohérence: Tous les messages suivent le même format
 
 ---
 
@@ -346,8 +369,8 @@
 ### Stats Globales
 ```
 Total Améliorations Planifiées: 22
-✅ Complétées: 13 (59%)
-⏳ En attente: 9 (41%)
+✅ Complétées: 14 (64%)
+⏳ En attente: 8 (36%)
 ```
 
 ### Complétées (Sprint 2 + Sprint 3)
@@ -366,9 +389,9 @@ Total Améliorations Planifiées: 22
 - ✅ Bulk operations UI (5 operations) - Sprint 3.1
 - ✅ Auto-save forms (2 forms) - Sprint 3.2 & 3.3
 
-🟠 UX/ERGONOMIE (1/5):
+🟠 UX/ERGONOMIE (2/5):
 - ✅ Search & filtering dashboard - Sprint 3.5
-- ⏳ Specific error messages
+- ✅ Specific error messages with hints - Sprint 4
 - ⏳ Real-time form validation
 - ⏳ WCAG 2.1 accessibility
 - ⏳ Audit trail visualization
