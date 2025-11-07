@@ -197,8 +197,10 @@ export class KeyManager {
   /**
    * Save key metadata to secure storage
    * In production, consider using a secrets manager (AWS Secrets Manager, Vault, etc.)
+   *
+   * @private Internal method
    */
-  private saveKeyMetadata() {
+  saveKeyMetadata() {
     try {
       const metadata = {
         currentVersion: this.currentKeyVersion,
@@ -223,8 +225,10 @@ export class KeyManager {
 
   /**
    * Load key metadata from storage
+   *
+   * @private Internal method
    */
-  private loadKeyMetadata() {
+  loadKeyMetadata() {
     try {
       if (fs.existsSync(this.keysFile)) {
         const data = JSON.parse(fs.readFileSync(this.keysFile, 'utf-8'));
