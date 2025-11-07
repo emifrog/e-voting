@@ -1,6 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useAuth } from './hooks/useAuth';
+import { queryClient } from './config/queryClient';
 import { NotificationProvider } from './contexts/NotificationContext';
 import NotificationCenter from './components/NotificationCenter';
 import PageLoader from './components/PageLoader';
@@ -29,17 +32,18 @@ function App() {
   }
 
   return (
-    <Router>
-      <NotificationProvider>
-        {/* Centre de notifications (visible partout sauf sur les pages publiques) */}
-        {isAuthenticated && (
-          <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 10000 }}>
-            <NotificationCenter />
-          </div>
-        )}
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <NotificationProvider>
+          {/* Centre de notifications (visible partout sauf sur les pages publiques) */}
+          {isAuthenticated && (
+            <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 10000 }}>
+              <NotificationCenter />
+            </div>
+          )}
 
-        {/* Suspense boundary pour gérer le chargement des pages lazy-loadées */}
-        <Suspense fallback={<PageLoader />}>
+          {/* Suspense boundary pour gérer le chargement des pages lazy-loadées */}
+          <Suspense fallback={<PageLoader />}>
           <Routes>
             {/* Routes publiques */}
             <Route path="/login" element={
@@ -73,9 +77,13 @@ function App() {
             {/* Redirection par défaut */}
             <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
           </Routes>
-        </Suspense>
-      </NotificationProvider>
-    </Router>
+          </Suspense>
+        </NotificationProvider>
+      </Router>
+
+      {/* React Query DevTools pour debug en développement */}
+      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+    </QueryClientProvider>
   );
 }
 
