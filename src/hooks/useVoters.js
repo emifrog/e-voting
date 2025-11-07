@@ -12,7 +12,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { api } from '../utils/api';
+import api from '../utils/api';
 
 /**
  * Fetch voters for an election

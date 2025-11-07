@@ -12,7 +12,7 @@
  */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '../utils/api';
+import api from '../utils/api';
 import { useNotification } from '../contexts/NotificationContext';
 
 /**

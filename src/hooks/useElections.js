@@ -13,7 +13,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { api } from '../utils/api';
+import api from '../utils/api';
 
 /**
  * Fetch elections list with optional filters
