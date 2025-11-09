@@ -1,0 +1,225 @@
+{
+  "timestamp": "2025-11-09T11:02:40.100Z",
+  "summary": {
+    "total": 21,
+    "passing": 12,
+    "failing": 9,
+    "passRate": 57
+  },
+  "wcagRequirements": {
+    "normalText": 4.5,
+    "largeText": 3
+  },
+  "results": [
+    {
+      "name": "Primary button text",
+      "fg": "#ffffff",
+      "bg": "#2563eb",
+      "type": "normal",
+      "location": "btn-primary",
+      "ratio": "5.17",
+      "passes": true,
+      "requirement": 4.5
+    },
+    {
+      "name": "Secondary button text",
+      "fg": "#374151",
+      "bg": "#f3f4f6",
+      "type": "normal",
+      "location": "btn-secondary",
+      "ratio": "9.37",
+      "passes": true,
+      "requirement": 4.5
+    },
+    {
+      "name": "Danger button text",
+      "fg": "#ffffff",
+      "bg": "#dc2626",
+      "type": "normal",
+      "location": "btn-danger",
+      "ratio": "4.83",
+      "passes": true,
+      "requirement": 4.5
+    },
+    {
+      "name": "Success button text",
+      "fg": "#ffffff",
+      "bg": "#10b981",
+      "type": "normal",
+      "location": "btn-success",
+      "ratio": "2.54",
+      "passes": false,
+      "requirement": 4.5
+    },
+    {
+      "name": "Primary text on white",
+      "fg": "#000000",
+      "bg": "#ffffff",
+      "type": "normal",
+      "location": "body text",
+      "ratio": "21.00",
+      "passes": true,
+      "requirement": 4.5
+    },
+    {
+      "name": "Secondary text on white",
+      "fg": "#6b7280",
+      "bg": "#ffffff",
+      "type": "normal",
+      "location": "secondary text",
+      "ratio": "4.83",
+      "passes": true,
+      "requirement": 4.5
+    },
+    {
+      "name": "Gray text on white",
+      "fg": "#9ca3af",
+      "bg": "#ffffff",
+      "type": "normal",
+      "location": "muted text",
+      "ratio": "2.54",
+      "passes": false,
+      "requirement": 4.5
+    },
+    {
+      "name": "Error alert text",
+      "fg": "#dc2626",
+      "bg": "#fef2f2",
+      "type": "normal",
+      "location": "alert-error",
+      "ratio": "4.41",
+      "passes": false,
+      "requirement": 4.5
+    },
+    {
+      "name": "Success alert text",
+      "fg": "#10b981",
+      "bg": "#ecfdf5",
+      "type": "normal",
+      "location": "alert-success",
+      "ratio": "2.41",
+      "passes": false,
+      "requirement": 4.5
+    },
+    {
+      "name": "Warning alert text",
+      "fg": "#f59e0b",
+      "bg": "#fef3c7",
+      "type": "normal",
+      "location": "alert-warning",
+      "ratio": "1.93",
+      "passes": false,
+      "requirement": 4.5
+    },
+    {
+      "name": "Info alert text",
+      "fg": "#2563eb",
+      "bg": "#eff6ff",
+      "type": "normal",
+      "location": "alert-info",
+      "ratio": "4.75",
+      "passes": true,
+      "requirement": 4.5
+    },
+    {
+      "name": "Link on white",
+      "fg": "#2563eb",
+      "bg": "#ffffff",
+      "type": "normal",
+      "location": "links",
+      "ratio": "5.17",
+      "passes": true,
+      "requirement": 4.5
+    },
+    {
+      "name": "Link hover",
+      "fg": "#1d4ed8",
+      "bg": "#ffffff",
+      "type": "normal",
+      "location": "links:hover",
+      "ratio": "6.70",
+      "passes": true,
+      "requirement": 4.5
+    },
+    {
+      "name": "Input text",
+      "fg": "#000000",
+      "bg": "#ffffff",
+      "type": "normal",
+      "location": "input",
+      "ratio": "21.00",
+      "passes": true,
+      "requirement": 4.5
+    },
+    {
+      "name": "Input placeholder",
+      "fg": "#9ca3af",
+      "bg": "#ffffff",
+      "type": "normal",
+      "location": "input::placeholder",
+      "ratio": "2.54",
+      "passes": false,
+      "requirement": 4.5
+    },
+    {
+      "name": "Input border",
+      "fg": "#d1d5db",
+      "bg": "#ffffff",
+      "type": "large",
+      "location": "input border",
+      "ratio": "1.47",
+      "passes": false,
+      "requirement": 3
+    },
+    {
+      "name": "Badge active",
+      "fg": "#ffffff",
+      "bg": "#10b981",
+      "type": "normal",
+      "location": "badge-active",
+      "ratio": "2.54",
+      "passes": false,
+      "requirement": 4.5
+    },
+    {
+      "name": "Badge pending",
+      "fg": "#ffffff",
+      "bg": "#f59e0b",
+      "type": "normal",
+      "location": "badge-pending",
+      "ratio": "2.15",
+      "passes": false,
+      "requirement": 4.5
+    },
+    {
+      "name": "Badge completed",
+      "fg": "#ffffff",
+      "bg": "#2563eb",
+      "type": "normal",
+      "location": "badge-completed",
+      "ratio": "5.17",
+      "passes": true,
+      "requirement": 4.5
+    },
+    {
+      "name": "Dark mode text",
+      "fg": "#f9fafb",
+      "bg": "#1f2937",
+      "type": "normal",
+      "location": "dark mode body",
+      "ratio": "14.05",
+      "passes": true,
+      "requirement": 4.5
+    },
+    {
+      "name": "Dark mode secondary",
+      "fg": "#d1d5db",
+      "bg": "#1f2937",
+      "type": "normal",
+      "location": "dark mode secondary",
+      "ratio": "9.96",
+      "passes": true,
+      "requirement": 4.5
+    }
+  ]
+}
