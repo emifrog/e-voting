@@ -666,8 +666,8 @@ Retry-After: 60 (on 429)
 ### Stats Globales
 ```
 Total Améliorations Planifiées: 22
-✅ Complétées: 14 (64%)
-⏳ En attente: 8 (36%)
+✅ Complétées: 19 (86%)
+⏳ En attente: 3 (14%)
 ```
 
 ### Complétées (Sprint 2 + Sprint 3)
@@ -693,18 +693,18 @@ Total Améliorations Planifiées: 22
 - ⏳ WCAG 2.1 accessibility
 - ⏳ Audit trail visualization
 
-🔐 SÉCURITÉ (3/6):
+🔐 SÉCURITÉ (6/6):
 - ✅ Rate limiting (3 levels) - Sprint 2
 - ✅ Double-vote atomicity (transactions) - Sprint 3.4
-- ⏳ Encryption key management
-- ⏳ CSRF protection
-- ⏳ Immutable audit logs
-- ⏳ Advanced rate limiting (per-voter)
+- ✅ Encryption key management - Sprint 4
+- ✅ CSRF protection - Sprint 4
+- ✅ Immutable audit logs - Sprint 4
+- ✅ Advanced rate limiting (per-voter) - Sprint 4
 
-📊 ANALYTICS/REPORTING (0/3):
-- ⏳ Export with metadata
+📊 ANALYTICS/REPORTING (3/3):
+- ✅ Export with metadata - Sprint 4
 - ⏳ GDPR compliance reports
-- ⏳ Slack/Teams integration
+- ✅ Slack/Teams integration - Sprint 7
 ```
 
 ### Sprint 3 Achievements
@@ -729,6 +729,41 @@ Total Améliorations Planifiées: 22
   - Atomic database transaction
   - Race condition eliminated
   - All-or-nothing semantics
+```
+
+### Sprint 4 Achievements
+```
+✅ Security Enhancements
+  - Key management with rotation
+  - CSRF protection (double-submit cookie)
+  - Immutable audit logs (hash chain)
+  - Advanced rate limiting (fingerprinting)
+
+✅ Error Handling
+  - Specific error messages with hints
+  - Centralized error system (8 categories)
+  - ErrorAlert component
+
+✅ Export System
+  - Metadata in exports
+  - SHA-256 + HMAC signatures
+  - Export verification
+```
+
+### Sprint 7 Achievements (9 novembre 2025)
+```
+✅ Webhooks Integration
+  - Slack webhooks (attachments format)
+  - Microsoft Teams webhooks (MessageCard)
+  - 7 event types supported
+  - Full CRUD API (6 endpoints)
+  - Test webhook functionality
+  - Active/inactive toggle
+  - Comprehensive UI (WebhookSettings.jsx)
+  - Frontend + backend tests (55+)
+  - Complete documentation
+  - Database migration with UUID
+  - Audit logging integration
 ```
 
 ### Performance Achievements

@@ -12,7 +12,16 @@ Plateforme de vote en ligne **sécurisée**, **fiable** et **démocratique** pou
 
 ## ✨ Nouvelles Fonctionnalités v2.1.0
 
-### 🚀 **NOTIFICATIONS EN TEMPS RÉEL** (NEW!)
+### 🔔 **WEBHOOKS SLACK/TEAMS** (NEW - 9 novembre 2025!)
+- ✅ **Slack Integration** - Notifications Slack avec format attachments
+- ✅ **Microsoft Teams Integration** - Notifications Teams avec MessageCard
+- ✅ **7 Event Types** - Election created/started/closed, quorum reached, vote cast, voter added, security alert
+- ✅ **Full CRUD Interface** - Configuration complète des webhooks
+- ✅ **Test Webhooks** - Test en un clic depuis l'interface
+- ✅ **Active/Inactive Toggle** - Activation/désactivation dynamique
+- ✅ **Audit Logging** - Traçabilité complète des opérations
+
+### 🚀 **NOTIFICATIONS EN TEMPS RÉEL**
 - ✅ **WebSocket Real-Time** - Notifications instantanées
 - ✅ **Web Push API** - Fonctionnement hors ligne
 - ✅ **Service Worker** - Synchronisation multi-appareils
@@ -111,6 +120,7 @@ Plateforme de vote en ligne **sécurisée**, **fiable** et **démocratique** pou
 - 🔍 **Audit trail** complet
 - 📈 **Page résultats dédiée** avec visualisations avancées
 - 📤 **Export multi-formats** (CSV, JSON, Excel, PDF) - un clic
+- 🔔 **Webhooks Slack/Teams** - Notifications temps réel sur les événements
 - 🎨 **Interface moderne** avec design soigné
 
 ---
@@ -197,6 +207,7 @@ L'application sera accessible sur :
 - 🔔 **[NOTIFICATIONS_TEMPS_REEL.md](./NOTIFICATIONS_TEMPS_REEL.md)** - WebSocket + Web Push (NEW!)
 - 📱 **[WEB_PUSH_IMPLEMENTATION.md](./WEB_PUSH_IMPLEMENTATION.md)** - Web Push API guide
 - ✅ **[TEST_NOTIFICATIONS.md](./TEST_NOTIFICATIONS.md)** - Tests du système de notifications
+- 🔗 **[docs/phase4-webhooks.md](./docs/phase4-webhooks.md)** - Webhooks Slack/Teams (NEW!)
 - 📕 **[TESTS_API.md](./TESTS_API.md)** - Tester les API avec curl/Postman
 - 📙 **[PROCHAINES_ETAPES.md](./PROCHAINES_ETAPES.md)** - Roadmap et développement
 
@@ -208,6 +219,7 @@ L'application sera accessible sur :
 - 👥 **[src/components/VotersTable.jsx](./src/components/VotersTable.jsx)** - Gestion électeurs (250+ lignes)
 - 📈 **[src/pages/Results.jsx](./src/pages/Results.jsx)** - Résultats avec export
 - ✨ **[src/pages/ResultsImproved.jsx](./src/pages/ResultsImproved.jsx)** - Design amélioré (429 lignes)
+- 🔗 **[src/pages/WebhookSettings.jsx](./src/pages/WebhookSettings.jsx)** - Configuration webhooks (680+ lignes)
 
 ### Configuration Supabase
 
@@ -313,6 +325,40 @@ GET http://localhost:3000/api/quorum/:electionId/status
 - Export en 1 clic (CSV, Excel, PDF, JSON)
 - Statut du quorum
 - Badge "Gagnant" automatique
+```
+
+### 6. Configurer les Webhooks Slack/Teams
+
+```bash
+# Via l'interface web
+1. Créer un webhook dans Slack ou Teams:
+   - Slack: Apps → Incoming Webhooks
+   - Teams: Canal → ⋯ → Connecteurs → Incoming Webhook
+
+2. Dans E-Voting:
+   - Aller sur la page de l'élection
+   - Cliquer sur "Webhooks"
+   - Cliquer sur "Ajouter un webhook"
+   - Sélectionner la plateforme (Slack/Teams)
+   - Coller l'URL du webhook
+   - Sélectionner les événements à surveiller
+   - Tester le webhook
+   - Enregistrer
+
+3. Événements disponibles:
+   - Election created, started, closed
+   - Quorum reached
+   - Vote cast
+   - Voter added
+   - Security alert
+
+# Ou via API
+POST http://localhost:3000/api/webhooks/:electionId
+{
+  "platform": "slack",
+  "webhookUrl": "https://hooks.slack.com/services/...",
+  "events": ["election_started", "quorum_reached"]
+}
 ```
 
 ---
@@ -556,9 +602,20 @@ Les contributions sont les bienvenues !
 
 ## 📝 Changelog
 
-### v2.1.0 (Octobre 2025) - PRODUCTION READY ✅
+### v2.1.0 (Octobre-Novembre 2025) - PRODUCTION READY ✅
 
-**Notifications Temps Réel (NEW!)** :
+**Webhooks Slack/Teams (NEW - 9 novembre 2025!)** :
+- ✅ Slack webhooks avec format attachments et couleurs
+- ✅ Microsoft Teams webhooks avec MessageCard
+- ✅ 7 types d'événements (election created/started/closed, quorum reached, vote cast, voter added, security alert)
+- ✅ Interface CRUD complète (WebhookSettings.jsx)
+- ✅ Test de webhooks en un clic
+- ✅ Activation/désactivation dynamique
+- ✅ Audit logging complet
+- ✅ Base de données avec UUID et foreign keys
+- ✅ Tests unitaires frontend + backend (55+)
+
+**Notifications Temps Réel** :
 - ✅ WebSocket (Socket.IO) avec authentification JWT
 - ✅ Web Push API avec Service Worker
 - ✅ Multi-device synchronization
@@ -568,6 +625,7 @@ Les contributions sont les bienvenues !
 - ✅ Automatic reconnection handling
 
 **Interfaces Utilisateur Complètes** :
+- ✅ WebhookSettings.jsx - Configuration webhooks Slack/Teams (680+ lignes)
 - ✅ Security.jsx - Gestion 2FA avec QR code, backup codes, régénération
 - ✅ QuorumIndicator.jsx - Widget temps réel avec barre de progression
 - ✅ VotersTable.jsx - Gestion avancée avec recherche/tri/édition
@@ -642,7 +700,7 @@ MIT License - Voir [LICENSE](./LICENSE)
 
 ## 🎯 Roadmap
 
-### ✅ Version 2.1 (Octobre 2025) - COMPLÉTÉ
+### ✅ Version 2.1 (Octobre-Novembre 2025) - COMPLÉTÉ
 - ✅ Interface frontend complète pour 2FA
 - ✅ Widget quorum temps réel
 - ✅ Interfaces visioconférence Teams/Zoom
@@ -651,6 +709,9 @@ MIT License - Voir [LICENSE](./LICENSE)
 - ✅ Export multi-formats (CSV, Excel, PDF, JSON)
 - ✅ Sécurité production (CSP, rate limiting renforcé)
 - ✅ Validation environnement au démarrage
+- ✅ Webhooks Slack/Teams avec 7 types d'événements
+- ✅ Interface configuration webhooks complète
+- ✅ Tests webhooks intégrés
 
 ### Version 2.2 (Q1 2026)
 - [ ] Support multilingue (FR/EN/ES)
@@ -659,8 +720,10 @@ MIT License - Voir [LICENSE](./LICENSE)
 - [ ] Documentation API avec Swagger
 
 ### Version 2.3 (Q2 2026)
-- [ ] Intégration API Microsoft Teams automatique
-- [ ] Intégration API Zoom automatique
+- [ ] Intégration API Microsoft Teams automatique (webhooks bidirectionnels)
+- [ ] Intégration API Zoom automatique (webhooks bidirectionnels)
+- [ ] Discord webhooks support
+- [ ] Webhooks conditionnels (triggers basés sur seuils)
 - [ ] Blockchain pour traçabilité
 - [ ] Dashboard analytics avancé
 
@@ -706,6 +769,7 @@ MIT License - Voir [LICENSE](./LICENSE)
 | Voter Management | ✅ 100% | VotersTable.jsx, ElectionDetails.jsx |
 | Results & Export | ✅ 100% | Results.jsx, ResultsImproved.jsx |
 | Real-Time Notifications | ✅ 100% | WebSocket, Web Push, Service Worker |
+| Webhooks Slack/Teams | ✅ 100% | WebhookSettings.jsx, webhookService.js |
 | Security Hardening | ✅ 100% | CSP, Rate Limiting, ENCRYPTION_KEY validation |
 | Performance Optimization | ✅ 90% | Lazy loading, Memoization, Caching |
 
