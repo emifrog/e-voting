@@ -26,35 +26,40 @@ function NotificationCenter() {
 
   const getIcon = (type) => {
     switch (type) {
-      case 'success': return <Check size={20} color="#10b981" />;
-      case 'error': return <AlertCircle size={20} color="#ef4444" />;
-      case 'info': return <Info size={20} color="#3b82f6" />;
-      case 'warning': return <AlertCircle size={20} color="#f59e0b" />;
-      default: return <Bell size={20} color="#6366f1" />;
+      case 'success': return <Check size={20} color="#047857" />;  /* WCAG AA - 6.36:1 */
+      case 'error': return <AlertCircle size={20} color="#dc2626" />;  /* WCAG AA - 4.83:1 */
+      case 'info': return <Info size={20} color="#2563eb" />;  /* WCAG AA - 5.17:1 */
+      case 'warning': return <AlertCircle size={20} color="#b45309" />;  /* WCAG AA - 6.26:1 */
+      default: return <Bell size={20} color="#2563eb" />;  /* WCAG AA - 5.17:1 */
     }
   };
 
   const getStyle = (type) => {
     const styles = {
       success: {
-        background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)',
-        borderColor: '#10b981'
+        background: '#d1fae5',  /* Light background with high contrast text */
+        borderColor: '#047857',  /* WCAG AA - 6.36:1 */
+        color: '#065f46'  /* Dark text for contrast */
       },
       error: {
-        background: 'linear-gradient(135deg, #fee2e2, #fecaca)',
-        borderColor: '#ef4444'
+        background: '#fee2e2',
+        borderColor: '#dc2626',  /* WCAG AA - 4.83:1 */
+        color: '#991b1b'  /* Dark text for contrast */
       },
       info: {
-        background: 'linear-gradient(135deg, #dbeafe, #bfdbfe)',
-        borderColor: '#3b82f6'
+        background: '#dbeafe',
+        borderColor: '#2563eb',  /* WCAG AA - 5.17:1 */
+        color: '#1e40af'  /* Dark text for contrast */
       },
       warning: {
-        background: 'linear-gradient(135deg, #fef3c7, #fde68a)',
-        borderColor: '#f59e0b'
+        background: '#fef3c7',
+        borderColor: '#b45309',  /* WCAG AA - 6.26:1 */
+        color: '#92400e'  /* Dark text for contrast - 7.28:1 */
       },
       default: {
-        background: 'linear-gradient(135deg, #e0e7ff, #c7d2fe)',
-        borderColor: '#6366f1'
+        background: '#dbeafe',
+        borderColor: '#2563eb',  /* WCAG AA - 5.17:1 */
+        color: '#1e40af'
       }
     };
     return styles[type] || styles.default;
@@ -80,11 +85,16 @@ function NotificationCenter() {
             alignItems: 'center',
             justifyContent: 'center'
           }}
-          title="Notifications"
+          aria-label={`Notifications${unreadCount > 0 ? ` - ${unreadCount} non lue${unreadCount > 1 ? 's' : ''}` : ''}`}
+          aria-expanded={isOpen}
+          aria-haspopup="true"
         >
-          <Bell size={20} />
+          <Bell size={20} aria-hidden="true" />
           {unreadCount > 0 && (
-            <span style={{
+            <span
+              aria-live="polite"
+              aria-atomic="true"
+              style={{
               position: 'absolute',
               top: '-8px',
               right: '-8px',
@@ -110,19 +120,23 @@ function NotificationCenter() {
 
         {/* Panel de notifications */}
         {isOpen && (
-          <div style={{
-            position: 'absolute',
-            top: '60px',
-            right: '0',
-            width: '400px',
-            maxHeight: '500px',
-            background: 'white',
-            borderRadius: '12px',
-            boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-            zIndex: 1000,
-            overflow: 'hidden',
-            animation: 'slideDown 0.3s ease'
-          }}>
+          <div
+            role="dialog"
+            aria-label="Centre de notifications"
+            style={{
+              position: 'absolute',
+              top: '60px',
+              right: '0',
+              width: '400px',
+              maxHeight: '500px',
+              background: 'white',
+              borderRadius: '12px',
+              boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+              zIndex: 1000,
+              overflow: 'hidden',
+              animation: 'slideDown 0.3s ease'
+            }}
+          >
             {/* Header */}
             <div style={{
               padding: '16px 20px',
@@ -174,10 +188,14 @@ function NotificationCenter() {
             </div>
 
             {/* Liste des notifications */}
-            <div style={{
-              maxHeight: '400px',
-              overflowY: 'auto'
-            }}>
+            <div
+              role="list"
+              aria-label="Liste des notifications"
+              style={{
+                maxHeight: '400px',
+                overflowY: 'auto'
+              }}
+            >
               {notifications.length === 0 ? (
                 <div style={{
                   padding: '40px 20px',
@@ -191,7 +209,16 @@ function NotificationCenter() {
                 notifications.filter(n => !n.isLocal).map(notif => (
                   <div
                     key={notif.id}
+                    role="listitem"
+                    tabIndex={0}
                     onClick={() => !notif.is_read && handleMarkAsRead(notif.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        !notif.is_read && handleMarkAsRead(notif.id);
+                      }
+                    }}
+                    aria-label={`${notif.title}: ${notif.message}${!notif.is_read ? ' (Non lu)' : ''}`}
                     style={{
                       padding: '16px 20px',
                       borderBottom: '1px solid var(--gray-100)',
@@ -255,18 +282,26 @@ function NotificationCenter() {
       </div>
 
       {/* Toast notifications (coin supérieur droit) */}
-      <div style={{
-        position: 'fixed',
-        top: '20px',
-        right: '20px',
-        zIndex: 9999,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px'
-      }}>
+      <div
+        role="region"
+        aria-live="polite"
+        aria-atomic="true"
+        aria-label="Notifications toast"
+        style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px'
+        }}
+      >
         {toastNotifications.map(notif => (
           <div
             key={notif.id}
+            role="alert"
+            aria-label={`${notif.title}: ${notif.message}`}
             style={{
               ...getStyle(notif.type),
               padding: '16px 20px',

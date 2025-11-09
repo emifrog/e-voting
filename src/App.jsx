@@ -35,15 +35,25 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <NotificationProvider>
+          {/* Skip to main content link - WCAG 2.4.1 */}
+          <a href="#main-content" className="skip-link">
+            Aller au contenu principal
+          </a>
+
           {/* Centre de notifications (visible partout sauf sur les pages publiques) */}
           {isAuthenticated && (
-            <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 10000 }}>
+            <div
+              style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 10000 }}
+              role="region"
+              aria-label="Notifications"
+            >
               <NotificationCenter />
             </div>
           )}
 
           {/* Suspense boundary pour gérer le chargement des pages lazy-loadées */}
           <Suspense fallback={<PageLoader />}>
+          <main id="main-content" role="main">
           <Routes>
             {/* Routes publiques */}
             <Route path="/login" element={
@@ -77,6 +87,7 @@ function App() {
             {/* Redirection par défaut */}
             <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
           </Routes>
+          </main>
           </Suspense>
         </NotificationProvider>
       </Router>
