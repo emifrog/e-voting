@@ -4,10 +4,19 @@ import api from '../utils/api';
 import ErrorAlert from '../components/ErrorAlert';
 import { getErrorHint } from '../utils/errorHandler';
 import { LogIn, Shield } from 'lucide-react';
+import { useFormValidation } from '../hooks/useFormValidation';
+import { FormField } from '../components/FormField';
+import { validateEmail, validatePassword } from '../utils/validators';
 
 function Login({ setIsAuthenticated }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const form = useFormValidation(
+    { email: '', password: '' },
+    {
+      email: validateEmail,
+      password: validatePassword
+    }
+  );
+
   const [rememberMe, setRememberMe] = useState(false);
   const [twoFactorCode, setTwoFactorCode] = useState('');
   const [twoFactorRequired, setTwoFactorRequired] = useState(false);
@@ -19,9 +28,15 @@ function Login({ setIsAuthenticated }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    // Validate form fields
+    const isValid = await form.validate();
+    if (!isValid) return;
+
     setLoading(true);
 
     try {
+      const { email, password } = form.getValues();
       const response = await api.post('/auth/login', { email, password, rememberMe });
 
       // Vérifier si 2FA est requis
@@ -121,30 +136,28 @@ function Login({ setIsAuthenticated }) {
         {!twoFactorRequired ? (
           // Formulaire de connexion classique
           <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label className="label">Email</label>
-              <input
-                type="email"
-                className="input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="admin@example.com"
-                autoFocus
-              />
-            </div>
+            <FormField
+              name="email"
+              label="Email"
+              type="email"
+              required
+              {...form.getFieldProps('email')}
+              error={form.errors.email}
+              touched={form.touched.email}
+              placeholder="admin@example.com"
+              autoFocus
+            />
 
-            <div className="form-group">
-              <label className="label">Mot de passe</label>
-              <input
-                type="password"
-                className="input"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="••••••••"
-              />
-            </div>
+            <FormField
+              name="password"
+              label="Mot de passe"
+              type="password"
+              required
+              {...form.getFieldProps('password')}
+              error={form.errors.password}
+              touched={form.touched.password}
+              placeholder="••••••••"
+            />
 
             <div style={{
               display: 'flex',
@@ -178,7 +191,7 @@ function Login({ setIsAuthenticated }) {
               type="submit"
               className="btn btn-primary"
               style={{ width: '100%' }}
-              disabled={loading}
+              disabled={loading || !form.isSubmittable}
             >
               <LogIn size={18} />
               {loading ? 'Connexion...' : 'Se connecter'}
