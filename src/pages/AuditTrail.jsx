@@ -15,6 +15,8 @@ import {
   Link as LinkIcon,
   RefreshCw
 } from 'lucide-react';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import api from '../utils/api';
 
 function AuditTrail() {
@@ -47,6 +49,7 @@ function AuditTrail() {
   // Export loading states
   const [exportingJSON, setExportingJSON] = useState(false);
   const [exportingCSV, setExportingCSV] = useState(false);
+  const [exportingPDF, setExportingPDF] = useState(false);
 
   useEffect(() => {
     fetchAuditLogs();
@@ -118,11 +121,20 @@ function AuditTrail() {
     try {
       if (format === 'json') {
         setExportingJSON(true);
-      } else {
+      } else if (format === 'csv') {
         setExportingCSV(true);
+      } else if (format === 'pdf') {
+        setExportingPDF(true);
       }
 
       setError('');
+
+      // Handle PDF export client-side
+      if (format === 'pdf') {
+        exportToPDF();
+        setSuccess('✅ Export PDF téléchargé avec succès');
+        return;
+      }
 
       const response = await api.get(
         `/elections/${electionId}/audit-logs/export?format=${format}&includeSignatures=true`,
@@ -145,7 +157,170 @@ function AuditTrail() {
     } finally {
       setExportingJSON(false);
       setExportingCSV(false);
+      setExportingPDF(false);
     }
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    // Title
+    doc.setFontSize(20);
+    doc.setTextColor(37, 99, 235); // Primary color
+    doc.text('Piste d\'Audit - Élection', pageWidth / 2, 20, { align: 'center' });
+
+    // Election ID
+    doc.setFontSize(12);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`ID: ${electionId}`, pageWidth / 2, 30, { align: 'center' });
+
+    // Date and time
+    doc.setFontSize(10);
+    doc.setTextColor(120, 120, 120);
+    doc.text(`Généré le: ${new Date().toLocaleString('fr-FR')}`, pageWidth / 2, 38, { align: 'center' });
+
+    // Statistics section
+    if (stats) {
+      let yPos = 48;
+      doc.setFontSize(14);
+      doc.setTextColor(0, 0, 0);
+      doc.text('📊 Statistiques', 14, yPos);
+
+      yPos += 8;
+      doc.setFontSize(10);
+      doc.setTextColor(60, 60, 60);
+
+      // Total logs
+      doc.text(`Total d'événements: ${stats.totalLogs || 0}`, 20, yPos);
+      yPos += 6;
+
+      // Unique users
+      doc.text(`Utilisateurs uniques: ${stats.uniqueUsers || 0}`, 20, yPos);
+      yPos += 6;
+
+      // Date range
+      if (stats.dateRange && stats.dateRange.earliest && stats.dateRange.latest) {
+        const earliest = new Date(stats.dateRange.earliest).toLocaleDateString('fr-FR');
+        const latest = new Date(stats.dateRange.latest).toLocaleDateString('fr-FR');
+        doc.text(`Période: ${earliest} - ${latest}`, 20, yPos);
+        yPos += 6;
+      }
+
+      // Actions breakdown
+      if (stats.actionsByType && Object.keys(stats.actionsByType).length > 0) {
+        doc.text('Répartition par type:', 20, yPos);
+        yPos += 5;
+        Object.entries(stats.actionsByType).forEach(([action, count]) => {
+          doc.setFontSize(9);
+          doc.text(`  • ${action}: ${count}`, 24, yPos);
+          yPos += 4;
+        });
+      }
+    }
+
+    // Audit Logs Table
+    const tableStartY = stats ? 110 : 50;
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text('📋 Événements', 14, tableStartY);
+
+    // Prepare table data
+    const tableData = logs.map(log => [
+      new Date(log.timestamp).toLocaleString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }),
+      log.action,
+      log.user_name || log.user_email || 'Système',
+      log.current_hash ? `${log.current_hash.substring(0, 12)}...` : 'N/A'
+    ]);
+
+    // Generate table
+    doc.autoTable({
+      startY: tableStartY + 6,
+      head: [['Date/Heure', 'Action', 'Utilisateur', 'Hash']],
+      body: tableData,
+      theme: 'grid',
+      headStyles: {
+        fillColor: [37, 99, 235], // Primary color
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        halign: 'center'
+      },
+      bodyStyles: {
+        fontSize: 8,
+        cellPadding: 3
+      },
+      columnStyles: {
+        0: { cellWidth: 38 },  // Date/Time
+        1: { cellWidth: 45 },  // Action
+        2: { cellWidth: 50 },  // User
+        3: { cellWidth: 45 }   // Hash
+      },
+      alternateRowStyles: {
+        fillColor: [245, 245, 245]
+      },
+      margin: { top: 10, left: 14, right: 14 },
+      didDrawPage: (data) => {
+        // Footer with page number
+        const pageCount = doc.internal.getNumberOfPages();
+        const currentPage = doc.internal.getCurrentPageInfo().pageNumber;
+
+        doc.setFontSize(8);
+        doc.setTextColor(120, 120, 120);
+        doc.text(
+          `Page ${currentPage} / ${pageCount}`,
+          pageWidth / 2,
+          pageHeight - 10,
+          { align: 'center' }
+        );
+
+        // Security notice
+        doc.setFontSize(7);
+        doc.text(
+          '🔒 Document sécurisé - Vérification blockchain disponible',
+          pageWidth / 2,
+          pageHeight - 5,
+          { align: 'center' }
+        );
+      }
+    });
+
+    // Blockchain verification section (if verification was done)
+    if (verificationResult) {
+      const finalY = doc.lastAutoTable.finalY + 10;
+
+      if (finalY + 30 < pageHeight - 20) {
+        doc.setFontSize(14);
+        doc.setTextColor(0, 0, 0);
+        doc.text('🔐 Vérification Blockchain', 14, finalY);
+
+        doc.setFontSize(10);
+        const statusColor = verificationResult.valid ? [5, 150, 105] : [220, 38, 38];
+        doc.setTextColor(...statusColor);
+        doc.text(
+          verificationResult.valid ? '✓ Chaîne de hachage valide' : '✗ Échec de vérification',
+          20,
+          finalY + 8
+        );
+
+        doc.setTextColor(60, 60, 60);
+        doc.setFontSize(9);
+        doc.text(`Total vérifié: ${verificationResult.verified}/${verificationResult.total}`, 20, finalY + 14);
+
+        if (!verificationResult.valid) {
+          doc.text(`Échecs: ${verificationResult.failed}`, 20, finalY + 20);
+        }
+      }
+    }
+
+    // Save the PDF
+    doc.save(`audit-trail-${electionId}-${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
   const toggleLogDetails = (logId) => {
@@ -308,6 +483,7 @@ function AuditTrail() {
             className="btn btn-secondary"
             onClick={() => exportLogs('json')}
             disabled={exportingJSON}
+            aria-label="Exporter en JSON"
           >
             <Download size={18} />
             {exportingJSON ? 'Export...' : 'JSON'}
@@ -317,9 +493,20 @@ function AuditTrail() {
             className="btn btn-secondary"
             onClick={() => exportLogs('csv')}
             disabled={exportingCSV}
+            aria-label="Exporter en CSV"
           >
             <Download size={18} />
             {exportingCSV ? 'Export...' : 'CSV'}
+          </button>
+
+          <button
+            className="btn btn-secondary"
+            onClick={() => exportLogs('pdf')}
+            disabled={exportingPDF}
+            aria-label="Exporter en PDF"
+          >
+            <Download size={18} />
+            {exportingPDF ? 'Export...' : 'PDF'}
           </button>
         </div>
 
