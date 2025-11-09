@@ -1,7 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { ArrowLeft, Mail, Play, StopCircle, BarChart3, Bell, UserPlus, QrCode } from 'lucide-react';
+import { ArrowLeft, Mail, Play, StopCircle, BarChart3, Bell, UserPlus, QrCode, Shield } from 'lucide-react';
 import QuorumIndicator from '../components/QuorumIndicator';
 import VotersTable from '../components/VotersTable';
 import ElectionQRCode from '../components/ElectionQRCode';
@@ -216,6 +216,10 @@ function ElectionDetails() {
                 <button onClick={() => navigate(`/elections/${id}/results`)} className="btn btn-primary">
                   <BarChart3 size={18} />
                   Résultats détaillés
+                </button>
+                <button onClick={() => navigate(`/elections/${id}/audit`)} className="btn btn-secondary">
+                  <Shield size={18} />
+                  Piste d'Audit
                 </button>
               </>
             )}
