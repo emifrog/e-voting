@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { UserPlus } from 'lucide-react';
@@ -13,7 +13,21 @@ function Register({ setIsAuthenticated }) {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [csrfToken, setCsrfToken] = useState('');
   const navigate = useNavigate();
+
+  // Récupérer le token CSRF au chargement du composant
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        const response = await api.get('/csrf-token');
+        setCsrfToken(response.data.csrfToken);
+      } catch (err) {
+        console.error('Erreur lors de la récupération du CSRF token:', err);
+      }
+    };
+    fetchCsrfToken();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -54,6 +68,10 @@ function Register({ setIsAuthenticated }) {
         name: formData.name,
         email: formData.email,
         password: formData.password
+      }, {
+        headers: {
+          'X-CSRF-Token': csrfToken
+        }
       });
 
       localStorage.setItem('token', response.data.token);

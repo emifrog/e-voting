@@ -20,6 +20,7 @@ const ObserverDashboard = lazy(() => import('./pages/ObserverDashboard'));
 const Security = lazy(() => import('./pages/Security'));
 const Results = lazy(() => import('./pages/Results'));
 const AuditTrail = lazy(() => import('./pages/AuditTrail'));
+const WebhookSettings = lazy(() => import('./pages/WebhookSettings'));
 
 function App() {
   const { isAuthenticated, loading, setIsAuthenticated } = useAuth();
@@ -83,6 +84,9 @@ function App() {
             } />
             <Route path="/elections/:id/audit" element={
               isAuthenticated ? <AuditTrail /> : <Navigate to="/login" />
+            } />
+            <Route path="/elections/:id/webhooks" element={
+              isAuthenticated ? <WebhookSettings /> : <Navigate to="/login" />
             } />
             <Route path="/security" element={
               isAuthenticated ? <Security /> : <Navigate to="/login" />

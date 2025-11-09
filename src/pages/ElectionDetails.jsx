@@ -1,7 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { ArrowLeft, Mail, Play, StopCircle, BarChart3, Bell, UserPlus, QrCode, Shield } from 'lucide-react';
+import { ArrowLeft, Mail, Play, StopCircle, BarChart3, Bell, UserPlus, QrCode, Shield, Webhook } from 'lucide-react';
 import QuorumIndicator from '../components/QuorumIndicator';
 import VotersTable from '../components/VotersTable';
 import ElectionQRCode from '../components/ElectionQRCode';
@@ -220,6 +220,10 @@ function ElectionDetails() {
                 <button onClick={() => navigate(`/elections/${id}/audit`)} className="btn btn-secondary">
                   <Shield size={18} />
                   Piste d'Audit
+                </button>
+                <button onClick={() => navigate(`/elections/${id}/webhooks`)} className="btn btn-secondary">
+                  <Webhook size={18} />
+                  Webhooks
                 </button>
               </>
             )}

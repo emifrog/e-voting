@@ -23,6 +23,7 @@ import pushRoutes from './routes/push.js';
 import keyManagementRoutes from './routes/keyManagement.js';
 import auditLogsRoutes from './routes/auditLogs.js';
 import exportsRoutes from './routes/exports.js';
+import webhooksRoutes from './routes/webhooks.js';
 
 // Services
 import { initScheduler } from './services/scheduler.js';
@@ -161,9 +162,19 @@ app.use(csrfTokenGeneration);
 // CSRF Protection - Verify tokens on state-changing requests
 app.use(csrfTokenVerification);
 
+// Endpoint pour obtenir un token CSRF (avant la vérification)
+app.get('/api/csrf-token', (req, res) => {
+  // Le token a été généré par csrfTokenGeneration middleware
+  const token = res.csrfToken || req.cookies['XSRF-TOKEN'];
+  res.json({
+    csrfToken: token,
+    message: 'CSRF token généré avec succès'
+  });
+});
+
 // Routes API with advanced rate limiting
 app.use('/api/auth', loginLimiter, checkRateLimitStatus('login'), authRoutes);
-app.use('/api/2fa', loginLimiter, twoFactorRoutes);
+app.use('/api/2fa', generalLimiter, twoFactorRoutes); // Use general limiter for 2FA routes
 app.use('/api/elections', electionsRoutes);
 app.use('/api/elections', votersRoutes);
 app.use('/api/vote', voteRateLimiter, votingRoutes); // Advanced rate limiting for votes
@@ -177,6 +188,7 @@ app.use('/api/push', pushRoutes);
 app.use('/api/admin', keyManagementRoutes);
 app.use('/api/elections', auditLogsRoutes);
 app.use('/api/elections', exportsRoutes);
+app.use('/api/webhooks', webhooksRoutes);
 
 // Page d'accueil API
 app.get('/', (req, res) => {

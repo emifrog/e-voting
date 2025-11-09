@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import ErrorAlert from '../components/ErrorAlert';
@@ -23,7 +23,21 @@ function Login({ setIsAuthenticated }) {
   const [tempEmail, setTempEmail] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [csrfToken, setCsrfToken] = useState('');
   const navigate = useNavigate();
+
+  // Récupérer le token CSRF au chargement du composant
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        const response = await api.get('/csrf-token');
+        setCsrfToken(response.data.csrfToken);
+      } catch (err) {
+        console.error('Erreur lors de la récupération du CSRF token:', err);
+      }
+    };
+    fetchCsrfToken();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +51,11 @@ function Login({ setIsAuthenticated }) {
 
     try {
       const { email, password } = form.getValues();
-      const response = await api.post('/auth/login', { email, password, rememberMe });
+      const response = await api.post('/auth/login', { email, password, rememberMe }, {
+        headers: {
+          'X-CSRF-Token': csrfToken
+        }
+      });
 
       // Vérifier si 2FA est requis
       if (response.data.require2FA) {
@@ -65,11 +83,16 @@ function Login({ setIsAuthenticated }) {
     setLoading(true);
 
     try {
+      const { password } = form.getValues();
       const response = await api.post('/auth/login', {
         email: tempEmail,
         password,
         twoFactorToken: twoFactorCode,
         rememberMe
+      }, {
+        headers: {
+          'X-CSRF-Token': csrfToken
+        }
       });
 
       saveTokensAndNavigate(response.data);

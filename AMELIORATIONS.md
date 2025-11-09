@@ -638,13 +638,26 @@ Retry-After: 60 (on 429)
 
 ---
 
-### 22. ⏳ Intégrations Slack/Teams
-**Status:** EN ATTENTE (Sprint 7)
-**Manquant:** Notifications seulement in-app
-**Solution Proposée:**
-- [ ] Slack webhooks
-- [ ] Teams webhooks
-- [ ] Alertes: Quorum reached, election closed, etc.
+### 22. ✅ Intégrations Slack/Teams
+**Status:** ✅ TERMINÉ (Sprint 7 - 9 novembre 2025)
+**Implémenté:** Webhooks Slack et Microsoft Teams
+**Solution Implémentée:**
+- [x] Slack webhooks avec format attachments
+- [x] Teams webhooks avec format MessageCard
+- [x] Alertes: Election created, started, closed, quorum reached, vote cast, voter added, security alert
+- [x] Interface de configuration complète
+- [x] Tests de webhooks intégrés
+- [x] Gestion CRUD des webhooks
+- [x] Activation/désactivation dynamique
+- [x] Audit logging complet
+- [x] Tests unitaires (frontend + backend)
+
+**Fichiers ajoutés:**
+- Backend: `server/services/webhookService.js`, `server/routes/webhooks.js`
+- Frontend: `src/pages/WebhookSettings.jsx`
+- Migration: `server/scripts/migrate-webhooks.js`
+- Tests: `src/pages/__tests__/WebhookSettings.test.jsx`, `server/routes/__tests__/webhooks.test.js`
+- Documentation: `docs/phase4-webhooks.md`
 
 ---
 

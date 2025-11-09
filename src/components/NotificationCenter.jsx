@@ -96,21 +96,21 @@ function NotificationCenter() {
               aria-atomic="true"
               style={{
               position: 'absolute',
-              top: '-8px',
-              right: '-8px',
+              top: '1px',
+              right: '6px',
               background: 'linear-gradient(135deg, #ef4444, #dc2626)',
               color: 'white',
               borderRadius: '50%',
-              width: '24px',
-              height: '24px',
+              width: '12px',
+              height: '12px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '12px',
+              fontSize: '10px',
               fontWeight: 'bold',
-              boxShadow: '0 2px 12px rgba(239, 68, 68, 0.6), 0 0 0 3px white',
+              /*boxShadow: '0 2px 12px rgba(239, 68, 68, 0.6), 0 0 0 3px white',
               animation: 'pulse 2s infinite',
-              border: '2px solid white',
+              border: '2px solid white',*/
               zIndex: 10
             }}>
               {unreadCount > 9 ? '9+' : unreadCount}

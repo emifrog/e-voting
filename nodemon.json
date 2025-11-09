@@ -1,0 +1,14 @@
+{
+  "watch": ["server"],
+  "ext": "js,json",
+  "ignore": [
+    "server/database/*.db",
+    "server/database/*.sqlite",
+    "server/logs/*",
+    "node_modules/*",
+    "*.log",
+    "*.md"
+  ],
+  "delay": 1000,
+  "verbose": false
+}
