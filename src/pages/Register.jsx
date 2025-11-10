@@ -3,6 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { UserPlus } from 'lucide-react';
 import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
+import { useFormValidation } from '../hooks/useFormValidation';
+import { required, minLength, email as emailValidator, password as passwordValidator, compose } from '../utils/validationRules';
+import FieldError from '../components/FieldError';
 
 function Register({ setIsAuthenticated }) {
   const [formData, setFormData] = useState({
@@ -15,6 +18,31 @@ function Register({ setIsAuthenticated }) {
   const [loading, setLoading] = useState(false);
   const [csrfToken, setCsrfToken] = useState('');
   const navigate = useNavigate();
+
+  // Validation setup
+  const validation = useFormValidation(formData, {
+    name: compose(
+      required('Le nom est requis'),
+      minLength(2, 'Le nom doit contenir au moins 2 caractères')
+    ),
+    email: compose(
+      required('L\'email est requis'),
+      emailValidator('Format d\'email invalide')
+    ),
+    password: compose(
+      required('Le mot de passe est requis'),
+      passwordValidator()
+    ),
+    confirmPassword: (value) => {
+      if (!value) {
+        return { isValid: false, message: 'La confirmation est requise' };
+      }
+      if (value !== formData.password) {
+        return { isValid: false, message: 'Les mots de passe ne correspondent pas' };
+      }
+      return { isValid: true };
+    }
+  });
 
   // Récupérer le token CSRF au chargement du composant
   useEffect(() => {
@@ -30,34 +58,28 @@ function Register({ setIsAuthenticated }) {
   }, []);
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
+
+    // Trigger validation
+    validation.setField(name, value);
+    validation.validateField(name, value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    // Client-side validation
-    if (!formData.name.trim()) {
-      setError('Le nom est requis');
-      return;
-    }
-
-    if (!formData.email.trim()) {
-      setError('L\'email est requis');
-      return;
-    }
-
-    if (!formData.password) {
-      setError('Le mot de passe est requis');
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Les mots de passe ne correspondent pas');
+    // Validate all fields
+    const isValid = await validation.validate();
+    if (!isValid) {
+      setError('Veuillez corriger les erreurs dans le formulaire');
+      // Mark all fields as touched to show errors
+      Object.keys(formData).forEach(key => validation.setFieldTouched(key));
       return;
     }
 
@@ -122,9 +144,13 @@ function Register({ setIsAuthenticated }) {
               className="input"
               value={formData.name}
               onChange={handleChange}
+              onBlur={validation.handleBlur}
               required
               placeholder="Jean Dupont"
+              aria-invalid={validation.touched.name && validation.errors.name ? 'true' : 'false'}
+              aria-describedby={validation.errors.name ? 'name-error' : undefined}
             />
+            <FieldError error={validation.touched.name && validation.errors.name} id="name-error" />
           </div>
 
           <div className="form-group">
@@ -135,9 +161,13 @@ function Register({ setIsAuthenticated }) {
               className="input"
               value={formData.email}
               onChange={handleChange}
+              onBlur={validation.handleBlur}
               required
               placeholder="admin@example.com"
+              aria-invalid={validation.touched.email && validation.errors.email ? 'true' : 'false'}
+              aria-describedby={validation.errors.email ? 'email-error' : undefined}
             />
+            <FieldError error={validation.touched.email && validation.errors.email} id="email-error" />
           </div>
 
           {/* Password Strength Meter */}
@@ -162,6 +192,7 @@ function Register({ setIsAuthenticated }) {
               }`}
               value={formData.confirmPassword}
               onChange={handleChange}
+              onBlur={validation.handleBlur}
               required
               placeholder="••••••••"
               style={{
@@ -173,20 +204,15 @@ function Register({ setIsAuthenticated }) {
                     : '#d1d5db'
               }}
               aria-label="Confirmer le mot de passe"
-              aria-invalid={
-                formData.confirmPassword && formData.password !== formData.confirmPassword
-              }
+              aria-invalid={validation.touched.confirmPassword && validation.errors.confirmPassword ? 'true' : 'false'}
+              aria-describedby={validation.errors.confirmPassword ? 'confirmPassword-error' : undefined}
             />
             {formData.confirmPassword && formData.password === formData.confirmPassword && (
               <div style={{ fontSize: '12px', color: '#22c55e', marginTop: '4px' }}>
                 ✓ Les mots de passe correspondent
               </div>
             )}
-            {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-              <div style={{ fontSize: '12px', color: '#ef4444', marginTop: '4px' }}>
-                ✗ Les mots de passe ne correspondent pas
-              </div>
-            )}
+            <FieldError error={validation.touched.confirmPassword && validation.errors.confirmPassword} id="confirmPassword-error" />
           </div>
 
           <button
