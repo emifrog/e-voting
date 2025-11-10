@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { Plus, LogOut, BarChart3, Users, Clock, CheckCircle, Shield, Trash2, Search, X } from 'lucide-react';
+import { Plus, LogOut, BarChart3, Users, Clock, CheckCircle, Shield, Trash2, Search, X, FileText } from 'lucide-react';
 
 function Dashboard({ setIsAuthenticated }) {
   const [elections, setElections] = useState([]);
@@ -157,6 +157,10 @@ function Dashboard({ setIsAuthenticated }) {
               </div>
             </div>
             <nav aria-label="Navigation principale" className="flex gap-2">
+              <button onClick={() => navigate('/gdpr')} className="btn btn-secondary" aria-label="Accéder à la conformité GDPR">
+                <FileText size={18} aria-hidden="true" />
+              GDPR
+            </button>
               <button onClick={() => navigate('/security')} className="btn btn-secondary" aria-label="Accéder à la sécurité">
                 <Shield size={18} aria-hidden="true" />
               Sécurité

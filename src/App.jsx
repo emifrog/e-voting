@@ -21,6 +21,7 @@ const Security = lazy(() => import('./pages/Security'));
 const Results = lazy(() => import('./pages/Results'));
 const AuditTrail = lazy(() => import('./pages/AuditTrail'));
 const WebhookSettings = lazy(() => import('./pages/WebhookSettings'));
+const GDPRCompliance = lazy(() => import('./pages/GDPRCompliance'));
 
 function App() {
   const { isAuthenticated, loading, setIsAuthenticated } = useAuth();
@@ -90,6 +91,9 @@ function App() {
             } />
             <Route path="/security" element={
               isAuthenticated ? <Security /> : <Navigate to="/login" />
+            } />
+            <Route path="/gdpr" element={
+              isAuthenticated ? <GDPRCompliance /> : <Navigate to="/login" />
             } />
 
             {/* Redirection par défaut */}
