@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { ArrowLeft, Plus, Trash2, Video, Save, Trash } from 'lucide-react';
+import { useFormValidation } from '../hooks/useFormValidation';
+import { commonValidators, compose, required, minLength, maxLength, minValue, maxValue, futureDate, dateAfter, url, when } from '../utils/validationRules';
+import FieldError from '../components/FieldError';
 
 function CreateElection() {
   const navigate = useNavigate();
@@ -31,6 +34,32 @@ function CreateElection() {
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Validation setup
+  const validation = useFormValidation(formData, {
+    title: commonValidators.electionTitle,
+    description: commonValidators.electionDescription,
+    max_voters: commonValidators.maxVoters,
+    scheduled_start: when(
+      () => formData.scheduled_start,
+      compose(required('La date de début est requise'), futureDate('La date de début doit être dans le futur'))
+    ),
+    scheduled_end: when(
+      () => formData.scheduled_end,
+      compose(
+        required('La date de fin est requise'),
+        dateAfter('scheduled_start', () => validation.getValues(), 'La date de fin doit être après la date de début')
+      )
+    ),
+    quorum_value: when(
+      () => formData.quorum_type !== 'none',
+      commonValidators.quorumValue
+    ),
+    meeting_url: when(
+      () => formData.enable_meeting,
+      commonValidators.meetingUrl
+    )
+  });
 
   // Auto-save state
   const [saveStatus, setSaveStatus] = useState(''); // '', 'saving', 'saved', 'error'
@@ -99,10 +128,16 @@ function CreateElection() {
 
   const handleChange = (e) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+    const name = e.target.name;
+
     setFormData({
       ...formData,
-      [e.target.name]: value
+      [name]: value
     });
+
+    // Trigger validation
+    validation.setField(name, value);
+    validation.validateField(name, value);
   };
 
   const handleOptionChange = (index, field, value) => {
@@ -125,7 +160,16 @@ function CreateElection() {
     e.preventDefault();
     setError('');
 
-    // Validation
+    // Validate all fields
+    const isValid = await validation.validate();
+    if (!isValid) {
+      setError('Veuillez corriger les erreurs dans le formulaire');
+      // Mark all fields as touched to show errors
+      Object.keys(formData).forEach(key => validation.setFieldTouched(key));
+      return;
+    }
+
+    // Validation des options
     const validOptions = options.filter(opt => opt.option_text.trim());
     if (validOptions.length < 2) {
       setError('Au moins 2 options sont requises');
@@ -291,9 +335,13 @@ function CreateElection() {
                 className="input"
                 value={formData.title}
                 onChange={handleChange}
+                onBlur={validation.handleBlur}
                 required
                 placeholder="Ex: Élection du délégué de classe"
+                aria-invalid={validation.touched.title && validation.errors.title ? 'true' : 'false'}
+                aria-describedby={validation.errors.title ? 'title-error' : undefined}
               />
+              <FieldError error={validation.touched.title && validation.errors.title} id="title-error" />
             </div>
 
             <div className="form-group">
@@ -303,10 +351,14 @@ function CreateElection() {
                 className="input"
                 value={formData.description}
                 onChange={handleChange}
+                onBlur={validation.handleBlur}
                 rows="3"
                 placeholder="Décrivez l'objectif de ce vote..."
                 style={{ resize: 'vertical' }}
+                aria-invalid={validation.touched.description && validation.errors.description ? 'true' : 'false'}
+                aria-describedby={validation.errors.description ? 'description-error' : undefined}
               />
+              <FieldError error={validation.touched.description && validation.errors.description} id="description-error" />
             </div>
 
             <div className="form-group">
@@ -368,7 +420,11 @@ function CreateElection() {
                   className="input"
                   value={formData.scheduled_start}
                   onChange={handleChange}
+                  onBlur={validation.handleBlur}
+                  aria-invalid={validation.touched.scheduled_start && validation.errors.scheduled_start ? 'true' : 'false'}
+                  aria-describedby={validation.errors.scheduled_start ? 'scheduled_start-error' : undefined}
                 />
+                <FieldError error={validation.touched.scheduled_start && validation.errors.scheduled_start} id="scheduled_start-error" />
               </div>
 
               <div className="form-group">
@@ -379,7 +435,11 @@ function CreateElection() {
                   className="input"
                   value={formData.scheduled_end}
                   onChange={handleChange}
+                  onBlur={validation.handleBlur}
+                  aria-invalid={validation.touched.scheduled_end && validation.errors.scheduled_end ? 'true' : 'false'}
+                  aria-describedby={validation.errors.scheduled_end ? 'scheduled_end-error' : undefined}
                 />
+                <FieldError error={validation.touched.scheduled_end && validation.errors.scheduled_end} id="scheduled_end-error" />
               </div>
             </div>
 
@@ -391,9 +451,13 @@ function CreateElection() {
                 className="input"
                 value={formData.max_voters}
                 onChange={handleChange}
+                onBlur={validation.handleBlur}
                 min="1"
                 max="30000"
+                aria-invalid={validation.touched.max_voters && validation.errors.max_voters ? 'true' : 'false'}
+                aria-describedby={validation.errors.max_voters ? 'max_voters-error' : undefined}
               />
+              <FieldError error={validation.touched.max_voters && validation.errors.max_voters} id="max_voters-error" />
             </div>
 
             {/* Quorum */}
