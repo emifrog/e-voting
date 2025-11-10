@@ -24,6 +24,7 @@ import keyManagementRoutes from './routes/keyManagement.js';
 import auditLogsRoutes from './routes/auditLogs.js';
 import exportsRoutes from './routes/exports.js';
 import webhooksRoutes from './routes/webhooks.js';
+import gdprRoutes from './routes/gdpr.js';
 
 // Services
 import { initScheduler } from './services/scheduler.js';
@@ -189,6 +190,7 @@ app.use('/api/admin', keyManagementRoutes);
 app.use('/api/elections', auditLogsRoutes);
 app.use('/api/elections', exportsRoutes);
 app.use('/api/webhooks', webhooksRoutes);
+app.use('/api/gdpr', gdprRoutes);
 
 // Page d'accueil API
 app.get('/', (req, res) => {
