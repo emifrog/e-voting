@@ -17,6 +17,7 @@
     "migrate:v2-old": "node server/scripts/migrate-v2.js",
     "migrate:notifications": "node server/scripts/migrate-notifications.js",
     "migrate:webhooks": "node server/scripts/migrate-webhooks.js",
+    "migrate:gdpr": "node server/scripts/migrate-gdpr.js",
     "migrate:indexes:generate": "node server/scripts/migrate-indexes.js",
     "migrate:indexes:apply": "node server/scripts/apply-indexes.js",
     "check-indexes": "node server/scripts/check-indexes.js",
