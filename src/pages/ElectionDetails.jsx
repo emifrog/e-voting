@@ -256,10 +256,28 @@ function ElectionDetails() {
             </div>
           )}
 
-          {/* Onglets */}
-          <div style={{ borderBottom: '2px solid #e5e7eb', marginBottom: '20px' }}>
+          {/* Onglets - WCAG 2.1 Compliant Tabs */}
+          <div
+            role="tablist"
+            aria-label="Navigation de l'élection"
+            style={{ borderBottom: '2px solid #e5e7eb', marginBottom: '20px' }}
+          >
             <button
+              role="tab"
+              id="tab-voters"
+              aria-selected={activeTab === 'voters'}
+              aria-controls="panel-voters"
+              tabIndex={activeTab === 'voters' ? 0 : -1}
               onClick={() => setActiveTab('voters')}
+              onKeyDown={(e) => {
+                if (e.key === 'ArrowRight' && election.status === 'active') {
+                  setActiveTab('qrcode');
+                  setTimeout(() => document.getElementById('tab-qrcode')?.focus(), 0);
+                } else if (e.key === 'ArrowRight' && (election.status === 'active' || election.status === 'closed')) {
+                  setActiveTab('results');
+                  setTimeout(() => document.getElementById('tab-results')?.focus(), 0);
+                }
+              }}
               style={{
                 padding: '12px 24px',
                 background: 'none',
@@ -274,7 +292,21 @@ function ElectionDetails() {
             </button>
             {election.status === 'active' && (
               <button
+                role="tab"
+                id="tab-qrcode"
+                aria-selected={activeTab === 'qrcode'}
+                aria-controls="panel-qrcode"
+                tabIndex={activeTab === 'qrcode' ? 0 : -1}
                 onClick={() => setActiveTab('qrcode')}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowLeft') {
+                    setActiveTab('voters');
+                    setTimeout(() => document.getElementById('tab-voters')?.focus(), 0);
+                  } else if (e.key === 'ArrowRight' && (election.status === 'active' || election.status === 'closed')) {
+                    setActiveTab('results');
+                    setTimeout(() => document.getElementById('tab-results')?.focus(), 0);
+                  }
+                }}
                 style={{
                   padding: '12px 24px',
                   background: 'none',
@@ -290,7 +322,23 @@ function ElectionDetails() {
             )}
             {(election.status === 'active' || election.status === 'closed') && (
               <button
+                role="tab"
+                id="tab-results"
+                aria-selected={activeTab === 'results'}
+                aria-controls="panel-results"
+                tabIndex={activeTab === 'results' ? 0 : -1}
                 onClick={() => { fetchResults(); setActiveTab('results'); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowLeft') {
+                    if (election.status === 'active') {
+                      setActiveTab('qrcode');
+                      setTimeout(() => document.getElementById('tab-qrcode')?.focus(), 0);
+                    } else {
+                      setActiveTab('voters');
+                      setTimeout(() => document.getElementById('tab-voters')?.focus(), 0);
+                    }
+                  }
+                }}
                 style={{
                   padding: '12px 24px',
                   background: 'none',
@@ -306,23 +354,49 @@ function ElectionDetails() {
             )}
           </div>
 
-          {/* Contenu onglets */}
-          {activeTab === 'voters' && (
-            <VotersTable
-              electionId={id}
-              isWeighted={election.is_weighted}
-              refreshTrigger={stats?.voted_count}
-            />
+          {/* Contenu onglets - WCAG 2.1 Compliant Tab Panels */}
+          <div
+            role="tabpanel"
+            id="panel-voters"
+            aria-labelledby="tab-voters"
+            hidden={activeTab !== 'voters'}
+            style={{ display: activeTab === 'voters' ? 'block' : 'none' }}
+          >
+            {activeTab === 'voters' && (
+              <VotersTable
+                electionId={id}
+                isWeighted={election.is_weighted}
+                refreshTrigger={stats?.voted_count}
+              />
+            )}
+          </div>
+
+          {election.status === 'active' && (
+            <div
+              role="tabpanel"
+              id="panel-qrcode"
+              aria-labelledby="tab-qrcode"
+              hidden={activeTab !== 'qrcode'}
+              style={{ display: activeTab === 'qrcode' ? 'block' : 'none' }}
+            >
+              {activeTab === 'qrcode' && (
+                <ElectionQRCode
+                  electionId={id}
+                  electionTitle={election.title}
+                />
+              )}
+            </div>
           )}
 
-          {activeTab === 'qrcode' && election.status === 'active' && (
-            <ElectionQRCode
-              electionId={id}
-              electionTitle={election.title}
-            />
-          )}
-
-          {activeTab === 'results' && results && (
+          {(election.status === 'active' || election.status === 'closed') && (
+            <div
+              role="tabpanel"
+              id="panel-results"
+              aria-labelledby="tab-results"
+              hidden={activeTab !== 'results'}
+              style={{ display: activeTab === 'results' ? 'block' : 'none' }}
+            >
+              {activeTab === 'results' && results && (
             <div>
               <div className="alert alert-info" style={{ marginBottom: '20px' }}>
                 <strong>Participation:</strong> {results.stats.voted_count} / {results.stats.total_voters} électeurs ({results.stats.participation_rate}%)
@@ -353,6 +427,8 @@ function ElectionDetails() {
                   </p>
                 </div>
               ))}
+            </div>
+              )}
             </div>
           )}
         </div>

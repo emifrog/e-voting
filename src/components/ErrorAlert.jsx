@@ -35,6 +35,9 @@ function ErrorAlert({ error, onDismiss, actionHint = null, details = null }) {
 
   return (
     <div
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
       style={{
         background: config.bg,
         border: `2px solid ${config.border}`,
@@ -48,6 +51,7 @@ function ErrorAlert({ error, onDismiss, actionHint = null, details = null }) {
     >
       <AlertCircle
         size={20}
+        aria-hidden="true"
         style={{
           color: config.icon,
           flexShrink: 0,
@@ -80,7 +84,7 @@ function ErrorAlert({ error, onDismiss, actionHint = null, details = null }) {
               gap: '4px'
             }}
           >
-            <Info size={14} />
+            <Info size={14} aria-hidden="true" />
             {actionHint}
           </div>
         )}
@@ -109,6 +113,7 @@ function ErrorAlert({ error, onDismiss, actionHint = null, details = null }) {
       {onDismiss && (
         <button
           onClick={onDismiss}
+          aria-label="Fermer l'alerte"
           style={{
             background: 'none',
             border: 'none',
@@ -120,7 +125,7 @@ function ErrorAlert({ error, onDismiss, actionHint = null, details = null }) {
           }}
           title="Fermer"
         >
-          <X size={18} />
+          <X size={18} aria-hidden="true" />
         </button>
       )}
     </div>

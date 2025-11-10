@@ -193,22 +193,27 @@ function CreateElection() {
               </p>
             </div>
 
-            {/* Auto-save indicator */}
+            {/* Auto-save indicator - Live region for screen readers */}
             <div style={{ textAlign: 'right', minWidth: '150px' }}>
               {saveStatus && (
-                <div style={{
-                  fontSize: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'flex-end',
-                  gap: '6px',
-                  color: saveStatus === 'saved' ? '#10b981' : saveStatus === 'error' ? '#ef4444' : '#6b7280'
-                }}>
-                  <Save size={14} />
+                <div
+                  role="status"
+                  aria-live="polite"
+                  aria-atomic="true"
+                  style={{
+                    fontSize: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                    gap: '6px',
+                    color: saveStatus === 'saved' ? 'var(--success-600)' : saveStatus === 'error' ? 'var(--danger)' : '#6b7280'
+                  }}
+                >
+                  <Save size={14} aria-hidden="true" />
                   <span>
-                    {saveStatus === 'saving' && 'Enregistrement...'}
-                    {saveStatus === 'saved' && 'Enregistré'}
-                    {saveStatus === 'error' && 'Erreur'}
+                    {saveStatus === 'saving' && 'Enregistrement en cours...'}
+                    {saveStatus === 'saved' && 'Modifications enregistrées avec succès'}
+                    {saveStatus === 'error' && 'Erreur lors de l\'enregistrement'}
                   </span>
                 </div>
               )}

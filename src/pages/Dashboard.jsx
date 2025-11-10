@@ -135,39 +135,44 @@ function Dashboard({ setIsAuthenticated }) {
   return (
     <div style={{ minHeight: '100vh', padding: '40px 20px' }}>
       <div className="container">
-        <div className="flex-between" style={{ marginBottom: '30px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <img
-              src="/logo-removebg.png"
-              alt="E-Voting Logo"
-              style={{
-                height: '60px',
-                objectFit: 'contain'
-              }}
-            />
-            <div>
-              <h1 style={{ fontSize: '32px', color: 'white', marginBottom: '8px' }}>
-                Tableau de bord
-              </h1>
-              <p style={{ color: 'rgba(255,255,255,0.9)' }}>
-                Bienvenue, {user?.name}
-              </p>
+        {/* Header with branding and navigation */}
+        <header role="banner" style={{ marginBottom: '30px' }}>
+          <div className="flex-between">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <img
+                src="/logo-removebg.png"
+                alt="E-Voting Logo"
+                style={{
+                  height: '60px',
+                  objectFit: 'contain'
+                }}
+              />
+              <div>
+                <h1 style={{ fontSize: '32px', color: 'white', marginBottom: '8px' }}>
+                  Tableau de bord
+                </h1>
+                <p style={{ color: 'rgba(255,255,255,0.9)' }}>
+                  Bienvenue, {user?.name}
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="flex gap-2">
-            <button onClick={() => navigate('/security')} className="btn btn-secondary">
-              <Shield size={18} />
+            <nav aria-label="Navigation principale" className="flex gap-2">
+              <button onClick={() => navigate('/security')} className="btn btn-secondary" aria-label="Accéder à la sécurité">
+                <Shield size={18} aria-hidden="true" />
               Sécurité
             </button>
-            <button onClick={handleLogout} className="btn btn-secondary">
-              <LogOut size={18} />
+            <button onClick={handleLogout} className="btn btn-secondary" aria-label="Se déconnecter">
+              <LogOut size={18} aria-hidden="true" />
               Déconnexion
             </button>
+            </nav>
           </div>
-        </div>
+        </header>
 
-        {/* Statistiques */}
-        <div className="grid grid-2" style={{ marginBottom: '30px' }}>
+        {/* Statistics section */}
+        <section aria-labelledby="stats-heading" style={{ marginBottom: '30px' }}>
+          <h2 id="stats-heading" className="sr-only">Statistiques des élections</h2>
+          <div className="grid grid-2">
           <div className="card">
             <div className="flex-between">
               <div>
@@ -176,7 +181,7 @@ function Dashboard({ setIsAuthenticated }) {
                 </p>
                 <h3 style={{ fontSize: '28px', color: '#111827' }}>{stats.total}</h3>
               </div>
-              <BarChart3 size={32} color="#2563eb" />
+              <BarChart3 size={32} color="var(--primary)" aria-hidden="true" />
             </div>
           </div>
 
@@ -186,9 +191,9 @@ function Dashboard({ setIsAuthenticated }) {
                 <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '4px' }}>
                   Votes actifs
                 </p>
-                <h3 style={{ fontSize: '28px', color: '#10b981' }}>{stats.active}</h3>
+                <h3 style={{ fontSize: '28px', color: 'var(--success-600)' }}>{stats.active}</h3>
               </div>
-              <Clock size={32} color="#10b981" />
+              <Clock size={32} color="var(--success-600)" aria-hidden="true" />
             </div>
           </div>
 
@@ -200,7 +205,7 @@ function Dashboard({ setIsAuthenticated }) {
                 </p>
                 <h3 style={{ fontSize: '28px', color: '#6b7280' }}>{stats.draft}</h3>
               </div>
-              <Users size={32} color="#6b7280" />
+              <Users size={32} color="#6b7280" aria-hidden="true" />
             </div>
           </div>
 
@@ -210,22 +215,24 @@ function Dashboard({ setIsAuthenticated }) {
                 <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '4px' }}>
                   Terminés
                 </p>
-                <h3 style={{ fontSize: '28px', color: '#ef4444' }}>{stats.closed}</h3>
+                <h3 style={{ fontSize: '28px', color: 'var(--danger)' }}>{stats.closed}</h3>
               </div>
-              <CheckCircle size={32} color="#ef4444" />
+              <CheckCircle size={32} color="var(--danger)" aria-hidden="true" />
             </div>
           </div>
-        </div>
+          </div>
+        </section>
 
-        {/* Liste des élections */}
-        <div className="card">
+        {/* Elections list section */}
+        <section aria-labelledby="elections-heading">
+          <div className="card">
           <div className="flex-between" style={{ marginBottom: '20px' }}>
-            <h2 style={{ fontSize: '20px', color: '#111827' }}>Mes élections</h2>
+            <h2 id="elections-heading" style={{ fontSize: '20px', color: '#111827' }}>Mes élections</h2>
             <button
               onClick={() => navigate('/elections/new')}
               className="btn btn-primary"
             >
-              <Plus size={18} />
+              <Plus size={18} aria-hidden="true" />
               Nouvelle élection
             </button>
           </div>
@@ -244,6 +251,7 @@ function Dashboard({ setIsAuthenticated }) {
             <div style={{ position: 'relative' }}>
               <Search
                 size={18}
+                aria-hidden="true"
                 style={{
                   position: 'absolute',
                   left: '12px',
@@ -252,17 +260,23 @@ function Dashboard({ setIsAuthenticated }) {
                   color: '#6b7280'
                 }}
               />
+              <label htmlFor="search-elections" className="sr-only">
+                Rechercher une élection
+              </label>
               <input
+                id="search-elections"
                 type="text"
                 placeholder="Rechercher par titre ou description..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                aria-label="Rechercher une élection par titre ou description"
                 className="input"
                 style={{ paddingLeft: '40px', width: '100%', boxSizing: 'border-box' }}
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm('')}
+                  aria-label="Effacer la recherche"
                   style={{
                     position: 'absolute',
                     right: '12px',
@@ -274,7 +288,7 @@ function Dashboard({ setIsAuthenticated }) {
                     color: '#6b7280'
                   }}
                 >
-                  <X size={18} />
+                  <X size={18} aria-hidden="true" />
                 </button>
               )}
             </div>
@@ -311,24 +325,30 @@ function Dashboard({ setIsAuthenticated }) {
             </div>
           </div>
 
-          {/* Results count */}
+          {/* Results count - Live region for search results */}
           {elections.length > 0 && (
-            <div style={{
-              fontSize: '13px',
-              color: '#6b7280',
-              marginBottom: '16px',
-              paddingBottom: '16px',
-              borderBottom: '1px solid #e5e7eb'
-            }}>
+            <div
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              style={{
+                fontSize: '13px',
+                color: '#6b7280',
+                marginBottom: '16px',
+                paddingBottom: '16px',
+                borderBottom: '1px solid #e5e7eb'
+              }}
+            >
               {searchTerm || statusFilter !== 'all'
-                ? `${filteredStats.total} résultat(s) sur ${stats.total}`
-                : `${stats.total} élection(s)`}
+                ? `${filteredStats.total} résultat(s) trouvé(s) sur ${stats.total} élection(s)`
+                : `${stats.total} élection(s) au total`}
             </div>
           )}
 
           {loading ? (
-            <div className="loading">
-              <div className="spinner"></div>
+            <div className="loading" role="status" aria-live="polite">
+              <div className="spinner" aria-hidden="true"></div>
+              <span className="sr-only">Chargement des élections en cours...</span>
             </div>
           ) : elections.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
@@ -426,7 +446,8 @@ function Dashboard({ setIsAuthenticated }) {
               </tbody>
             </table>
           )}
-        </div>
+          </div>
+        </section>
       </div>
     </div>
   );
