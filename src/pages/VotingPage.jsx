@@ -80,11 +80,11 @@ function VotingPage() {
                 onClick={() => setSelectedVote(option.id)}
                 style={{
                   padding: '16px',
-                  border: `2px solid ${selectedVote === option.id ? '#2563eb' : '#e5e7eb'}`,
+                  border: `2px solid ${selectedVote === option.id ? '#74E2DE' : 'rgba(116, 226, 222, 0.2)'}`,
                   borderRadius: '8px',
                   marginBottom: '12px',
                   cursor: 'pointer',
-                  background: selectedVote === option.id ? '#eff6ff' : 'white',
+                  background: selectedVote === option.id ? 'rgba(116, 226, 222, 0.1)' : 'rgba(255, 255, 255, 0.05)',
                   transition: 'all 0.3s ease'
                 }}
               >
@@ -93,19 +93,19 @@ function VotingPage() {
                     type="radio"
                     checked={selectedVote === option.id}
                     onChange={() => setSelectedVote(option.id)}
-                    style={{ width: '20px', height: '20px' }}
+                    style={{ width: '20px', height: '20px', accentColor: '#74E2DE' }}
                   />
                   <div style={{ flex: 1 }}>
-                    <strong style={{ display: 'block', marginBottom: '4px' }}>
+                    <strong style={{ display: 'block', marginBottom: '4px', color: '#EFEFEF' }}>
                       {option.option_text}
                     </strong>
                     {option.candidate_name && (
-                      <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '4px' }}>
+                      <p style={{ color: '#9CA3AF', fontSize: '14px', marginBottom: '4px' }}>
                         {option.candidate_name}
                       </p>
                     )}
                     {option.candidate_info && (
-                      <p style={{ color: '#6b7280', fontSize: '13px' }}>
+                      <p style={{ color: '#9CA3AF', fontSize: '13px' }}>
                         {option.candidate_info}
                       </p>
                     )}
@@ -227,22 +227,22 @@ function VotingPage() {
 
   if (success) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-        <div className="card" style={{ maxWidth: '600px', textAlign: 'center' }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', background: '#1A1D21' }}>
+        <div className="card" style={{ maxWidth: '600px', textAlign: 'center', background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
           <CheckCircle size={64} color="#10b981" style={{ margin: '0 auto 20px' }} />
-          <h1 style={{ fontSize: '32px', marginBottom: '12px', color: '#111827' }}>
+          <h1 style={{ fontSize: '32px', marginBottom: '12px', color: '#EFEFEF' }}>
             Vote enregistré !
           </h1>
-          <p style={{ color: '#6b7280', marginBottom: '30px' }}>
+          <p style={{ color: '#9CA3AF', marginBottom: '30px' }}>
             {election.is_secret
               ? 'Votre vote a été enregistré de manière anonyme et sécurisée.'
               : 'Votre vote a été enregistré avec succès.'}
           </p>
 
           {receipt && (
-            <div style={{ background: '#f9fafb', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
-              <h3 style={{ marginBottom: '12px' }}>Reçu de vote</h3>
-              <p style={{ fontSize: '14px', color: '#6b7280' }}>
+            <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '20px', borderRadius: '8px', marginBottom: '20px', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+              <h3 style={{ marginBottom: '12px', color: '#EFEFEF' }}>Reçu de vote</h3>
+              <p style={{ fontSize: '14px', color: '#9CA3AF' }}>
                 <strong>Élection:</strong> {receipt.election}<br />
                 <strong>Votant:</strong> {receipt.voter_name}<br />
                 <strong>Date:</strong> {new Date(receipt.voted_at).toLocaleString('fr-FR')}
@@ -250,7 +250,7 @@ function VotingPage() {
             </div>
           )}
 
-          <div className="alert alert-info">
+          <div className="alert alert-info" style={{ background: 'rgba(116, 226, 222, 0.1)', border: '1px solid rgba(116, 226, 222, 0.3)', color: '#74E2DE' }}>
             Merci d'avoir participé à ce vote démocratique !
           </div>
         </div>
@@ -259,15 +259,15 @@ function VotingPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', padding: '40px 20px' }}>
+    <div style={{ minHeight: '100vh', padding: '40px 20px', background: '#1A1D21' }}>
       <div className="container" style={{ maxWidth: '700px' }}>
-        <div className="card">
+        <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-            <h1 style={{ fontSize: '32px', marginBottom: '8px', color: '#111827' }}>
+            <h1 style={{ fontSize: '32px', marginBottom: '8px', color: '#EFEFEF' }}>
               🗳️ {election?.title}
             </h1>
             {election?.description && (
-              <p style={{ color: '#6b7280' }}>{election.description}</p>
+              <p style={{ color: '#9CA3AF' }}>{election.description}</p>
             )}
           </div>
 
@@ -304,20 +304,20 @@ function VotingPage() {
           )}
 
           {error && (
-            <div className="alert alert-error" style={{ marginBottom: '20px' }}>
+            <div className="alert alert-error" style={{ marginBottom: '20px', background: 'rgba(252, 73, 95, 0.1)', border: '1px solid rgba(252, 73, 95, 0.3)', color: '#FC495F' }}>
               <AlertCircle size={20} />
               {error}
             </div>
           )}
 
           {voter?.has_voted ? (
-            <div className="alert alert-warning">
+            <div className="alert alert-warning" style={{ background: 'rgba(229, 133, 85, 0.1)', border: '1px solid rgba(229, 133, 85, 0.3)', color: '#E58555' }}>
               Vous avez déjà voté à cette élection.
             </div>
           ) : (
             <>
               <div style={{ marginBottom: '30px' }}>
-                <div className="alert alert-info">
+                <div className="alert alert-info" style={{ background: 'rgba(116, 226, 222, 0.1)', border: '1px solid rgba(116, 226, 222, 0.3)', color: '#74E2DE' }}>
                   <strong>Type de vote:</strong>{' '}
                   {election?.voting_type === 'simple' && 'Question simple'}
                   {election?.voting_type === 'approval' && 'Vote par approbation'}

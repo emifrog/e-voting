@@ -155,18 +155,18 @@ function ElectionDetails() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', padding: '40px 20px' }}>
+    <div style={{ minHeight: '100vh', padding: '40px 20px', background: '#1A1D21' }}>
       <div className="container">
         <button onClick={() => navigate('/dashboard')} className="btn btn-secondary" style={{ marginBottom: '20px' }}>
           <ArrowLeft size={18} />
           Retour
         </button>
 
-        <div className="card">
+        <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
           <div className="flex-between" style={{ marginBottom: '20px' }}>
             <div>
-              <h1 style={{ fontSize: '28px', marginBottom: '8px' }}>{election.title}</h1>
-              <p style={{ color: '#6b7280' }}>{election.description}</p>
+              <h1 style={{ fontSize: '28px', marginBottom: '8px', color: '#EFEFEF' }}>{election.title}</h1>
+              <p style={{ color: '#9CA3AF' }}>{election.description}</p>
             </div>
             <span className={`badge badge-${election.status}`}>
               {election.status === 'draft' ? 'Brouillon' : election.status === 'active' ? 'En cours' : 'Terminé'}
@@ -231,13 +231,13 @@ function ElectionDetails() {
 
           {/* Statistiques */}
           <div className="grid grid-2" style={{ marginBottom: '30px' }}>
-            <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '8px' }}>
-              <p style={{ color: '#6b7280', fontSize: '14px' }}>Total électeurs</p>
-              <h3 style={{ fontSize: '24px', color: '#111827' }}>{stats?.total_voters || 0}</h3>
+            <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '16px', borderRadius: '8px', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+              <p style={{ color: '#9CA3AF', fontSize: '14px' }}>Total électeurs</p>
+              <h3 style={{ fontSize: '24px', color: '#EFEFEF' }}>{stats?.total_voters || 0}</h3>
             </div>
-            <div style={{ background: '#dcfce7', padding: '16px', borderRadius: '8px' }}>
-              <p style={{ color: '#166534', fontSize: '14px' }}>Ont voté</p>
-              <h3 style={{ fontSize: '24px', color: '#166534' }}>
+            <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '16px', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+              <p style={{ color: '#10b981', fontSize: '14px' }}>Ont voté</p>
+              <h3 style={{ fontSize: '24px', color: '#10b981' }}>
                 {stats?.voted_count || 0}
                 <span style={{ fontSize: '16px', marginLeft: '8px' }}>
                   ({stats?.total_voters > 0 ? Math.round((stats.voted_count / stats.total_voters) * 100) : 0}%)
@@ -260,7 +260,7 @@ function ElectionDetails() {
           <div
             role="tablist"
             aria-label="Navigation de l'élection"
-            style={{ borderBottom: '2px solid #e5e7eb', marginBottom: '20px' }}
+            style={{ borderBottom: '2px solid rgba(116, 226, 222, 0.2)', marginBottom: '20px' }}
           >
             <button
               role="tab"
@@ -282,8 +282,8 @@ function ElectionDetails() {
                 padding: '12px 24px',
                 background: 'none',
                 border: 'none',
-                borderBottom: activeTab === 'voters' ? '2px solid #2563eb' : 'none',
-                color: activeTab === 'voters' ? '#2563eb' : '#6b7280',
+                borderBottom: activeTab === 'voters' ? '2px solid #74E2DE' : 'none',
+                color: activeTab === 'voters' ? '#74E2DE' : '#9CA3AF',
                 fontWeight: 600,
                 cursor: 'pointer'
               }}
@@ -311,8 +311,8 @@ function ElectionDetails() {
                   padding: '12px 24px',
                   background: 'none',
                   border: 'none',
-                  borderBottom: activeTab === 'qrcode' ? '2px solid #2563eb' : 'none',
-                  color: activeTab === 'qrcode' ? '#2563eb' : '#6b7280',
+                  borderBottom: activeTab === 'qrcode' ? '2px solid #74E2DE' : 'none',
+                  color: activeTab === 'qrcode' ? '#74E2DE' : '#9CA3AF',
                   fontWeight: 600,
                   cursor: 'pointer'
                 }}
@@ -343,8 +343,8 @@ function ElectionDetails() {
                   padding: '12px 24px',
                   background: 'none',
                   border: 'none',
-                  borderBottom: activeTab === 'results' ? '2px solid #2563eb' : 'none',
-                  color: activeTab === 'results' ? '#2563eb' : '#6b7280',
+                  borderBottom: activeTab === 'results' ? '2px solid #74E2DE' : 'none',
+                  color: activeTab === 'results' ? '#74E2DE' : '#9CA3AF',
                   fontWeight: 600,
                   cursor: 'pointer'
                 }}
@@ -398,30 +398,30 @@ function ElectionDetails() {
             >
               {activeTab === 'results' && results && (
             <div>
-              <div className="alert alert-info" style={{ marginBottom: '20px' }}>
+              <div className="alert alert-info" style={{ marginBottom: '20px', background: 'rgba(116, 226, 222, 0.1)', border: '1px solid rgba(116, 226, 222, 0.3)', color: '#74E2DE' }}>
                 <strong>Participation:</strong> {results.stats.voted_count} / {results.stats.total_voters} électeurs ({results.stats.participation_rate}%)
               </div>
 
-              <h3 style={{ marginBottom: '16px' }}>Résultats</h3>
+              <h3 style={{ marginBottom: '16px', color: '#EFEFEF' }}>Résultats</h3>
               {results.results.results.map((result, index) => (
-                <div key={index} style={{ marginBottom: '16px', padding: '16px', background: '#f9fafb', borderRadius: '8px' }}>
+                <div key={index} style={{ marginBottom: '16px', padding: '16px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
                   <div className="flex-between" style={{ marginBottom: '8px' }}>
-                    <strong>{result.option.option_text}</strong>
-                    <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#2563eb' }}>
+                    <strong style={{ color: '#EFEFEF' }}>{result.option.option_text}</strong>
+                    <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#74E2DE' }}>
                       {result.percentage}%
                     </span>
                   </div>
-                  <div style={{ background: '#e5e7eb', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ background: 'rgba(255, 255, 255, 0.1)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
                     <div
                       style={{
-                        background: '#2563eb',
+                        background: '#74E2DE',
                         height: '100%',
                         width: `${result.percentage}%`,
                         transition: 'width 0.5s ease'
                       }}
                     />
                   </div>
-                  <p style={{ marginTop: '8px', fontSize: '14px', color: '#6b7280' }}>
+                  <p style={{ marginTop: '8px', fontSize: '14px', color: '#9CA3AF' }}>
                     {result.votes || result.approvals || 0} voix
                     {election.is_weighted && ` (poids: ${result.weight})`}
                   </p>

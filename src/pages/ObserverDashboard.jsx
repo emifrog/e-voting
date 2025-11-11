@@ -40,16 +40,16 @@ function ObserverDashboard() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', padding: '40px 20px' }}>
+    <div style={{ minHeight: '100vh', padding: '40px 20px', background: '#1A1D21' }}>
       <div className="container" style={{ maxWidth: '900px' }}>
-        <div className="card">
+        <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-            <Eye size={48} color="#2563eb" style={{ margin: '0 auto 16px' }} />
-            <h1 style={{ fontSize: '32px', marginBottom: '8px' }}>Tableau de bord observateur</h1>
-            <p style={{ color: '#6b7280' }}>Suivi en temps réel</p>
+            <Eye size={48} color="#74E2DE" style={{ margin: '0 auto 16px' }} />
+            <h1 style={{ fontSize: '32px', marginBottom: '8px', color: '#EFEFEF' }}>Tableau de bord observateur</h1>
+            <p style={{ color: '#9CA3AF' }}>Suivi en temps réel</p>
           </div>
 
-          <div className="alert alert-info" style={{ marginBottom: '30px' }}>
+          <div className="alert alert-info" style={{ marginBottom: '30px', background: 'rgba(116, 226, 222, 0.1)', border: '1px solid rgba(116, 226, 222, 0.3)', color: '#74E2DE' }}>
             <strong>Élection:</strong> {data.election.title}<br />
             <strong>Observateur:</strong> {data.observer.name}<br />
             <strong>Statut:</strong> {data.election.status === 'active' ? 'En cours' : data.election.status}
@@ -99,17 +99,17 @@ function ObserverDashboard() {
 
           {data.observer.can_see_turnout && data.turnout && (
             <div>
-              <h2 style={{ marginBottom: '16px', fontSize: '20px' }}>Taux de participation</h2>
+              <h2 style={{ marginBottom: '16px', fontSize: '20px', color: '#EFEFEF' }}>Taux de participation</h2>
               <div className="grid grid-2" style={{ marginBottom: '30px' }}>
-                <div style={{ background: '#f9fafb', padding: '20px', borderRadius: '8px' }}>
-                  <Users size={32} color="#6b7280" style={{ marginBottom: '12px' }} />
-                  <p style={{ color: '#6b7280', fontSize: '14px' }}>Total électeurs</p>
-                  <h3 style={{ fontSize: '28px' }}>{data.turnout.total_voters}</h3>
+                <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '20px', borderRadius: '8px', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+                  <Users size={32} color="#9CA3AF" style={{ marginBottom: '12px' }} />
+                  <p style={{ color: '#9CA3AF', fontSize: '14px' }}>Total électeurs</p>
+                  <h3 style={{ fontSize: '28px', color: '#EFEFEF' }}>{data.turnout.total_voters}</h3>
                 </div>
-                <div style={{ background: '#dcfce7', padding: '20px', borderRadius: '8px' }}>
-                  <CheckCircle size={32} color="#166534" style={{ marginBottom: '12px' }} />
-                  <p style={{ color: '#166534', fontSize: '14px' }}>Ont voté</p>
-                  <h3 style={{ fontSize: '28px', color: '#166534' }}>
+                <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '20px', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                  <CheckCircle size={32} color="#10b981" style={{ marginBottom: '12px' }} />
+                  <p style={{ color: '#10b981', fontSize: '14px' }}>Ont voté</p>
+                  <h3 style={{ fontSize: '28px', color: '#10b981' }}>
                     {data.turnout.voted_count}
                     <span style={{ fontSize: '16px', marginLeft: '8px' }}>
                       ({data.turnout.participation_rate}%)
@@ -118,12 +118,12 @@ function ObserverDashboard() {
                 </div>
               </div>
 
-              <div style={{ background: '#f9fafb', padding: '20px', borderRadius: '8px' }}>
-                <h3 style={{ marginBottom: '12px' }}>Progression</h3>
-                <div style={{ background: '#e5e7eb', height: '12px', borderRadius: '6px', overflow: 'hidden' }}>
+              <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '20px', borderRadius: '8px', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+                <h3 style={{ marginBottom: '12px', color: '#EFEFEF' }}>Progression</h3>
+                <div style={{ background: 'rgba(255, 255, 255, 0.1)', height: '12px', borderRadius: '6px', overflow: 'hidden' }}>
                   <div
                     style={{
-                      background: 'linear-gradient(90deg, #10b981, #059669)',
+                      background: 'linear-gradient(90deg, #10b981, #74E2DE)',
                       height: '100%',
                       width: `${data.turnout.participation_rate}%`,
                       transition: 'width 0.5s ease'
@@ -135,13 +135,13 @@ function ObserverDashboard() {
           )}
 
           {!data.observer.can_see_turnout && (
-            <div className="alert alert-warning">
+            <div className="alert alert-warning" style={{ background: 'rgba(229, 133, 85, 0.1)', border: '1px solid rgba(229, 133, 85, 0.3)', color: '#E58555' }}>
               Vous n'avez pas accès aux statistiques de participation
             </div>
           )}
 
-          <div style={{ marginTop: '30px', padding: '16px', background: '#f9fafb', borderRadius: '8px', textAlign: 'center' }}>
-            <p style={{ color: '#6b7280', fontSize: '14px' }}>
+          <div style={{ marginTop: '30px', padding: '16px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', textAlign: 'center', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+            <p style={{ color: '#9CA3AF', fontSize: '14px' }}>
               Cette page se rafraîchit automatiquement toutes les 30 secondes
             </p>
           </div>

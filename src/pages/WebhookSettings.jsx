@@ -105,13 +105,14 @@ export default function WebhookSettings() {
   const webhooks = webhooksData?.webhooks || [];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8" style={{ background: '#1A1D21' }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => navigate(`/elections/${electionId}`)}
-            className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
+            className="flex items-center mb-4"
+            style={{ color: '#9CA3AF', cursor: 'pointer', background: 'transparent', border: 'none', padding: '8px' }}
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Retour à l'élection
@@ -119,17 +120,18 @@ export default function WebhookSettings() {
 
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold" style={{ color: '#EFEFEF' }}>
                 Configuration des Webhooks
               </h1>
-              <p className="mt-2 text-gray-600">
+              <p className="mt-2" style={{ color: '#9CA3AF' }}>
                 Recevez des notifications en temps réel sur Slack ou Microsoft Teams
               </p>
             </div>
 
             <button
               onClick={() => setShowAddForm(true)}
-              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
+              style={{ background: '#74E2DE', color: '#1A1D21', fontWeight: '600' }}
             >
               <PlusCircle className="w-5 h-5" />
               Ajouter un webhook
@@ -138,12 +140,12 @@ export default function WebhookSettings() {
         </div>
 
         {/* Info Banner */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div className="rounded-lg p-4 mb-6" style={{ background: 'rgba(116, 226, 222, 0.1)', border: '1px solid rgba(116, 226, 222, 0.3)' }}>
           <div className="flex gap-3">
-            <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-blue-800">
-              <p className="font-semibold mb-1">Comment configurer un webhook ?</p>
-              <ul className="list-disc list-inside space-y-1 text-blue-700">
+            <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#74E2DE' }} />
+            <div className="text-sm" style={{ color: '#9CA3AF' }}>
+              <p className="font-semibold mb-1" style={{ color: '#74E2DE' }}>Comment configurer un webhook ?</p>
+              <ul className="list-disc list-inside space-y-1">
                 <li>
                   <strong>Slack :</strong> Créez un webhook entrant dans votre workspace Slack
                   (Apps → Incoming Webhooks)
@@ -159,17 +161,18 @@ export default function WebhookSettings() {
 
         {/* Webhooks List */}
         {webhooks.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
+          <div className="rounded-lg shadow p-12 text-center" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
             <div className="text-6xl mb-4">🔗</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold mb-2" style={{ color: '#EFEFEF' }}>
               Aucun webhook configuré
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="mb-6" style={{ color: '#9CA3AF' }}>
               Ajoutez votre premier webhook pour recevoir des notifications
             </p>
             <button
               onClick={() => setShowAddForm(true)}
-              className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg transition-colors"
+              style={{ background: '#74E2DE', color: '#1A1D21', fontWeight: '600' }}
             >
               <PlusCircle className="w-5 h-5" />
               Ajouter un webhook
@@ -237,30 +240,31 @@ function WebhookCard({
     .map(e => e.name);
 
   return (
-    <div className="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6">
+    <div className="rounded-lg shadow hover:shadow-md transition-shadow p-6" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-3">
             <span className="text-3xl">{getPlatformIcon(webhook.platform)}</span>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 capitalize">
+              <h3 className="text-lg font-semibold capitalize" style={{ color: '#EFEFEF' }}>
                 {webhook.platform}
               </h3>
-              <p className="text-sm text-gray-500 font-mono truncate max-w-md">
+              <p className="text-sm font-mono truncate max-w-md" style={{ color: '#9CA3AF' }}>
                 {webhook.webhook_url.substring(0, 50)}...
               </p>
             </div>
           </div>
 
           <div className="mb-3">
-            <p className="text-sm font-medium text-gray-700 mb-2">
+            <p className="text-sm font-medium mb-2" style={{ color: '#9CA3AF' }}>
               Événements surveillés :
             </p>
             <div className="flex flex-wrap gap-2">
               {eventNames.map((name, idx) => (
                 <span
                   key={idx}
-                  className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full"
+                  className="px-3 py-1 text-xs font-medium rounded-full"
+                  style={{ background: 'rgba(116, 226, 222, 0.1)', color: '#74E2DE', border: '1px solid rgba(116, 226, 222, 0.3)' }}
                 >
                   {name}
                 </span>
@@ -269,7 +273,7 @@ function WebhookCard({
           </div>
 
           {webhook.last_triggered_at && (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm" style={{ color: '#9CA3AF' }}>
               Dernier déclenchement :{' '}
               {new Date(webhook.last_triggered_at).toLocaleString('fr-FR')}
             </p>

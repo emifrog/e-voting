@@ -127,8 +127,8 @@ function Login({ setIsAuthenticated }) {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-      <div className="card" style={{ maxWidth: '400px', width: '100%' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', background: '#1A1D21' }}>
+      <div className="card" style={{ maxWidth: '400px', width: '100%', background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)', boxShadow: '0 4px 30px rgba(0,0,0,0.5)' }}>
         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
           <img
             src="/logo-removebg.png"
@@ -139,8 +139,8 @@ function Login({ setIsAuthenticated }) {
               objectFit: 'contain'
             }}
           />
-          <h1 style={{ fontSize: '28px', marginBottom: '8px', color: '#000' }}>E-Voting</h1>
-          <p style={{ color: '#6b7280' }}>
+          <h1 style={{ fontSize: '28px', marginBottom: '8px', color: '#EFEFEF' }}>E-Voting</h1>
+          <p style={{ color: '#9CA3AF' }}>
             {twoFactorRequired ?
               'Authentification à deux facteurs' :
               'Connexion à votre espace administrateur'
@@ -197,12 +197,12 @@ function Login({ setIsAuthenticated }) {
                   width: '16px',
                   height: '16px',
                   cursor: 'pointer',
-                  accentColor: '#2563eb'
+                  accentColor: '#74E2DE'
                 }}
               />
               <label htmlFor="rememberMe" style={{
                 fontSize: '14px',
-                color: '#374151',
+                color: '#EFEFEF',
                 cursor: 'pointer',
                 margin: 0
               }}>
@@ -213,7 +213,7 @@ function Login({ setIsAuthenticated }) {
             <button
               type="submit"
               className="btn btn-primary"
-              style={{ width: '100%' }}
+              style={{ width: '100%', background: '#74E2DE', color: '#1A1D21', fontWeight: '600', border: 'none' }}
               disabled={loading || !form.isSubmittable}
             >
               <LogIn size={18} />
@@ -252,10 +252,13 @@ function Login({ setIsAuthenticated }) {
                   fontSize: '24px',
                   letterSpacing: '8px',
                   textAlign: 'center',
-                  fontFamily: 'monospace'
+                  fontFamily: 'monospace',
+                  background: 'rgba(255,255,255,0.05)',
+                  color: '#EFEFEF',
+                  border: '1px solid rgba(116, 226, 222, 0.3)'
                 }}
               />
-              <p style={{ fontSize: '12px', color: 'var(--gray-500)', marginTop: '8px' }}>
+              <p style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '8px' }}>
                 Le code change toutes les 30 secondes
               </p>
             </div>
@@ -263,7 +266,7 @@ function Login({ setIsAuthenticated }) {
             <button
               type="submit"
               className="btn btn-primary"
-              style={{ width: '100%', marginBottom: '12px' }}
+              style={{ width: '100%', marginBottom: '12px', background: '#74E2DE', color: '#1A1D21', fontWeight: '600', border: 'none' }}
               disabled={loading || twoFactorCode.length !== 6}
             >
               <Shield size={18} />
@@ -274,17 +277,17 @@ function Login({ setIsAuthenticated }) {
               type="button"
               onClick={handleBackToLogin}
               className="btn btn-secondary"
-              style={{ width: '100%' }}
+              style={{ width: '100%', background: 'transparent', color: '#EFEFEF', border: '1px solid rgba(116, 226, 222, 0.3)' }}
               disabled={loading}
             >
               Retour à la connexion
             </button>
 
-            <div style={{ marginTop: '16px', padding: '12px', background: 'var(--gray-50)', borderRadius: '8px' }}>
-              <p style={{ fontSize: '13px', color: 'var(--gray-600)', marginBottom: '8px' }}>
+            <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(116, 226, 222, 0.1)', borderRadius: '8px', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+              <p style={{ fontSize: '13px', color: '#EFEFEF', marginBottom: '8px' }}>
                 <strong>Vous avez perdu votre appareil ?</strong>
               </p>
-              <p style={{ fontSize: '12px', color: 'var(--gray-500)' }}>
+              <p style={{ fontSize: '12px', color: '#9CA3AF' }}>
                 Utilisez un de vos codes de récupération à la place du code 2FA.
                 Si vous n'avez plus accès à vos codes, contactez l'administrateur.
               </p>
@@ -292,11 +295,11 @@ function Login({ setIsAuthenticated }) {
           </form>
         )}
 
-        <div style={{ marginTop: '20px', textAlign: 'center', color: '#6b7280' }}>
+        <div style={{ marginTop: '20px', textAlign: 'center', color: '#9CA3AF' }}>
           {!twoFactorRequired && (
             <>
               Pas encore de compte ?{' '}
-              <Link to="/register" style={{ color: '#2563eb', fontWeight: '600', textDecoration: 'none' }}>
+              <Link to="/register" style={{ color: '#74E2DE', fontWeight: '600', textDecoration: 'none' }}>
                 S'inscrire
               </Link>
             </>

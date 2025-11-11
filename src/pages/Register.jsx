@@ -113,8 +113,8 @@ function Register({ setIsAuthenticated }) {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-      <div className="card" style={{ maxWidth: '400px', width: '100%' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', background: '#1A1D21' }}>
+      <div className="card" style={{ maxWidth: '400px', width: '100%', background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)', boxShadow: '0 4px 30px rgba(0,0,0,0.5)' }}>
         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
           <img
             src="/logo-removebg.png"
@@ -125,8 +125,8 @@ function Register({ setIsAuthenticated }) {
               objectFit: 'contain'
             }}
           />
-          <h1 style={{ fontSize: '28px', marginBottom: '8px', color: '#000' }}>E-Voting</h1>
-          <p style={{ color: '#6b7280' }}>Créer un compte administrateur</p>
+          <h1 style={{ fontSize: '28px', marginBottom: '8px', color: '#EFEFEF' }}>E-Voting</h1>
+          <p style={{ color: '#9CA3AF' }}>Créer un compte administrateur</p>
         </div>
 
         {error && (
@@ -218,7 +218,7 @@ function Register({ setIsAuthenticated }) {
           <button
             type="submit"
             className="btn btn-primary"
-            style={{ width: '100%' }}
+            style={{ width: '100%', background: '#74E2DE', color: '#1A1D21', fontWeight: '600', border: 'none' }}
             disabled={loading}
           >
             <UserPlus size={18} />
@@ -226,9 +226,9 @@ function Register({ setIsAuthenticated }) {
           </button>
         </form>
 
-        <div style={{ marginTop: '20px', textAlign: 'center', color: '#6b7280' }}>
+        <div style={{ marginTop: '20px', textAlign: 'center', color: '#9CA3AF' }}>
           Déjà un compte ?{' '}
-          <Link to="/login" style={{ color: '#2563eb', fontWeight: '600', textDecoration: 'none' }}>
+          <Link to="/login" style={{ color: '#74E2DE', fontWeight: '600', textDecoration: 'none' }}>
             Se connecter
           </Link>
         </div>

@@ -176,51 +176,52 @@ function Security() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', padding: '40px 20px' }}>
+    <div style={{ minHeight: '100vh', padding: '40px 20px', background: '#1A1D21' }}>
       <div className="container">
         <button onClick={() => navigate('/dashboard')} className="btn btn-secondary" style={{ marginBottom: '20px' }}>
           <ArrowLeft size={18} />
           Retour
         </button>
         <div style={{ marginBottom: '30px' }}>
-          <h1 style={{ fontSize: '32px', marginBottom: '8px', color: '#111827' }}>
+          <h1 style={{ fontSize: '32px', marginBottom: '8px', color: '#EFEFEF' }}>
             🔒 Sécurité du Compte
           </h1>
-          <p style={{ color: '#6b7280', fontSize: '16px' }}>
+          <p style={{ color: '#9CA3AF', fontSize: '16px' }}>
             Gérez vos paramètres de sécurité et authentification
           </p>
         </div>
 
       {/* Messages */}
       {error && (
-        <div className="alert alert-error" style={{ marginBottom: '20px' }}>
+        <div className="alert alert-error" style={{ marginBottom: '20px', background: 'rgba(252, 73, 95, 0.1)', border: '1px solid rgba(252, 73, 95, 0.3)', color: '#FC495F' }}>
           {error}
         </div>
       )}
 
       {success && (
-        <div className="alert alert-success" style={{ marginBottom: '20px' }}>
+        <div className="alert alert-success" style={{ marginBottom: '20px', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', color: '#10b981' }}>
           {success}
         </div>
       )}
 
       {/* Statut 2FA */}
-      <div className="card" style={{ marginBottom: '30px' }}>
+      <div className="card" style={{ marginBottom: '30px', background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
           <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', flex: 1 }}>
             <div style={{
-              background: twoFactorEnabled ? '#d1fae5' : '#f3f4f6',
+              background: twoFactorEnabled ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255, 255, 255, 0.05)',
               padding: '12px',
               borderRadius: '8px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              border: `1px solid ${twoFactorEnabled ? 'rgba(16, 185, 129, 0.3)' : 'rgba(116, 226, 222, 0.2)'}`
             }}>
-              <Shield size={24} color={twoFactorEnabled ? '#10b981' : '#6b7280'} />
+              <Shield size={24} color={twoFactorEnabled ? '#10b981' : '#74E2DE'} />
             </div>
             <div style={{ flex: 1 }}>
-              <h2 style={{ marginBottom: '4px', color: '#111827', fontSize: '18px', fontWeight: '600' }}>Authentification à Deux Facteurs (2FA)</h2>
-              <p style={{ fontSize: '14px', color: '#6b7280' }}>
+              <h2 style={{ marginBottom: '4px', color: '#EFEFEF', fontSize: '18px', fontWeight: '600' }}>Authentification à Deux Facteurs (2FA)</h2>
+              <p style={{ fontSize: '14px', color: '#9CA3AF' }}>
                 {twoFactorEnabled ?
                   'Votre compte est protégé par 2FA' :
                   'Ajoutez une couche de sécurité supplémentaire à votre compte'
@@ -232,25 +233,27 @@ function Security() {
           <div>
             {twoFactorEnabled ? (
               <span style={{
-                background: '#d1fae5',
-                color: '#065f46',
+                background: 'rgba(16, 185, 129, 0.1)',
+                color: '#10b981',
                 padding: '6px 12px',
                 borderRadius: '6px',
                 fontSize: '13px',
                 fontWeight: '500',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                border: '1px solid rgba(16, 185, 129, 0.3)'
               }}>
                 ✅ Activée
               </span>
             ) : (
               <span style={{
-                background: '#fef3c7',
-                color: '#92400e',
+                background: 'rgba(229, 133, 85, 0.1)',
+                color: '#E58555',
                 padding: '6px 12px',
                 borderRadius: '6px',
                 fontSize: '13px',
                 fontWeight: '500',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                border: '1px solid rgba(229, 133, 85, 0.3)'
               }}>
                 ⏳ Désactivée
               </span>
@@ -261,16 +264,16 @@ function Security() {
         {!twoFactorEnabled && !setupStep && (
           <div>
             <div style={{
-              background: '#dbeafe',
-              border: '1px solid #bfdbfe',
+              background: 'rgba(116, 226, 222, 0.1)',
+              border: '1px solid rgba(116, 226, 222, 0.3)',
               borderRadius: '8px',
               padding: '16px',
               marginBottom: '24px'
             }}>
-              <p style={{ marginBottom: '8px', fontWeight: '600', color: '#1e40af', fontSize: '14px' }}>
+              <p style={{ marginBottom: '8px', fontWeight: '600', color: '#74E2DE', fontSize: '14px' }}>
                 ℹ️ Qu'est-ce que la 2FA ?
               </p>
-              <p style={{ fontSize: '14px', color: '#1e3a8a', lineHeight: '1.6' }}>
+              <p style={{ fontSize: '14px', color: '#9CA3AF', lineHeight: '1.6' }}>
                 L'authentification à deux facteurs ajoute une étape supplémentaire lors de la connexion.
                 Même si quelqu'un connaît votre mot de passe, il ne pourra pas accéder à votre compte
                 sans le code généré par votre application d'authentification.
@@ -307,20 +310,20 @@ function Security() {
 
       {/* Configuration 2FA - Étape 1: QR Code */}
       {setupStep === 'qr' && (
-        <div className="card">
-          <h2 style={{ marginBottom: '24px', color: '#111827', fontSize: '20px' }}>Étape 1: Scanner le QR Code</h2>
+        <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+          <h2 style={{ marginBottom: '24px', color: '#EFEFEF', fontSize: '20px' }}>Étape 1: Scanner le QR Code</h2>
 
           <div style={{
-            background: '#dbeafe',
-            border: '1px solid #bfdbfe',
+            background: 'rgba(116, 226, 222, 0.1)',
+            border: '1px solid rgba(116, 226, 222, 0.3)',
             borderRadius: '8px',
             padding: '16px',
             marginBottom: '24px'
           }}>
-            <p style={{ marginBottom: '8px', fontWeight: '600', color: '#1e40af', fontSize: '14px' }}>
+            <p style={{ marginBottom: '8px', fontWeight: '600', color: '#74E2DE', fontSize: '14px' }}>
               📱 Applications recommandées:
             </p>
-            <ul style={{ marginLeft: '20px', fontSize: '13px', color: '#1e3a8a', lineHeight: '1.6' }}>
+            <ul style={{ marginLeft: '20px', fontSize: '13px', color: '#9CA3AF', lineHeight: '1.6' }}>
               <li>Google Authenticator (iOS/Android)</li>
               <li>Microsoft Authenticator (iOS/Android)</li>
               <li>Authy (iOS/Android/Desktop)</li>
@@ -330,11 +333,11 @@ function Security() {
 
           <div style={{
             textAlign: 'center',
-            background: '#f9fafb',
+            background: 'rgba(255, 255, 255, 0.05)',
             padding: '32px',
             borderRadius: '12px',
             marginBottom: '24px',
-            border: '2px solid #e5e7eb'
+            border: '2px solid rgba(116, 226, 222, 0.2)'
           }}>
             <img
               src={qrCodeUrl}
@@ -344,27 +347,27 @@ function Security() {
           </div>
 
           <div style={{
-            background: '#fef3c7',
-            border: '1px solid #fcd34d',
+            background: 'rgba(229, 133, 85, 0.1)',
+            border: '1px solid rgba(229, 133, 85, 0.3)',
             borderRadius: '8px',
             padding: '16px',
             marginBottom: '24px'
           }}>
-            <p style={{ marginBottom: '8px', fontWeight: '600', color: '#78350f', fontSize: '14px' }}>
+            <p style={{ marginBottom: '8px', fontWeight: '600', color: '#E58555', fontSize: '14px' }}>
               🤔 Impossible de scanner le QR code ?
             </p>
-            <p style={{ fontSize: '13px', marginBottom: '12px', color: '#78350f' }}>
+            <p style={{ fontSize: '13px', marginBottom: '12px', color: '#9CA3AF' }}>
               Entrez manuellement cette clé dans votre application :
             </p>
             <div style={{
-              background: 'white',
+              background: 'rgba(255, 255, 255, 0.05)',
               padding: '12px 14px',
               borderRadius: '6px',
               fontFamily: 'monospace',
               fontSize: '14px',
               wordBreak: 'break-all',
-              color: '#111827',
-              border: '1px solid #fcd34d',
+              color: '#EFEFEF',
+              border: '1px solid rgba(229, 133, 85, 0.3)',
               fontWeight: '600'
             }}>
               {secret}
@@ -384,24 +387,24 @@ function Security() {
 
       {/* Configuration 2FA - Étape 2: Vérification */}
       {setupStep === 'verify' && (
-        <div className="card">
-          <h2 style={{ marginBottom: '24px', color: '#111827', fontSize: '20px' }}>Étape 2: Vérification</h2>
+        <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+          <h2 style={{ marginBottom: '24px', color: '#EFEFEF', fontSize: '20px' }}>Étape 2: Vérification</h2>
 
           <div style={{
-            background: '#f0fdf4',
-            border: '1px solid #bbf7d0',
+            background: 'rgba(16, 185, 129, 0.1)',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
             borderRadius: '8px',
             padding: '16px',
             marginBottom: '24px'
           }}>
-            <p style={{ margin: 0, color: '#166534', fontSize: '14px', lineHeight: '1.6' }}>
+            <p style={{ margin: 0, color: '#10b981', fontSize: '14px', lineHeight: '1.6' }}>
               ✓ Entrez le code à 6 chiffres affiché dans votre application d'authentification
             </p>
           </div>
 
           <form onSubmit={verifyAndEnable}>
             <div className="form-group">
-              <label className="label" style={{ color: '#111827', fontWeight: '500' }}>Code de vérification</label>
+              <label className="label" style={{ color: '#EFEFEF', fontWeight: '500' }}>Code de vérification</label>
               <input
                 type="text"
                 className="input"
@@ -417,10 +420,12 @@ function Security() {
                   textAlign: 'center',
                   fontFamily: 'monospace',
                   fontWeight: '700',
-                  color: '#111827'
+                  color: '#EFEFEF',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(116, 226, 222, 0.3)'
                 }}
               />
-              <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '8px' }}>
+              <p style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '8px' }}>
                 Le code change toutes les 30 secondes
               </p>
             </div>
@@ -447,8 +452,8 @@ function Security() {
 
       {/* Configuration 2FA - Étape 3: Codes de récupération */}
       {setupStep === 'complete' && backupCodes.length > 0 && (
-        <div className="card">
-          <h2 style={{ marginBottom: '24px', color: '#111827', fontSize: '20px' }}>
+        <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+          <h2 style={{ marginBottom: '24px', color: '#EFEFEF', fontSize: '20px' }}>
             {twoFactorEnabled && !success.includes('Nouveaux') ?
               '✅ 2FA Activée !' :
               '🔑 Codes de Récupération'
@@ -456,19 +461,19 @@ function Security() {
           </h2>
 
           <div style={{
-            background: '#fef3c7',
-            border: '1px solid #fcd34d',
+            background: 'rgba(229, 133, 85, 0.1)',
+            border: '1px solid rgba(229, 133, 85, 0.3)',
             borderRadius: '8px',
             padding: '16px',
             marginBottom: '24px'
           }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-              <AlertTriangle size={20} style={{ flexShrink: 0, marginTop: '2px', color: '#92400e' }} />
+              <AlertTriangle size={20} style={{ flexShrink: 0, marginTop: '2px', color: '#E58555' }} />
               <div>
-                <p style={{ marginBottom: '8px', fontWeight: '600', color: '#78350f', fontSize: '14px' }}>
+                <p style={{ marginBottom: '8px', fontWeight: '600', color: '#E58555', fontSize: '14px' }}>
                   ⚠️ Important - Conservez ces codes en lieu sûr
                 </p>
-                <ul style={{ marginLeft: '20px', fontSize: '13px', color: '#78350f', lineHeight: '1.6' }}>
+                <ul style={{ marginLeft: '20px', fontSize: '13px', color: '#9CA3AF', lineHeight: '1.6' }}>
                   <li>Chaque code ne peut être utilisé qu'<strong>une seule fois</strong></li>
                   <li>Utilisez-les si vous perdez l'accès à votre application d'authentification</li>
                   <li>Ne les partagez avec personne</li>
@@ -479,13 +484,13 @@ function Security() {
           </div>
 
           <div style={{
-            background: '#f9fafb',
+            background: 'rgba(255, 255, 255, 0.05)',
             padding: '24px',
             borderRadius: '8px',
             marginBottom: '24px',
-            border: '1px solid #e5e7eb'
+            border: '1px solid rgba(116, 226, 222, 0.2)'
           }}>
-            <p style={{ marginBottom: '16px', fontSize: '14px', fontWeight: '500', color: '#6b7280' }}>
+            <p style={{ marginBottom: '16px', fontSize: '14px', fontWeight: '500', color: '#9CA3AF' }}>
               {backupCodes.length} codes de récupération disponibles
             </p>
             <div style={{
@@ -497,20 +502,20 @@ function Security() {
                 <div
                   key={index}
                   style={{
-                    background: 'white',
+                    background: '#232730',
                     padding: '12px 14px',
                     borderRadius: '6px',
-                    border: '1px solid #e5e7eb',
+                    border: '1px solid rgba(116, 226, 222, 0.2)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     gap: '8px',
                     transition: 'all 0.2s'
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.borderColor = '#3b82f6'}
-                  onMouseLeave={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                  onMouseEnter={(e) => e.currentTarget.style.borderColor = '#74E2DE'}
+                  onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(116, 226, 222, 0.2)'}
                 >
-                  <code style={{ fontSize: '13px', fontWeight: '600', fontFamily: 'monospace', color: '#111827' }}>
+                  <code style={{ fontSize: '13px', fontWeight: '600', fontFamily: 'monospace', color: '#EFEFEF' }}>
                     {code}
                   </code>
                   <button
@@ -556,26 +561,26 @@ function Security() {
 
       {/* Formulaire de désactivation */}
       {showDisableForm && (
-        <div className="card">
-          <h2 style={{ marginBottom: '24px', color: '#ef4444', fontSize: '20px' }}>
+        <div className="card" style={{ background: '#232730', border: '1px solid rgba(252, 73, 95, 0.3)' }}>
+          <h2 style={{ marginBottom: '24px', color: '#FC495F', fontSize: '20px' }}>
             Désactiver 2FA
           </h2>
 
           <div style={{
-            background: '#fee2e2',
-            border: '1px solid #fecaca',
+            background: 'rgba(252, 73, 95, 0.1)',
+            border: '1px solid rgba(252, 73, 95, 0.3)',
             borderRadius: '8px',
             padding: '16px',
             marginBottom: '24px'
           }}>
-            <p style={{ margin: 0, color: '#7f1d1d', fontSize: '14px', fontWeight: '500' }}>
+            <p style={{ margin: 0, color: '#FC495F', fontSize: '14px', fontWeight: '500' }}>
               <strong>⚠️ Attention:</strong> Votre compte sera moins sécurisé si vous désactivez la 2FA.
             </p>
           </div>
 
           <form onSubmit={disableTwoFactor}>
             <div className="form-group">
-              <label className="label">Mot de passe actuel</label>
+              <label className="label" style={{ color: '#EFEFEF' }}>Mot de passe actuel</label>
               <input
                 type="password"
                 className="input"
@@ -583,11 +588,12 @@ function Security() {
                 onChange={(e) => setDisablePassword(e.target.value)}
                 required
                 placeholder="Votre mot de passe"
+                style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(116, 226, 222, 0.3)', color: '#EFEFEF' }}
               />
             </div>
 
             <div className="form-group">
-              <label className="label">Code 2FA actuel</label>
+              <label className="label" style={{ color: '#EFEFEF' }}>Code 2FA actuel</label>
               <input
                 type="text"
                 className="input"
@@ -600,7 +606,10 @@ function Security() {
                   fontSize: '20px',
                   letterSpacing: '6px',
                   textAlign: 'center',
-                  fontFamily: 'monospace'
+                  fontFamily: 'monospace',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(116, 226, 222, 0.3)',
+                  color: '#EFEFEF'
                 }}
               />
             </div>
@@ -627,26 +636,26 @@ function Security() {
 
       {/* Formulaire de régénération des codes */}
       {showRegenerateForm && (
-        <div className="card">
-          <h2 style={{ marginBottom: '24px', color: '#111827', fontSize: '20px' }}>
+        <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+          <h2 style={{ marginBottom: '24px', color: '#EFEFEF', fontSize: '20px' }}>
             Régénérer les Codes de Récupération
           </h2>
 
           <div style={{
-            background: '#fef3c7',
-            border: '1px solid #fcd34d',
+            background: 'rgba(229, 133, 85, 0.1)',
+            border: '1px solid rgba(229, 133, 85, 0.3)',
             borderRadius: '8px',
             padding: '16px',
             marginBottom: '24px'
           }}>
-            <p style={{ margin: 0, color: '#78350f', fontSize: '14px', fontWeight: '500' }}>
+            <p style={{ margin: 0, color: '#E58555', fontSize: '14px', fontWeight: '500' }}>
               <strong>⚠️ Attention:</strong> Les anciens codes de récupération seront invalidés.
             </p>
           </div>
 
           <form onSubmit={regenerateBackupCodes}>
             <div className="form-group">
-              <label className="label">Mot de passe actuel</label>
+              <label className="label" style={{ color: '#EFEFEF' }}>Mot de passe actuel</label>
               <input
                 type="password"
                 className="input"
@@ -654,6 +663,7 @@ function Security() {
                 onChange={(e) => setRegeneratePassword(e.target.value)}
                 required
                 placeholder="Confirmez votre mot de passe"
+                style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(116, 226, 222, 0.3)', color: '#EFEFEF' }}
               />
             </div>
 

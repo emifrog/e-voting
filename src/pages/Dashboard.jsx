@@ -125,19 +125,19 @@ function Dashboard({ setIsAuthenticated }) {
   const getStatusBadge = (status) => {
     const styles = {
       draft: {
-        background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-        color: '#92400e',
-        border: '1px solid #fbbf24'
+        background: 'rgba(252, 73, 95, 0.15)',
+        color: '#FC495F',
+        border: '1px solid rgba(252, 73, 95, 0.3)'
       },
       active: {
-        background: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)',
-        color: '#065f46',
-        border: '1px solid #10b981'
+        background: 'rgba(116, 226, 222, 0.15)',
+        color: '#74E2DE',
+        border: '1px solid rgba(116, 226, 222, 0.3)'
       },
       closed: {
-        background: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)',
-        color: '#3730a3',
-        border: '1px solid #6366f1'
+        background: 'rgba(229, 133, 85, 0.15)',
+        color: '#E58555',
+        border: '1px solid rgba(229, 133, 85, 0.3)'
       }
     };
     const labels = {
@@ -150,7 +150,7 @@ function Dashboard({ setIsAuthenticated }) {
         ...styles[status],
         padding: '6px 14px',
         borderRadius: '20px',
-        fontSize: '13px',
+        fontSize: '12px',
         fontWeight: '600',
         display: 'inline-block'
       }}>
@@ -176,7 +176,7 @@ function Dashboard({ setIsAuthenticated }) {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      background: '#1A1D21',
       display: 'flex'
     }}>
       {/* Mobile Overlay */}
@@ -189,7 +189,7 @@ function Dashboard({ setIsAuthenticated }) {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'rgba(0,0,0,0.5)',
+            background: 'rgba(0,0,0,0.7)',
             zIndex: 998,
             transition: 'opacity 0.3s ease'
           }}
@@ -200,9 +200,9 @@ function Dashboard({ setIsAuthenticated }) {
       <aside
         style={{
           width: isMobile ? (sidebarOpen ? '280px' : '0') : (sidebarOpen ? '280px' : '80px'),
-          background: 'rgba(255,255,255,0.95)',
+          background: '#232730',
           backdropFilter: 'blur(10px)',
-          boxShadow: '4px 0 20px rgba(0,0,0,0.1)',
+          boxShadow: '2px 0 30px rgba(0,0,0,0.5)',
           transition: 'all 0.3s ease',
           display: 'flex',
           flexDirection: 'column',
@@ -217,7 +217,7 @@ function Dashboard({ setIsAuthenticated }) {
         {/* Sidebar Header */}
         <div style={{
           padding: '24px',
-          borderBottom: '1px solid #e5e7eb',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between'
@@ -229,7 +229,7 @@ function Dashboard({ setIsAuthenticated }) {
                 alt="E-Voting"
                 style={{ height: '40px', objectFit: 'contain' }}
               />
-              <span style={{ fontWeight: '700', fontSize: '18px', color: '#111827' }}>
+              <span style={{ fontWeight: '600', fontSize: '18px', color: '#EFEFEF', letterSpacing: '-0.02em' }}>
                 E-Voting
               </span>
             </div>
@@ -241,11 +241,11 @@ function Dashboard({ setIsAuthenticated }) {
               border: 'none',
               cursor: 'pointer',
               padding: '8px',
-              borderRadius: '8px',
+              borderRadius: '10px',
               transition: 'background 0.2s ease',
-              color: '#667eea'
+              color: '#74E2DE'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(116, 226, 222, 0.1)'}
             onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
             aria-label={sidebarOpen ? 'Réduire la sidebar' : 'Étendre la sidebar'}
           >
@@ -265,8 +265,8 @@ function Dashboard({ setIsAuthenticated }) {
                   alignItems: 'center',
                   gap: '12px',
                   padding: '12px 16px',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  color: 'white',
+                  background: '#74E2DE',
+                  color: '#1A1D21',
                   border: 'none',
                   borderRadius: '12px',
                   cursor: 'pointer',
@@ -290,7 +290,7 @@ function Dashboard({ setIsAuthenticated }) {
                   gap: '12px',
                   padding: '12px 16px',
                   background: 'transparent',
-                  color: '#64748b',
+                  color: '#EFEFEF',
                   border: 'none',
                   borderRadius: '12px',
                   cursor: 'pointer',
@@ -299,12 +299,12 @@ function Dashboard({ setIsAuthenticated }) {
                   transition: 'all 0.3s ease'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#f1f5f9';
-                  e.currentTarget.style.color = '#667eea';
+                  e.currentTarget.style.background = 'rgba(116, 226, 222, 0.1)';
+                  e.currentTarget.style.color = '#74E2DE';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = '#64748b';
+                  e.currentTarget.style.color = '#EFEFEF';
                 }}
               >
                 <Plus size={20} />
@@ -322,7 +322,7 @@ function Dashboard({ setIsAuthenticated }) {
                   gap: '12px',
                   padding: '12px 16px',
                   background: 'transparent',
-                  color: '#64748b',
+                  color: '#EFEFEF',
                   border: 'none',
                   borderRadius: '12px',
                   cursor: 'pointer',
@@ -331,12 +331,12 @@ function Dashboard({ setIsAuthenticated }) {
                   transition: 'all 0.3s ease'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#f1f5f9';
-                  e.currentTarget.style.color = '#667eea';
+                  e.currentTarget.style.background = 'rgba(116, 226, 222, 0.1)';
+                  e.currentTarget.style.color = '#74E2DE';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = '#64748b';
+                  e.currentTarget.style.color = '#EFEFEF';
                 }}
               >
                 <Shield size={20} />
@@ -354,7 +354,7 @@ function Dashboard({ setIsAuthenticated }) {
                   gap: '12px',
                   padding: '12px 16px',
                   background: 'transparent',
-                  color: '#64748b',
+                  color: '#EFEFEF',
                   border: 'none',
                   borderRadius: '12px',
                   cursor: 'pointer',
@@ -363,12 +363,12 @@ function Dashboard({ setIsAuthenticated }) {
                   transition: 'all 0.3s ease'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#f1f5f9';
-                  e.currentTarget.style.color = '#667eea';
+                  e.currentTarget.style.background = 'rgba(116, 226, 222, 0.1)';
+                  e.currentTarget.style.color = '#74E2DE';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = '#64748b';
+                  e.currentTarget.style.color = '#EFEFEF';
                 }}
               >
                 <FileText size={20} />
@@ -383,7 +383,7 @@ function Dashboard({ setIsAuthenticated }) {
                 paddingLeft: '16px',
                 fontSize: '12px',
                 fontWeight: '700',
-                color: '#94a3b8',
+                color: '#9CA3AF',
                 textTransform: 'uppercase',
                 letterSpacing: '1px'
               }}>
@@ -394,28 +394,29 @@ function Dashboard({ setIsAuthenticated }) {
             <li style={{ marginBottom: '8px' }}>
               <div style={{
                 padding: '12px 16px',
-                background: '#f8fafc',
+                background: 'rgba(116, 226, 222, 0.1)',
                 borderRadius: '12px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '12px'
+                gap: '12px',
+                border: '1px solid rgba(116, 226, 222, 0.2)'
               }}>
                 <div style={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  background: '#74E2DE',
                   padding: '8px',
-                  borderRadius: '8px',
+                  borderRadius: '10px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  <BarChart3 size={16} color="white" />
+                  <BarChart3 size={16} color="#1A1D21" />
                 </div>
                 {sidebarOpen && (
                   <div>
-                    <div style={{ fontSize: '20px', fontWeight: '700', color: '#111827' }}>
+                    <div style={{ fontSize: '20px', fontWeight: '600', color: '#EFEFEF' }}>
                       {stats.total}
                     </div>
-                    <div style={{ fontSize: '12px', color: '#64748b' }}>
+                    <div style={{ fontSize: '12px', color: '#9CA3AF', fontWeight: '400' }}>
                       Total élections
                     </div>
                   </div>
@@ -426,28 +427,29 @@ function Dashboard({ setIsAuthenticated }) {
             <li style={{ marginBottom: '8px' }}>
               <div style={{
                 padding: '12px 16px',
-                background: '#f8fafc',
+                background: 'rgba(229, 133, 85, 0.1)',
                 borderRadius: '12px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '12px'
+                gap: '12px',
+                border: '1px solid rgba(229, 133, 85, 0.2)'
               }}>
                 <div style={{
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  background: '#E58555',
                   padding: '8px',
-                  borderRadius: '8px',
+                  borderRadius: '10px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  <Activity size={16} color="white" />
+                  <Activity size={16} color="#1A1D21" />
                 </div>
                 {sidebarOpen && (
                   <div>
-                    <div style={{ fontSize: '20px', fontWeight: '700', color: '#111827' }}>
+                    <div style={{ fontSize: '20px', fontWeight: '600', color: '#EFEFEF' }}>
                       {stats.active}
                     </div>
-                    <div style={{ fontSize: '12px', color: '#64748b' }}>
+                    <div style={{ fontSize: '12px', color: '#9CA3AF', fontWeight: '400' }}>
                       En cours
                     </div>
                   </div>
@@ -460,7 +462,7 @@ function Dashboard({ setIsAuthenticated }) {
         {/* Sidebar Footer */}
         <div style={{
           padding: '20px',
-          borderTop: '1px solid #e5e7eb'
+          borderTop: '1px solid rgba(255,255,255,0.1)'
         }}>
           <button
             onClick={handleLogout}
@@ -470,8 +472,8 @@ function Dashboard({ setIsAuthenticated }) {
               alignItems: 'center',
               gap: '12px',
               padding: '12px 16px',
-              background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-              color: 'white',
+              background: '#FC495F',
+              color: '#EFEFEF',
               border: 'none',
               borderRadius: '12px',
               cursor: 'pointer',
@@ -481,7 +483,7 @@ function Dashboard({ setIsAuthenticated }) {
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.3)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(252, 73, 95, 0.4)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'translateY(0)';
@@ -512,13 +514,13 @@ function Dashboard({ setIsAuthenticated }) {
               top: '20px',
               left: '20px',
               zIndex: 997,
-              background: 'rgba(255,255,255,0.95)',
-              border: 'none',
+              background: '#232730',
+              border: '1px solid rgba(116, 226, 222, 0.3)',
               borderRadius: '12px',
               padding: '12px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
               cursor: 'pointer',
-              color: '#667eea'
+              color: '#74E2DE'
             }}
             aria-label="Toggle menu"
           >
@@ -529,30 +531,32 @@ function Dashboard({ setIsAuthenticated }) {
         {/* Header */}
         <header role="banner" style={{ marginBottom: isMobile ? '24px' : '40px' }}>
           <div style={{
-            background: 'rgba(255,255,255,0.95)',
+            background: '#232730',
             backdropFilter: 'blur(10px)',
-            padding: isMobile ? '20px' : '24px 32px',
+            padding: isMobile ? '24px' : '28px 36px',
             borderRadius: isMobile ? '16px' : '20px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
             display: 'flex',
             flexDirection: isMobile ? 'column' : 'row',
             alignItems: isMobile ? 'flex-start' : 'center',
             justifyContent: 'space-between',
-            gap: isMobile ? '16px' : '0'
+            gap: isMobile ? '16px' : '0',
+            border: '1px solid rgba(255,255,255,0.05)'
           }}>
             <div>
               <h1 style={{
                 fontSize: isMobile ? '24px' : '32px',
-                color: '#111827',
-                marginBottom: '4px',
-                fontWeight: '700'
+                color: '#EFEFEF',
+                marginBottom: '8px',
+                fontWeight: '600',
+                letterSpacing: '-0.02em'
               }}>
                 Tableau de bord
               </h1>
               <p style={{
-                color: '#64748b',
+                color: '#9CA3AF',
                 fontSize: isMobile ? '14px' : '16px',
-                fontWeight: '500',
+                fontWeight: '400',
                 margin: 0
               }}>
                 Bienvenue, {user?.name} 👋
@@ -560,10 +564,10 @@ function Dashboard({ setIsAuthenticated }) {
             </div>
             {!isMobile && (
               <div style={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: '#74E2DE',
                 padding: '12px 24px',
                 borderRadius: '12px',
-                color: 'white',
+                color: '#1A1D21',
                 fontWeight: '600',
                 fontSize: '14px'
               }}>
@@ -578,45 +582,47 @@ function Dashboard({ setIsAuthenticated }) {
           <h2 id="stats-heading" className="sr-only">Statistiques des élections</h2>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)',
             gap: isMobile ? '16px' : '24px'
           }}>
             {/* Card 1: Total */}
             <div
               className="card"
               style={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                color: 'white',
-                border: 'none',
-                boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)',
+                background: '#232730',
+                color: '#EFEFEF',
+                border: '1px solid rgba(116, 226, 222, 0.3)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
                 transition: 'all 0.3s ease',
                 cursor: 'pointer'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-8px)';
-                e.currentTarget.style.boxShadow = '0 15px 40px rgba(102, 126, 234, 0.4)';
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(116, 226, 222, 0.4)';
+                e.currentTarget.style.borderColor = '#74E2DE';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 10px 30px rgba(102, 126, 234, 0.3)';
+                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+                e.currentTarget.style.borderColor = 'rgba(116, 226, 222, 0.3)';
               }}
             >
               <div className="flex-between">
                 <div>
-                  <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>
+                  <p style={{ color: '#74E2DE', fontSize: '14px', marginBottom: '12px', fontWeight: '600' }}>
                     Total des élections
                   </p>
-                  <h3 style={{ fontSize: '36px', fontWeight: '700', margin: 0 }}>{stats.total}</h3>
+                  <h3 style={{ fontSize: '36px', fontWeight: '700', margin: 0, color: '#EFEFEF' }}>{stats.total}</h3>
                 </div>
                 <div style={{
-                  background: 'rgba(255,255,255,0.2)',
+                  background: '#74E2DE',
                   borderRadius: '16px',
                   padding: '16px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  <BarChart3 size={32} aria-hidden="true" />
+                  <BarChart3 size={32} color="#1A1D21" aria-hidden="true" />
                 </div>
               </div>
             </div>
@@ -625,38 +631,40 @@ function Dashboard({ setIsAuthenticated }) {
             <div
               className="card"
               style={{
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                color: 'white',
-                border: 'none',
-                boxShadow: '0 10px 30px rgba(16, 185, 129, 0.3)',
+                background: '#232730',
+                color: '#EFEFEF',
+                border: '1px solid rgba(229, 133, 85, 0.3)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
                 transition: 'all 0.3s ease',
                 cursor: 'pointer'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-8px)';
-                e.currentTarget.style.boxShadow = '0 15px 40px rgba(16, 185, 129, 0.4)';
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(229, 133, 85, 0.4)';
+                e.currentTarget.style.borderColor = '#E58555';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 10px 30px rgba(16, 185, 129, 0.3)';
+                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+                e.currentTarget.style.borderColor = 'rgba(229, 133, 85, 0.3)';
               }}
             >
               <div className="flex-between">
                 <div>
-                  <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>
+                  <p style={{ color: '#E58555', fontSize: '14px', marginBottom: '12px', fontWeight: '600' }}>
                     Votes actifs
                   </p>
-                  <h3 style={{ fontSize: '36px', fontWeight: '700', margin: 0 }}>{stats.active}</h3>
+                  <h3 style={{ fontSize: '36px', fontWeight: '700', margin: 0, color: '#EFEFEF' }}>{stats.active}</h3>
                 </div>
                 <div style={{
-                  background: 'rgba(255,255,255,0.2)',
+                  background: '#E58555',
                   borderRadius: '16px',
                   padding: '16px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  <Activity size={32} aria-hidden="true" />
+                  <Activity size={32} color="#1A1D21" aria-hidden="true" />
                 </div>
               </div>
             </div>
@@ -665,38 +673,40 @@ function Dashboard({ setIsAuthenticated }) {
             <div
               className="card"
               style={{
-                background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                color: 'white',
-                border: 'none',
-                boxShadow: '0 10px 30px rgba(245, 158, 11, 0.3)',
+                background: '#232730',
+                color: '#EFEFEF',
+                border: '1px solid rgba(252, 73, 95, 0.3)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
                 transition: 'all 0.3s ease',
                 cursor: 'pointer'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-8px)';
-                e.currentTarget.style.boxShadow = '0 15px 40px rgba(245, 158, 11, 0.4)';
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(252, 73, 95, 0.4)';
+                e.currentTarget.style.borderColor = '#FC495F';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 10px 30px rgba(245, 158, 11, 0.3)';
+                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+                e.currentTarget.style.borderColor = 'rgba(252, 73, 95, 0.3)';
               }}
             >
               <div className="flex-between">
                 <div>
-                  <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>
+                  <p style={{ color: '#FC495F', fontSize: '14px', marginBottom: '12px', fontWeight: '600' }}>
                     Brouillons
                   </p>
-                  <h3 style={{ fontSize: '36px', fontWeight: '700', margin: 0 }}>{stats.draft}</h3>
+                  <h3 style={{ fontSize: '36px', fontWeight: '700', margin: 0, color: '#EFEFEF' }}>{stats.draft}</h3>
                 </div>
                 <div style={{
-                  background: 'rgba(255,255,255,0.2)',
+                  background: '#FC495F',
                   borderRadius: '16px',
                   padding: '16px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  <Calendar size={32} aria-hidden="true" />
+                  <Calendar size={32} color="#EFEFEF" aria-hidden="true" />
                 </div>
               </div>
             </div>
@@ -705,38 +715,40 @@ function Dashboard({ setIsAuthenticated }) {
             <div
               className="card"
               style={{
-                background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-                color: 'white',
-                border: 'none',
-                boxShadow: '0 10px 30px rgba(99, 102, 241, 0.3)',
+                background: '#232730',
+                color: '#EFEFEF',
+                border: '1px solid rgba(116, 226, 222, 0.3)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
                 transition: 'all 0.3s ease',
                 cursor: 'pointer'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-8px)';
-                e.currentTarget.style.boxShadow = '0 15px 40px rgba(99, 102, 241, 0.4)';
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(116, 226, 222, 0.4)';
+                e.currentTarget.style.borderColor = '#74E2DE';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 10px 30px rgba(99, 102, 241, 0.3)';
+                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+                e.currentTarget.style.borderColor = 'rgba(116, 226, 222, 0.3)';
               }}
             >
               <div className="flex-between">
                 <div>
-                  <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '14px', marginBottom: '8px', fontWeight: '500' }}>
+                  <p style={{ color: '#74E2DE', fontSize: '14px', marginBottom: '12px', fontWeight: '600' }}>
                     Terminés
                   </p>
-                  <h3 style={{ fontSize: '36px', fontWeight: '700', margin: 0 }}>{stats.closed}</h3>
+                  <h3 style={{ fontSize: '36px', fontWeight: '700', margin: 0, color: '#EFEFEF' }}>{stats.closed}</h3>
                 </div>
                 <div style={{
-                  background: 'rgba(255,255,255,0.2)',
+                  background: '#74E2DE',
                   borderRadius: '16px',
                   padding: '16px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  <CheckCircle size={32} aria-hidden="true" />
+                  <CheckCircle size={32} color="#1A1D21" aria-hidden="true" />
                 </div>
               </div>
             </div>
@@ -746,21 +758,23 @@ function Dashboard({ setIsAuthenticated }) {
         {/* Elections list section */}
         <section aria-labelledby="elections-heading">
           <div className="card" style={{
-            background: 'white',
+            background: '#232730',
             borderRadius: '20px',
-            boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
-            overflow: 'hidden'
+            boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+            overflow: 'hidden',
+            border: '1px solid rgba(255,255,255,0.05)'
           }}>
           <div className="flex-between" style={{
             marginBottom: '24px',
             padding: '8px 0',
-            borderBottom: '2px solid #f3f4f6'
+            borderBottom: '1px solid rgba(255,255,255,0.1)'
           }}>
             <h2 id="elections-heading" style={{
               fontSize: '24px',
-              color: '#111827',
-              fontWeight: '700',
-              margin: 0
+              color: '#EFEFEF',
+              fontWeight: '600',
+              margin: 0,
+              letterSpacing: '-0.02em'
             }}>
               Mes élections
             </h2>
@@ -768,19 +782,20 @@ function Dashboard({ setIsAuthenticated }) {
               onClick={() => navigate('/elections/new')}
               className="btn btn-primary"
               style={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: '#74E2DE',
+                color: '#1A1D21',
                 border: 'none',
                 fontWeight: '600',
-                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+                boxShadow: '0 2px 8px rgba(116, 226, 222, 0.4)',
                 transition: 'all 0.3s ease'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(116, 226, 222, 0.6)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(116, 226, 222, 0.4)';
               }}
             >
               <Plus size={18} aria-hidden="true" />
@@ -795,9 +810,9 @@ function Dashboard({ setIsAuthenticated }) {
             gap: isMobile ? '12px' : '16px',
             marginBottom: isMobile ? '16px' : '24px',
             padding: isMobile ? '16px' : '20px',
-            background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+            background: 'rgba(255,255,255,0.03)',
             borderRadius: isMobile ? '12px' : '16px',
-            border: '1px solid #e2e8f0'
+            border: '1px solid rgba(255,255,255,0.05)'
           }}>
             {/* Search */}
             <div style={{ position: 'relative' }}>
@@ -809,7 +824,7 @@ function Dashboard({ setIsAuthenticated }) {
                   left: '12px',
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  color: '#6b7280'
+                  color: '#74E2DE'
                 }}
               />
               <label htmlFor="search-elections" className="sr-only">
@@ -827,17 +842,19 @@ function Dashboard({ setIsAuthenticated }) {
                   paddingLeft: '40px',
                   width: '100%',
                   boxSizing: 'border-box',
-                  border: '2px solid #e2e8f0',
+                  border: '1px solid rgba(116, 226, 222, 0.2)',
                   borderRadius: '12px',
                   fontSize: '14px',
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.3s ease',
+                  background: 'rgba(255,255,255,0.05)',
+                  color: '#EFEFEF'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#667eea';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+                  e.target.style.borderColor = '#74E2DE';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(116, 226, 222, 0.2)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = '#e2e8f0';
+                  e.target.style.borderColor = 'rgba(116, 226, 222, 0.2)';
                   e.target.style.boxShadow = 'none';
                 }}
               />
@@ -853,7 +870,7 @@ function Dashboard({ setIsAuthenticated }) {
                     background: 'none',
                     border: 'none',
                     cursor: 'pointer',
-                    color: '#6b7280'
+                    color: '#74E2DE'
                   }}
                 >
                   <X size={18} aria-hidden="true" />
@@ -870,26 +887,28 @@ function Dashboard({ setIsAuthenticated }) {
                 style={{
                   width: '100%',
                   boxSizing: 'border-box',
-                  border: '2px solid #e2e8f0',
+                  border: '1px solid rgba(116, 226, 222, 0.2)',
                   borderRadius: '12px',
                   fontSize: '14px',
                   fontWeight: '500',
                   transition: 'all 0.3s ease',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  background: 'rgba(255,255,255,0.05)',
+                  color: '#EFEFEF'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#667eea';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+                  e.target.style.borderColor = '#74E2DE';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(116, 226, 222, 0.2)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = '#e2e8f0';
+                  e.target.style.borderColor = 'rgba(116, 226, 222, 0.2)';
                   e.target.style.boxShadow = 'none';
                 }}
               >
-                <option value="all">Tous les statuts</option>
-                <option value="draft">Brouillons</option>
-                <option value="active">En cours</option>
-                <option value="closed">Terminés</option>
+                <option value="all" style={{background: '#232730', color: '#EFEFEF'}}>Tous les statuts</option>
+                <option value="draft" style={{background: '#232730', color: '#EFEFEF'}}>Brouillons</option>
+                <option value="active" style={{background: '#232730', color: '#EFEFEF'}}>En cours</option>
+                <option value="closed" style={{background: '#232730', color: '#EFEFEF'}}>Terminés</option>
               </select>
             </div>
 
@@ -902,27 +921,29 @@ function Dashboard({ setIsAuthenticated }) {
                 style={{
                   width: '100%',
                   boxSizing: 'border-box',
-                  border: '2px solid #e2e8f0',
+                  border: '1px solid rgba(116, 226, 222, 0.2)',
                   borderRadius: '12px',
                   fontSize: '14px',
                   fontWeight: '500',
                   transition: 'all 0.3s ease',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  background: 'rgba(255,255,255,0.05)',
+                  color: '#EFEFEF'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#667eea';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+                  e.target.style.borderColor = '#74E2DE';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(116, 226, 222, 0.2)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = '#e2e8f0';
+                  e.target.style.borderColor = 'rgba(116, 226, 222, 0.2)';
                   e.target.style.boxShadow = 'none';
                 }}
               >
-                <option value="date-desc">Date (récent → ancien)</option>
-                <option value="date-asc">Date (ancien → récent)</option>
-                <option value="title-asc">Titre (A → Z)</option>
-                <option value="title-desc">Titre (Z → A)</option>
-                <option value="participation-desc">Participation (haute → basse)</option>
+                <option value="date-desc" style={{background: '#232730', color: '#EFEFEF'}}>Date (récent → ancien)</option>
+                <option value="date-asc" style={{background: '#232730', color: '#EFEFEF'}}>Date (ancien → récent)</option>
+                <option value="title-asc" style={{background: '#232730', color: '#EFEFEF'}}>Titre (A → Z)</option>
+                <option value="title-desc" style={{background: '#232730', color: '#EFEFEF'}}>Titre (Z → A)</option>
+                <option value="participation-desc" style={{background: '#232730', color: '#EFEFEF'}}>Participation (haute → basse)</option>
               </select>
             </div>
           </div>
@@ -935,10 +956,10 @@ function Dashboard({ setIsAuthenticated }) {
               aria-atomic="true"
               style={{
                 fontSize: '13px',
-                color: '#6b7280',
+                color: '#9CA3AF',
                 marginBottom: '16px',
                 paddingBottom: '16px',
-                borderBottom: '1px solid #e5e7eb'
+                borderBottom: '1px solid rgba(255,255,255,0.1)'
               }}
             >
               {searchTerm || statusFilter !== 'all'
@@ -968,9 +989,10 @@ function Dashboard({ setIsAuthenticated }) {
             <div style={{
               textAlign: 'center',
               padding: isMobile ? '40px 20px' : '60px 40px',
-              color: '#6b7280',
-              background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-              borderRadius: '16px'
+              color: '#9CA3AF',
+              background: 'rgba(255,255,255,0.03)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255,255,255,0.05)'
             }}>
               <p style={{ fontSize: isMobile ? '14px' : '16px', marginBottom: '20px' }}>Aucune élection ne correspond à vos critères de recherche</p>
               <button
@@ -982,8 +1004,8 @@ function Dashboard({ setIsAuthenticated }) {
                 className="btn btn-secondary"
                 style={{
                   marginTop: '20px',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  color: 'white',
+                  background: '#74E2DE',
+                  color: '#1A1D21',
                   border: 'none',
                   fontWeight: '600'
                 }}
@@ -998,15 +1020,16 @@ function Dashboard({ setIsAuthenticated }) {
                 <div
                   key={election.id}
                   style={{
-                    background: 'white',
+                    background: 'rgba(255,255,255,0.03)',
                     borderRadius: '16px',
                     padding: '20px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                    transition: 'all 0.3s ease'
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                    transition: 'all 0.3s ease',
+                    border: '1px solid rgba(255,255,255,0.05)'
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px' }}>
-                    <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#111827', margin: 0, flex: 1 }}>
+                    <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#EFEFEF', margin: 0, flex: 1 }}>
                       {election.title}
                     </h3>
                     {getStatusBadge(election.status)}
@@ -1014,21 +1037,21 @@ function Dashboard({ setIsAuthenticated }) {
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
-                      <span style={{ color: '#64748b' }}>Type:</span>
-                      <span style={{ color: '#111827', fontWeight: '500', textTransform: 'capitalize' }}>{election.voting_type}</span>
+                      <span style={{ color: '#9CA3AF' }}>Type:</span>
+                      <span style={{ color: '#EFEFEF', fontWeight: '500', textTransform: 'capitalize' }}>{election.voting_type}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
-                      <span style={{ color: '#64748b' }}>Électeurs:</span>
-                      <span style={{ color: '#111827', fontWeight: '500' }}>{election.total_voters || 0}</span>
+                      <span style={{ color: '#9CA3AF' }}>Électeurs:</span>
+                      <span style={{ color: '#EFEFEF', fontWeight: '500' }}>{election.total_voters || 0}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
-                      <span style={{ color: '#64748b' }}>Participation:</span>
+                      <span style={{ color: '#9CA3AF' }}>Participation:</span>
                       {election.total_voters > 0 ? (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span style={{ color: '#111827', fontWeight: '500' }}>{election.voted_count} / {election.total_voters}</span>
+                          <span style={{ color: '#EFEFEF', fontWeight: '500' }}>{election.voted_count} / {election.total_voters}</span>
                           <span style={{
-                            background: Math.round((election.voted_count / election.total_voters) * 100) >= 50 ? '#d1fae5' : '#fee2e2',
-                            color: Math.round((election.voted_count / election.total_voters) * 100) >= 50 ? '#065f46' : '#991b1b',
+                            background: Math.round((election.voted_count / election.total_voters) * 100) >= 50 ? 'rgba(229, 133, 85, 0.2)' : 'rgba(252, 73, 95, 0.2)',
+                            color: Math.round((election.voted_count / election.total_voters) * 100) >= 50 ? '#E58555' : '#FC495F',
                             padding: '2px 8px',
                             borderRadius: '8px',
                             fontSize: '12px',
@@ -1038,12 +1061,12 @@ function Dashboard({ setIsAuthenticated }) {
                           </span>
                         </div>
                       ) : (
-                        <span style={{ color: '#94a3b8' }}>-</span>
+                        <span style={{ color: '#9CA3AF' }}>-</span>
                       )}
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
-                      <span style={{ color: '#64748b' }}>Date:</span>
-                      <span style={{ color: '#94a3b8', fontSize: '13px' }}>
+                      <span style={{ color: '#9CA3AF' }}>Date:</span>
+                      <span style={{ color: '#9CA3AF', fontSize: '13px' }}>
                         {new Date(election.created_at).toLocaleDateString('fr-FR')}
                       </span>
                     </div>
@@ -1055,7 +1078,8 @@ function Dashboard({ setIsAuthenticated }) {
                       className="btn btn-sm btn-primary"
                       style={{
                         flex: 1,
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        background: '#74E2DE',
+                        color: '#1A1D21',
                         border: 'none',
                         fontWeight: '600',
                         padding: '10px 16px',
@@ -1070,8 +1094,8 @@ function Dashboard({ setIsAuthenticated }) {
                         className="btn btn-sm btn-danger"
                         title="Supprimer cette élection"
                         style={{
-                          background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                          color: 'white',
+                          background: '#FC495F',
+                          color: '#EFEFEF',
                           padding: '10px 16px',
                           borderRadius: '8px',
                           border: 'none',
@@ -1091,128 +1115,207 @@ function Dashboard({ setIsAuthenticated }) {
             </div>
           ) : (
             // Desktop Table View
-            <table className="table" style={{
-              borderCollapse: 'separate',
-              borderSpacing: '0 12px'
-            }}>
-              <thead>
-                <tr style={{ background: 'transparent' }}>
-                  <th style={{ fontSize: '13px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Titre</th>
-                  <th style={{ fontSize: '13px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Type</th>
-                  <th style={{ fontSize: '13px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Statut</th>
-                  <th style={{ fontSize: '13px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Électeurs</th>
-                  <th style={{ fontSize: '13px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Participation</th>
-                  <th style={{ fontSize: '13px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Date</th>
-                  <th style={{ fontSize: '13px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredElections.map((election) => (
-                  <tr
-                    key={election.id}
-                    style={{
-                      background: 'white',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-                      borderRadius: '12px',
-                      transition: 'all 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)';
-                    }}
-                  >
-                    <td style={{ borderRadius: '12px 0 0 12px', padding: '16px' }}>
-                      <strong style={{ color: '#111827', fontSize: '15px' }}>{election.title}</strong>
-                    </td>
-                    <td style={{ textTransform: 'capitalize', color: '#64748b', fontSize: '14px' }}>
-                      {election.voting_type}
-                    </td>
-                    <td>{getStatusBadge(election.status)}</td>
-                    <td style={{ color: '#64748b', fontSize: '14px', fontWeight: '600' }}>{election.total_voters || 0}</td>
-                    <td style={{ color: '#64748b', fontSize: '14px' }}>
-                      {election.total_voters > 0
-                        ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span>{election.voted_count} / {election.total_voters}</span>
-                            <span style={{
-                              background: Math.round((election.voted_count / election.total_voters) * 100) >= 50 ? '#d1fae5' : '#fee2e2',
-                              color: Math.round((election.voted_count / election.total_voters) * 100) >= 50 ? '#065f46' : '#991b1b',
-                              padding: '2px 8px',
-                              borderRadius: '8px',
-                              fontSize: '12px',
-                              fontWeight: '600'
-                            }}>
-                              {Math.round((election.voted_count / election.total_voters) * 100)}%
-                            </span>
-                          </div>
-                        )
-                        : '-'}
-                    </td>
-                    <td style={{ fontSize: '13px', color: '#94a3b8' }}>
-                      {new Date(election.created_at).toLocaleDateString('fr-FR')}
-                    </td>
-                    <td style={{ borderRadius: '0 12px 12px 0' }}>
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <button
-                          onClick={() => navigate(`/elections/${election.id}`)}
-                          className="btn btn-sm btn-primary"
-                          style={{
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                            border: 'none',
-                            fontWeight: '600',
-                            padding: '8px 16px',
-                            borderRadius: '8px',
-                            transition: 'all 0.3s ease'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'scale(1.05)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'scale(1)';
-                          }}
-                        >
-                          Gérer
-                        </button>
-                        {election.status === 'closed' && (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{
+                width: '100%',
+                borderCollapse: 'separate',
+                borderSpacing: '0'
+              }}>
+                <thead>
+                  <tr style={{
+                    background: 'transparent',
+                    borderBottom: '2px solid rgba(116, 226, 222, 0.2)'
+                  }}>
+                    <th style={{
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#9CA3AF',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      padding: '16px',
+                      textAlign: 'left'
+                    }}>Titre</th>
+                    <th style={{
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#9CA3AF',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      padding: '16px',
+                      textAlign: 'left'
+                    }}>Type</th>
+                    <th style={{
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#9CA3AF',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      padding: '16px',
+                      textAlign: 'left'
+                    }}>Statut</th>
+                    <th style={{
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#9CA3AF',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      padding: '16px',
+                      textAlign: 'center'
+                    }}>Électeurs</th>
+                    <th style={{
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#9CA3AF',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      padding: '16px',
+                      textAlign: 'left'
+                    }}>Participation</th>
+                    <th style={{
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#9CA3AF',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      padding: '16px',
+                      textAlign: 'left'
+                    }}>Date</th>
+                    <th style={{
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#9CA3AF',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      padding: '16px',
+                      textAlign: 'right'
+                    }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody style={{
+                  border: '1px solid rgba(116, 226, 222, 0.2)',
+                  borderRadius: '12px'
+                }}>
+                  {filteredElections.map((election, index) => (
+                    <tr
+                      key={election.id}
+                      style={{
+                        borderBottom: '1px solid rgba(255,255,255,0.05)',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(116, 226, 222, 0.05)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'transparent';
+                      }}
+                    >
+                      <td style={{ padding: '20px 16px' }}>
+                        <div style={{ color: '#EFEFEF', fontSize: '14px', fontWeight: '500' }}>{election.title}</div>
+                      </td>
+                      <td style={{ padding: '20px 16px', textTransform: 'capitalize', color: '#9CA3AF', fontSize: '14px' }}>
+                        {election.voting_type}
+                      </td>
+                      <td style={{ padding: '20px 16px' }}>{getStatusBadge(election.status)}</td>
+                      <td style={{ padding: '20px 16px', color: '#EFEFEF', fontSize: '14px', fontWeight: '600', textAlign: 'center' }}>
+                        {election.total_voters || 0}
+                      </td>
+                      <td style={{ padding: '20px 16px', color: '#9CA3AF', fontSize: '14px' }}>
+                        {election.total_voters > 0
+                          ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <div style={{
+                                flex: 1,
+                                height: '6px',
+                                background: 'rgba(255,255,255,0.1)',
+                                borderRadius: '3px',
+                                overflow: 'hidden',
+                                maxWidth: '100px'
+                              }}>
+                                <div style={{
+                                  height: '100%',
+                                  width: `${Math.round((election.voted_count / election.total_voters) * 100)}%`,
+                                  background: Math.round((election.voted_count / election.total_voters) * 100) >= 50 ? '#74E2DE' : '#FC495F',
+                                  transition: 'width 0.3s ease'
+                                }}></div>
+                              </div>
+                              <span style={{
+                                color: '#EFEFEF',
+                                fontSize: '13px',
+                                fontWeight: '600',
+                                minWidth: '45px'
+                              }}>
+                                {Math.round((election.voted_count / election.total_voters) * 100)}%
+                              </span>
+                            </div>
+                          )
+                          : <span style={{color: '#6B7280'}}>-</span>}
+                      </td>
+                      <td style={{ padding: '20px 16px', fontSize: '13px', color: '#9CA3AF' }}>
+                        {new Date(election.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                      </td>
+                      <td style={{ padding: '20px 16px' }}>
+                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                           <button
-                            onClick={() => handleDeleteElection(election.id, election.title)}
-                            className="btn btn-sm btn-danger"
-                            title="Supprimer cette élection"
+                            onClick={() => navigate(`/elections/${election.id}`)}
                             style={{
-                              background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                              color: 'white',
+                              background: 'transparent',
+                              color: '#74E2DE',
+                              border: '1px solid rgba(116, 226, 222, 0.3)',
+                              fontWeight: '500',
                               padding: '8px 16px',
                               borderRadius: '8px',
-                              border: 'none',
+                              transition: 'all 0.2s ease',
                               cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '6px',
-                              fontSize: '14px',
-                              fontWeight: '600',
-                              transition: 'all 0.3s ease'
+                              fontSize: '13px'
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.transform = 'scale(1.05)';
+                              e.currentTarget.style.background = 'rgba(116, 226, 222, 0.1)';
+                              e.currentTarget.style.borderColor = '#74E2DE';
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.transform = 'scale(1)';
+                              e.currentTarget.style.background = 'transparent';
+                              e.currentTarget.style.borderColor = 'rgba(116, 226, 222, 0.3)';
                             }}
                           >
-                            <Trash2 size={16} />
-                            Supprimer
+                            Gérer
                           </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                          {election.status === 'closed' && (
+                            <button
+                              onClick={() => handleDeleteElection(election.id, election.title)}
+                              title="Supprimer cette élection"
+                              style={{
+                                background: 'transparent',
+                                color: '#FC495F',
+                                border: '1px solid rgba(252, 73, 95, 0.3)',
+                                padding: '8px 12px',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                fontSize: '13px',
+                                fontWeight: '500',
+                                transition: 'all 0.2s ease'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = 'rgba(252, 73, 95, 0.1)';
+                                e.currentTarget.style.borderColor = '#FC495F';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'transparent';
+                                e.currentTarget.style.borderColor = 'rgba(252, 73, 95, 0.3)';
+                              }}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
           </div>
         </section>

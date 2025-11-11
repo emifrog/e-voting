@@ -217,22 +217,22 @@ function CreateElection() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', padding: '40px 20px' }}>
+    <div style={{ minHeight: '100vh', padding: '40px 20px', background: '#1A1D21' }}>
       <div className="container" style={{ maxWidth: '800px' }}>
         <button
           onClick={() => navigate('/dashboard')}
           className="btn btn-secondary"
-          style={{ marginBottom: '20px' }}
+          style={{ marginBottom: '20px', background: 'transparent', color: '#EFEFEF', border: '1px solid rgba(116, 226, 222, 0.3)' }}
         >
           <ArrowLeft size={18} />
           Retour
         </button>
 
-        <div className="card">
+        <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)', boxShadow: '0 4px 30px rgba(0,0,0,0.5)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '20px' }}>
             <div>
-              <h1 style={{ fontSize: '28px', marginBottom: '8px' }}>Créer une nouvelle élection</h1>
-              <p style={{ color: '#6b7280', marginBottom: 0 }}>
+              <h1 style={{ fontSize: '28px', marginBottom: '8px', color: '#EFEFEF' }}>Créer une nouvelle élection</h1>
+              <p style={{ color: '#9CA3AF', marginBottom: 0 }}>
                 Configurez votre vote en ligne sécurisé
               </p>
             </div>
@@ -250,7 +250,7 @@ function CreateElection() {
                     alignItems: 'center',
                     justifyContent: 'flex-end',
                     gap: '6px',
-                    color: saveStatus === 'saved' ? 'var(--success-600)' : saveStatus === 'error' ? 'var(--danger)' : '#6b7280'
+                    color: saveStatus === 'saved' ? '#74E2DE' : saveStatus === 'error' ? '#FC495F' : '#9CA3AF'
                   }}
                 >
                   <Save size={14} aria-hidden="true" />
@@ -325,7 +325,7 @@ function CreateElection() {
 
           <form onSubmit={handleSubmit}>
             {/* Informations de base */}
-            <h3 style={{ marginBottom: '16px' }}>Informations générales</h3>
+            <h3 style={{ marginBottom: '16px', color: '#EFEFEF' }}>Informations générales</h3>
 
             <div className="form-group">
               <label className="label">Titre de l'élection *</label>
@@ -377,35 +377,38 @@ function CreateElection() {
             </div>
 
             {/* Paramètres */}
-            <h3 style={{ marginTop: '30px', marginBottom: '16px' }}>Paramètres</h3>
+            <h3 style={{ marginTop: '30px', marginBottom: '16px', color: '#EFEFEF' }}>Paramètres</h3>
 
             <div style={{ display: 'grid', gap: '12px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: '#EFEFEF' }}>
                 <input
                   type="checkbox"
                   name="is_secret"
                   checked={formData.is_secret}
                   onChange={handleChange}
+                  style={{ accentColor: '#74E2DE' }}
                 />
                 <span>Vote secret (ultra-sécurisé, anonyme)</span>
               </label>
 
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: '#EFEFEF' }}>
                 <input
                   type="checkbox"
                   name="is_weighted"
                   checked={formData.is_weighted}
                   onChange={handleChange}
+                  style={{ accentColor: '#74E2DE' }}
                 />
                 <span>Vote pondéré (poids différents par électeur)</span>
               </label>
 
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: '#EFEFEF' }}>
                 <input
                   type="checkbox"
                   name="deferred_counting"
                   checked={formData.deferred_counting}
                   onChange={handleChange}
+                  style={{ accentColor: '#74E2DE' }}
                 />
                 <span>Dépouillement différé (résultats après clôture)</span>
               </label>
@@ -461,7 +464,7 @@ function CreateElection() {
             </div>
 
             {/* Quorum */}
-            <h3 style={{ marginTop: '30px', marginBottom: '16px' }}>📊 Quorum</h3>
+            <h3 style={{ marginTop: '30px', marginBottom: '16px', color: '#EFEFEF' }}>📊 Quorum</h3>
 
             <div className="alert alert-info" style={{ marginBottom: '16px' }}>
               <p style={{ fontSize: '14px' }}>
@@ -520,7 +523,7 @@ function CreateElection() {
             )}
 
             {/* Intégration Visioconférence */}
-            <h3 style={{ marginTop: '30px', marginBottom: '16px' }}>
+            <h3 style={{ marginTop: '30px', marginBottom: '16px', color: '#EFEFEF' }}>
               <Video size={20} style={{ display: 'inline', marginRight: '8px', verticalAlign: 'middle' }} />
               Visioconférence
             </h3>
@@ -532,12 +535,13 @@ function CreateElection() {
             </div>
 
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: '#EFEFEF' }}>
                 <input
                   type="checkbox"
                   name="enable_meeting"
                   checked={formData.enable_meeting}
                   onChange={handleChange}
+                  style={{ accentColor: '#74E2DE' }}
                 />
                 <span>Activer l'intégration visioconférence</span>
               </label>
@@ -589,17 +593,18 @@ function CreateElection() {
             )}
 
             {/* Options */}
-            <h3 style={{ marginTop: '30px', marginBottom: '16px' }}>Options de vote</h3>
+            <h3 style={{ marginTop: '30px', marginBottom: '16px', color: '#EFEFEF' }}>Options de vote</h3>
 
             {options.map((option, index) => (
-              <div key={index} className="card" style={{ marginBottom: '12px', background: '#f9fafb' }}>
+              <div key={index} className="card" style={{ marginBottom: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
                 <div className="flex-between" style={{ marginBottom: '12px' }}>
-                  <strong>Option {index + 1}</strong>
+                  <strong style={{ color: '#EFEFEF' }}>Option {index + 1}</strong>
                   {options.length > 2 && (
                     <button
                       type="button"
                       onClick={() => removeOption(index)}
                       className="btn btn-sm btn-danger"
+                      style={{ background: '#FC495F', color: '#EFEFEF', border: 'none' }}
                     >
                       <Trash2 size={14} />
                     </button>
@@ -643,7 +648,7 @@ function CreateElection() {
               type="button"
               onClick={addOption}
               className="btn btn-secondary"
-              style={{ marginBottom: '20px' }}
+              style={{ marginBottom: '20px', background: 'transparent', color: '#EFEFEF', border: '1px solid rgba(116, 226, 222, 0.3)' }}
             >
               <Plus size={18} />
               Ajouter une option
@@ -654,12 +659,14 @@ function CreateElection() {
                 type="button"
                 onClick={() => navigate('/dashboard')}
                 className="btn btn-secondary"
+                style={{ background: 'transparent', color: '#EFEFEF', border: '1px solid rgba(116, 226, 222, 0.3)' }}
               >
                 Annuler
               </button>
               <button
                 type="submit"
                 className="btn btn-primary"
+                style={{ background: '#74E2DE', color: '#1A1D21', fontWeight: '600', border: 'none' }}
                 disabled={loading}
               >
                 {loading ? 'Création...' : 'Créer l\'élection'}

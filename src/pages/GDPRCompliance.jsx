@@ -138,41 +138,42 @@ function GDPRCompliance() {
   }
 
   return (
-    <div className="container">
+    <div className="container" style={{ background: '#1A1D21', minHeight: '100vh', padding: '40px 20px' }}>
       {/* Header */}
       <header role="banner" style={{
-        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+        background: 'linear-gradient(135deg, #74E2DE 0%, #E58555 100%)',
         padding: '30px',
         borderRadius: '12px',
         marginBottom: '30px',
-        color: 'white'
+        color: '#1A1D21'
       }}>
         <div className="flex-between" style={{ marginBottom: '20px' }}>
           <div>
             <button
               onClick={() => navigate('/dashboard')}
               style={{
-                background: 'rgba(255,255,255,0.2)',
+                background: 'rgba(26, 29, 33, 0.3)',
                 border: 'none',
-                color: 'white',
+                color: '#1A1D21',
                 padding: '8px 16px',
                 borderRadius: '8px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
                 cursor: 'pointer',
-                marginBottom: '16px'
+                marginBottom: '16px',
+                fontWeight: '600'
               }}
               aria-label="Retour au tableau de bord"
             >
               <ArrowLeft size={18} aria-hidden="true" />
               Retour
             </button>
-            <h1 style={{ fontSize: '32px', marginBottom: '8px' }}>
+            <h1 style={{ fontSize: '32px', marginBottom: '8px', fontWeight: '700' }}>
               <Shield size={32} style={{ verticalAlign: 'middle', marginRight: '12px' }} aria-hidden="true" />
               Conformité GDPR/RGPD
             </h1>
-            <p style={{ color: 'rgba(255,255,255,0.9)' }}>
+            <p style={{ color: 'rgba(26, 29, 33, 0.9)', fontWeight: '500' }}>
               Gestion de la conformité au Règlement Général sur la Protection des Données
             </p>
           </div>
@@ -184,7 +185,7 @@ function GDPRCompliance() {
         display: 'flex',
         gap: '8px',
         marginBottom: '30px',
-        borderBottom: '2px solid #e5e7eb',
+        borderBottom: '2px solid rgba(116, 226, 222, 0.2)',
         overflowX: 'auto'
       }}>
         {[
@@ -203,8 +204,8 @@ function GDPRCompliance() {
             tabIndex={activeTab === tab.id ? 0 : -1}
             onClick={() => setActiveTab(tab.id)}
             style={{
-              background: activeTab === tab.id ? '#6366f1' : 'transparent',
-              color: activeTab === tab.id ? 'white' : '#6b7280',
+              background: activeTab === tab.id ? '#74E2DE' : 'transparent',
+              color: activeTab === tab.id ? '#1A1D21' : '#9CA3AF',
               border: 'none',
               padding: '12px 24px',
               borderRadius: '8px 8px 0 0',
@@ -227,8 +228,8 @@ function GDPRCompliance() {
         <div role="tabpanel" id="panel-overview" aria-labelledby="tab-overview">
           <div className="grid grid-2" style={{ marginBottom: '30px' }}>
             {/* Compliance Score */}
-            <div className="card">
-              <h3 style={{ fontSize: '18px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+              <h3 style={{ fontSize: '18px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', color: '#EFEFEF' }}>
                 <CheckCircle size={20} color="#10b981" aria-hidden="true" />
                 Score de conformité
               </h3>
@@ -236,23 +237,23 @@ function GDPRCompliance() {
                 <div style={{ fontSize: '48px', fontWeight: 'bold', color: '#10b981' }}>
                   {statistics?.compliance_score || 0}%
                 </div>
-                <p style={{ color: '#6b7280', marginTop: '8px' }}>
+                <p style={{ color: '#9CA3AF', marginTop: '8px' }}>
                   Conformité globale GDPR
                 </p>
               </div>
             </div>
 
             {/* Pending Requests */}
-            <div className="card">
-              <h3 style={{ fontSize: '18px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Clock size={20} color="#f59e0b" aria-hidden="true" />
+            <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+              <h3 style={{ fontSize: '18px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', color: '#EFEFEF' }}>
+                <Clock size={20} color="#E58555" aria-hidden="true" />
                 Demandes en attente
               </h3>
               <div style={{ textAlign: 'center', padding: '20px' }}>
-                <div style={{ fontSize: '48px', fontWeight: 'bold', color: '#f59e0b' }}>
+                <div style={{ fontSize: '48px', fontWeight: 'bold', color: '#E58555' }}>
                   {statistics?.pending_requests || 0}
                 </div>
-                <p style={{ color: '#6b7280', marginTop: '8px' }}>
+                <p style={{ color: '#9CA3AF', marginTop: '8px' }}>
                   À traiter sous 30 jours
                 </p>
               </div>
@@ -260,8 +261,8 @@ function GDPRCompliance() {
           </div>
 
           {/* Quick Actions */}
-          <div className="card" style={{ marginBottom: '30px' }}>
-            <h3 style={{ fontSize: '18px', marginBottom: '16px' }}>Actions rapides</h3>
+          <div className="card" style={{ marginBottom: '30px', background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+            <h3 style={{ fontSize: '18px', marginBottom: '16px', color: '#EFEFEF' }}>Actions rapides</h3>
             <div className="grid grid-3">
               <button
                 onClick={handleEnforceRetention}
@@ -291,33 +292,34 @@ function GDPRCompliance() {
           </div>
 
           {/* Data Categories Overview */}
-          <div className="card">
-            <h3 style={{ fontSize: '18px', marginBottom: '16px' }}>Catégories de données</h3>
+          <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+            <h3 style={{ fontSize: '18px', marginBottom: '16px', color: '#EFEFEF' }}>Catégories de données</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {dataCategories.slice(0, 5).map(category => (
                 <div key={category.id} style={{
                   padding: '12px',
-                  background: '#f9fafb',
+                  background: 'rgba(255, 255, 255, 0.05)',
                   borderRadius: '8px',
-                  borderLeft: `4px solid ${category.is_sensitive ? '#ef4444' : '#6366f1'}`
+                  borderLeft: `4px solid ${category.is_sensitive ? '#FC495F' : '#74E2DE'}`
                 }}>
                   <div className="flex-between">
                     <div>
-                      <strong style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {category.is_sensitive && <Lock size={16} color="#ef4444" aria-hidden="true" />}
+                      <strong style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#EFEFEF' }}>
+                        {category.is_sensitive && <Lock size={16} color="#FC495F" aria-hidden="true" />}
                         {category.category_name}
                       </strong>
-                      <p style={{ color: '#6b7280', fontSize: '14px', marginTop: '4px' }}>
+                      <p style={{ color: '#9CA3AF', fontSize: '14px', marginTop: '4px' }}>
                         {category.description}
                       </p>
                     </div>
                     <span style={{
                       padding: '4px 12px',
-                      background: 'white',
+                      background: 'rgba(116, 226, 222, 0.1)',
+                      border: '1px solid rgba(116, 226, 222, 0.3)',
                       borderRadius: '12px',
                       fontSize: '12px',
                       fontWeight: '600',
-                      color: '#6366f1'
+                      color: '#74E2DE'
                     }}>
                       {category.retention_period}
                     </span>
@@ -332,8 +334,8 @@ function GDPRCompliance() {
       {/* Data Requests Tab */}
       {activeTab === 'requests' && (
         <div role="tabpanel" id="panel-requests" aria-labelledby="tab-requests">
-          <div className="card">
-            <h3 style={{ fontSize: '18px', marginBottom: '16px' }}>
+          <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+            <h3 style={{ fontSize: '18px', marginBottom: '16px', color: '#EFEFEF' }}>
               Demandes des personnes concernées (Art. 15-22 GDPR)
             </h3>
 

@@ -12,7 +12,7 @@ import {
   getImmutabilityCertificate,
   exportAuditLogsData
 } from '../services/auditLog.js';
-import logger from '../utils/logger.js';
+import { log } from '../utils/logger.js';
 
 const router = express.Router();
 
@@ -39,7 +39,7 @@ router.get('/:electionId/audit-logs', authenticateAdmin, async (req, res) => {
       logs
     });
   } catch (error) {
-    logger.error('Failed to get audit logs:', error);
+    log.error('Failed to get audit logs:', error);
     res.status(500).json({
       error: true,
       message: 'Failed to get audit logs',
@@ -66,7 +66,7 @@ router.get('/:electionId/audit-logs/verify-chain', authenticateAdmin, async (req
       verification
     });
   } catch (error) {
-    logger.error('Failed to verify audit chain:', error);
+    log.error('Failed to verify audit chain:', error);
     res.status(500).json({
       error: true,
       message: 'Failed to verify audit chain',
@@ -90,7 +90,7 @@ router.get('/:electionId/audit-logs/certificate', authenticateAdmin, async (req,
       certificate
     });
   } catch (error) {
-    logger.error('Failed to get immutability certificate:', error);
+    log.error('Failed to get immutability certificate:', error);
     res.status(500).json({
       error: true,
       message: 'Failed to get immutability certificate',
@@ -132,7 +132,7 @@ router.get('/:electionId/audit-logs/export', authenticateAdmin, async (req, res)
       res.json(exportData);
     }
   } catch (error) {
-    logger.error('Failed to export audit logs:', error);
+    log.error('Failed to export audit logs:', error);
     res.status(500).json({
       error: true,
       message: 'Failed to export audit logs',
@@ -170,7 +170,7 @@ router.post('/:electionId/audit-logs/manual', authenticateAdmin, async (req, res
       entry
     });
   } catch (error) {
-    logger.error('Failed to create audit log entry:', error);
+    log.error('Failed to create audit log entry:', error);
     res.status(500).json({
       error: true,
       message: 'Failed to create audit log entry',
@@ -217,7 +217,7 @@ router.get('/:electionId/audit-logs/stats', authenticateAdmin, async (req, res) 
       }
     });
   } catch (error) {
-    logger.error('Failed to get audit log stats:', error);
+    log.error('Failed to get audit log stats:', error);
     res.status(500).json({
       error: true,
       message: 'Failed to get audit log stats',

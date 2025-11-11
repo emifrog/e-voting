@@ -102,7 +102,7 @@ function Results() {
   const totalVotes = results.results.results.reduce((sum, r) => sum + (r.votes || r.approvals || 0), 0);
 
   return (
-    <div style={{ minHeight: '100vh', padding: '40px 20px', background: '#004b89 ' }}>
+    <div style={{ minHeight: '100vh', padding: '40px 20px', background: '#1A1D21' }}>
       <div className="container" style={{ maxWidth: '1200px' }}>
         {/* Header */}
         <button
@@ -115,14 +115,14 @@ function Results() {
         </button>
 
         {/* Titre et statut */}
-        <div className="card" style={{ marginBottom: '30px' }}>
+        <div className="card" style={{ marginBottom: '30px', background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
           <div className="flex-between" style={{ marginBottom: '20px' }}>
             <div>
-              <h1 style={{ fontSize: '32px', marginBottom: '8px' }}>
+              <h1 style={{ fontSize: '32px', marginBottom: '8px', color: '#EFEFEF' }}>
                 <BarChart3 size={32} style={{ display: 'inline', marginRight: '12px', verticalAlign: 'middle' }} />
                 Résultats de l'élection
               </h1>
-              <p style={{ fontSize: '18px', color: '#6b7280' }}>{election.title}</p>
+              <p style={{ fontSize: '18px', color: '#9CA3AF' }}>{election.title}</p>
             </div>
             <span className={`badge badge-${election.status}`} style={{ fontSize: '16px', padding: '8px 16px' }}>
               {election.status === 'closed' ? 'Clôturé' : 'En cours'}
@@ -168,29 +168,29 @@ function Results() {
 
         {/* Statistiques principales */}
         <div className="grid grid-3" style={{ marginBottom: '30px' }}>
-          <div className="card" style={{ background: 'white' }}>
-            <Users size={32} color="#6b7280" style={{ marginBottom: '12px' }} />
-            <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '4px' }}>Participation</p>
-            <h2 style={{ fontSize: '32px', marginBottom: '8px' }}>
+          <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+            <Users size={32} color="#9CA3AF" style={{ marginBottom: '12px' }} />
+            <p style={{ color: '#9CA3AF', fontSize: '14px', marginBottom: '4px' }}>Participation</p>
+            <h2 style={{ fontSize: '32px', marginBottom: '8px', color: '#EFEFEF' }}>
               {results.stats.participation_rate}%
             </h2>
-            <p style={{ fontSize: '14px', color: '#6b7280' }}>
+            <p style={{ fontSize: '14px', color: '#9CA3AF' }}>
               {results.stats.voted_count} / {results.stats.total_voters} électeurs
             </p>
           </div>
 
-          <div className="card" style={{ background: 'white' }}>
-            <TrendingUp size={32} color="#2563eb" style={{ marginBottom: '12px' }} />
-            <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '4px' }}>Total votes</p>
-            <h2 style={{ fontSize: '32px', marginBottom: '8px' }}>
+          <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+            <TrendingUp size={32} color="#74E2DE" style={{ marginBottom: '12px' }} />
+            <p style={{ color: '#9CA3AF', fontSize: '14px', marginBottom: '4px' }}>Total votes</p>
+            <h2 style={{ fontSize: '32px', marginBottom: '8px', color: '#EFEFEF' }}>
               {totalVotes}
             </h2>
-            <p style={{ fontSize: '14px', color: '#6b7280' }}>
+            <p style={{ fontSize: '14px', color: '#9CA3AF' }}>
               {results.results.results.length} option(s)
             </p>
           </div>
 
-          <div className="card" style={{ background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)', color: 'white' }}>
+          <div className="card" style={{ background: 'linear-gradient(135deg, #E58555 0%, #74E2DE 100%)', color: '#1A1D21', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
             <Award size={32} style={{ marginBottom: '12px' }} />
             <p style={{ fontSize: '14px', marginBottom: '4px' }}>Gagnant</p>
             <h2 style={{ fontSize: '20px', marginBottom: '8px', fontWeight: 'bold' }}>
@@ -237,21 +237,21 @@ function Results() {
         )}
 
         {/* Résultats détaillés */}
-        <div className="card">
-          <h2 style={{ fontSize: '24px', marginBottom: '20px' }}>
+        <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+          <h2 style={{ fontSize: '24px', marginBottom: '20px', color: '#EFEFEF' }}>
             <PieChart size={24} style={{ display: 'inline', marginRight: '8px', verticalAlign: 'middle' }} />
             Résultats détaillés
           </h2>
 
           <div style={{ marginBottom: '20px' }}>
-            <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '8px' }}>
+            <p style={{ color: '#9CA3AF', fontSize: '14px', marginBottom: '8px' }}>
               <strong>Type de vote:</strong>{' '}
               {election.voting_type === 'simple' ? 'Question simple' :
                election.voting_type === 'approval' ? 'Vote par approbation' :
                election.voting_type === 'preference' ? 'Vote par préférence' :
                election.voting_type === 'list' ? 'Scrutin de liste' : election.voting_type}
             </p>
-            <p style={{ color: '#6b7280', fontSize: '14px' }}>
+            <p style={{ color: '#9CA3AF', fontSize: '14px' }}>
               <strong>Vote pondéré:</strong> {election.is_weighted ? 'Oui' : 'Non'}
             </p>
           </div>
@@ -268,9 +268,9 @@ function Results() {
                   style={{
                     marginBottom: '20px',
                     padding: '20px',
-                    background: isWinner ? '#fef3c7' : '#f9fafb',
+                    background: isWinner ? 'rgba(229, 133, 85, 0.1)' : 'rgba(255, 255, 255, 0.05)',
                     borderRadius: '8px',
-                    border: isWinner ? '2px solid #fbbf24' : '1px solid #e5e7eb',
+                    border: isWinner ? '2px solid #E58555' : '1px solid rgba(116, 226, 222, 0.2)',
                     position: 'relative'
                   }}
                 >
@@ -279,8 +279,8 @@ function Results() {
                       position: 'absolute',
                       top: '12px',
                       right: '12px',
-                      background: '#fbbf24',
-                      color: 'white',
+                      background: '#E58555',
+                      color: '#1A1D21',
                       padding: '4px 12px',
                       borderRadius: '12px',
                       fontSize: '12px',
@@ -296,30 +296,30 @@ function Results() {
 
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
                     <div>
-                      <h3 style={{ fontSize: '20px', marginBottom: '4px' }}>
+                      <h3 style={{ fontSize: '20px', marginBottom: '4px', color: '#EFEFEF' }}>
                         #{index + 1} {result.option.option_text}
                       </h3>
                       {result.option.candidate_name && (
-                        <p style={{ color: '#6b7280', fontSize: '14px' }}>
+                        <p style={{ color: '#9CA3AF', fontSize: '14px' }}>
                           {result.option.candidate_name}
                         </p>
                       )}
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#2563eb' }}>
+                      <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#74E2DE' }}>
                         {result.percentage}%
                       </div>
-                      <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                      <div style={{ fontSize: '14px', color: '#9CA3AF' }}>
                         {voteCount} vote{voteCount > 1 ? 's' : ''}
                       </div>
                     </div>
                   </div>
 
                   {/* Barre de progression */}
-                  <div style={{ background: '#e5e7eb', height: '12px', borderRadius: '6px', overflow: 'hidden' }}>
+                  <div style={{ background: 'rgba(255, 255, 255, 0.1)', height: '12px', borderRadius: '6px', overflow: 'hidden' }}>
                     <div
                       style={{
-                        background: isWinner ? 'linear-gradient(90deg, #fbbf24, #f59e0b)' : 'linear-gradient(90deg, #2563eb, #1e40af)',
+                        background: isWinner ? 'linear-gradient(90deg, #E58555, #74E2DE)' : 'linear-gradient(90deg, #74E2DE, #E58555)',
                         height: '100%',
                         width: `${result.percentage}%`,
                         transition: 'width 0.5s ease'
@@ -329,8 +329,8 @@ function Results() {
 
                   {/* Informations supplémentaires */}
                   {election.is_weighted && result.weight !== undefined && (
-                    <div style={{ marginTop: '12px', padding: '8px', background: 'white', borderRadius: '4px' }}>
-                      <p style={{ fontSize: '13px', color: '#6b7280' }}>
+                    <div style={{ marginTop: '12px', padding: '8px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+                      <p style={{ fontSize: '13px', color: '#9CA3AF' }}>
                         <strong>Poids total:</strong> {result.weight}
                       </p>
                     </div>

@@ -370,28 +370,28 @@ function AuditTrail() {
   }
 
   return (
-    <div className="container" style={{ padding: '40px 24px', maxWidth: '1400px' }}>
+    <div className="container" style={{ padding: '40px 24px', maxWidth: '1400px', background: '#1A1D21', minHeight: '100vh' }}>
       {/* Header */}
       <div style={{ marginBottom: '32px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-          <Shield size={32} style={{ color: 'var(--primary)' }} />
-          <h1 style={{ fontSize: '32px', margin: 0 }}>Piste d'Audit</h1>
+          <Shield size={32} style={{ color: '#74E2DE' }} />
+          <h1 style={{ fontSize: '32px', margin: 0, color: '#EFEFEF' }}>Piste d'Audit</h1>
         </div>
-        <p style={{ color: 'var(--gray-600)', fontSize: '15px' }}>
+        <p style={{ color: '#9CA3AF', fontSize: '15px' }}>
           Journal immuable des événements avec vérification blockchain
         </p>
       </div>
 
       {/* Error/Success Messages */}
       {error && (
-        <div className="alert alert-error" style={{ marginBottom: '24px' }}>
+        <div className="alert alert-error" style={{ marginBottom: '24px', background: 'rgba(252, 73, 95, 0.1)', border: '1px solid rgba(252, 73, 95, 0.3)', color: '#FC495F' }}>
           <AlertCircle size={20} />
           {error}
         </div>
       )}
 
       {success && (
-        <div className="alert alert-success" style={{ marginBottom: '24px' }}>
+        <div className="alert alert-success" style={{ marginBottom: '24px', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', color: '#10b981' }}>
           <CheckCircle2 size={20} />
           {success}
         </div>
@@ -400,24 +400,24 @@ function AuditTrail() {
       {/* Statistics Cards */}
       {stats && (
         <div className="grid grid-2" style={{ marginBottom: '32px' }}>
-          <div className="stat-card">
+          <div className="stat-card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-              <FileText size={24} style={{ color: 'var(--primary)' }} />
+              <FileText size={24} style={{ color: '#74E2DE' }} />
               <div>
-                <h3 style={{ fontSize: '28px', margin: 0 }}>{stats.totalEntries}</h3>
-                <p style={{ color: 'var(--gray-600)', margin: 0, fontSize: '14px' }}>Entrées totales</p>
+                <h3 style={{ fontSize: '28px', margin: 0, color: '#EFEFEF' }}>{stats.totalEntries}</h3>
+                <p style={{ color: '#9CA3AF', margin: 0, fontSize: '14px' }}>Entrées totales</p>
               </div>
             </div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-              <Clock size={24} style={{ color: 'var(--success-600)' }} />
+              <Clock size={24} style={{ color: '#10b981' }} />
               <div>
-                <h3 style={{ fontSize: '16px', margin: 0 }}>
+                <h3 style={{ fontSize: '16px', margin: 0, color: '#EFEFEF' }}>
                   {stats.dateRange.earliest && formatTimestamp(stats.dateRange.earliest).split(' ')[0]}
                 </h3>
-                <p style={{ color: 'var(--gray-600)', margin: 0, fontSize: '14px' }}>Premier événement</p>
+                <p style={{ color: '#9CA3AF', margin: 0, fontSize: '14px' }}>Premier événement</p>
               </div>
             </div>
           </div>
@@ -425,7 +425,7 @@ function AuditTrail() {
       )}
 
       {/* Action Bar */}
-      <div className="card" style={{ marginBottom: '24px' }}>
+      <div className="card" style={{ marginBottom: '24px', background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
           {/* Search */}
           <div style={{ flex: '1', minWidth: '200px', position: 'relative' }}>
@@ -436,7 +436,7 @@ function AuditTrail() {
                 left: '12px',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: 'var(--gray-400)'
+                color: '#9CA3AF'
               }}
             />
             <input
@@ -445,7 +445,7 @@ function AuditTrail() {
               placeholder="Rechercher dans les logs..."
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-              style={{ paddingLeft: '40px' }}
+              style={{ paddingLeft: '40px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(116, 226, 222, 0.3)', color: '#EFEFEF' }}
             />
           </div>
 
@@ -602,8 +602,8 @@ function AuditTrail() {
       )}
 
       {/* Timeline */}
-      <div className="card">
-        <h2 style={{ marginBottom: '24px', fontSize: '20px' }}>
+      <div className="card" style={{ background: '#232730', border: '1px solid rgba(116, 226, 222, 0.2)' }}>
+        <h2 style={{ marginBottom: '24px', fontSize: '20px', color: '#EFEFEF' }}>
           Chronologie des Événements ({logs.length})
         </h2>
 
@@ -611,7 +611,7 @@ function AuditTrail() {
           <div style={{
             textAlign: 'center',
             padding: '60px 20px',
-            color: 'var(--gray-500)'
+            color: '#9CA3AF'
           }}>
             <Shield size={48} style={{ opacity: 0.3, marginBottom: '16px' }} />
             <p>Aucun événement d'audit trouvé</p>
@@ -625,7 +625,7 @@ function AuditTrail() {
               top: '12px',
               bottom: '12px',
               width: '2px',
-              background: 'var(--gray-200)'
+              background: 'rgba(116, 226, 222, 0.2)'
             }} />
 
             {/* Timeline entries */}
@@ -654,20 +654,20 @@ function AuditTrail() {
                 {/* Log entry */}
                 <div
                   style={{
-                    background: 'var(--gray-50)',
+                    background: 'rgba(255, 255, 255, 0.05)',
                     borderRadius: '12px',
                     padding: '16px',
-                    border: '1px solid var(--gray-200)',
+                    border: '1px solid rgba(116, 226, 222, 0.2)',
                     transition: 'all 0.2s ease',
                     cursor: 'pointer'
                   }}
                   onClick={() => toggleLogDetails(log.id)}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'white';
-                    e.currentTarget.style.boxShadow = 'var(--shadow)';
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+                    e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.3)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'var(--gray-50)';
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
